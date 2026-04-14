@@ -22,8 +22,8 @@ def main():
     print("\n🚀 === НАЧАЛО РАБОТЫ (v2.0 с умными тегами) ===")
 
     # 📁 Пути
-    base_dir = Path(r"C:\Users\41.Bogatyrevaee\PycharmProjects\pythonProject18")
-    # base_dir = Path(__file__).parent.resolve   ()
+    # base_dir = Path(r"C:\Users\41.Bogatyrevaee\PycharmProjects\pythonProject18")
+    base_dir = Path(__file__).parent.resolve()
     input_dir = base_dir / "input"
     mappings_dir = input_dir / "mappings"
     excel_dir = input_dir / "excel"
