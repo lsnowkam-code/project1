@@ -85,30 +85,39 @@ def load_column_mapping(filepath):
     - word_to_indicator: название показателя → код индикатора
     - indicator_to_excel: код индикатора → (номер колонки 2022, номер колонки 2023)
     - indicator_to_file: код индикатора → имя Excel-файла
+    - file_word_to_indicator: (файл, нормализованное название) → код индикатора
     """
     word_to_indicator = {}
     indicator_to_excel = {}
     indicator_to_file = {}
+    file_word_to_indicator = {}
 
     with open(filepath, encoding="utf-8-sig") as f:
-        reader = csv.reader(f)
+        reader = csv.reader(f, delimiter=';')
         headers = next(reader)  # Пропускаем заголовок
 
         for row in reader:
             if len(row) < 5:
                 continue  # Пропускаем неполные строки
 
-            excel_file = row[0].strip()
-            word_name = row[1].strip()
-            indicator = row[2].strip()
-            col_22 = row[3].strip()
-            col_23 = row[4].strip()
+            excel_file = str(row[0]).strip()
+            word_name = str(row[1]).strip()
+            indicator = str(row[2]).strip()
+            col_22 = str(row[3]).strip() if len(row) > 3 else ''
+            col_23 = str(row[4]).strip() if len(row) > 4 else ''
+
+            if col_22.lower() == 'nan':
+                col_22 = ''
+            if col_23.lower() == 'nan':
+                col_23 = ''
 
             word_to_indicator[word_name] = indicator
             indicator_to_excel[indicator] = (col_22, col_23)
             indicator_to_file[indicator] = excel_file
+            # NEW: Added mapping per file to avoid conflicts when same indicator in multiple files
+            file_word_to_indicator[(excel_file, _normalize_text(word_name))] = indicator
 
-    return word_to_indicator, indicator_to_excel, indicator_to_file
+    return word_to_indicator, indicator_to_excel, indicator_to_file, file_word_to_indicator
 
 
 # === Поиск названия таблицы ===
@@ -207,7 +216,7 @@ def get_excel_data(excel_path, okved_codes_set):
                         formatted_value = f"{num_value:,.2f}".replace(',', ' ').replace('.', ',')
                 except (ValueError, TypeError):
                     formatted_value = str(value).strip()
-            data_dict[okved_code][key_from_header] = formatted_value
+            data_dict[okved_code][str(col_idx)] = formatted_value
 
     if not data_dict:
         print(f"⚠️ В Excel-файле {excel_path.name} не найдено ни одного подходящего кода ОКВЭД.")
@@ -220,10 +229,12 @@ def get_excel_data(excel_path, okved_codes_set):
 # === Поиск кода ОКВЭД по названию ===
 def find_okved_code(cell_text, name_to_okved_cleaned):
     text_norm = _normalize_text(cell_text)
+    if not text_norm or text_norm in ('код', 'наименование'):
+        return None
     if text_norm in name_to_okved_cleaned:
         return name_to_okved_cleaned[text_norm]
     for name, code in name_to_okved_cleaned.items():
-        if text_norm in name or name in text_norm:
+        if len(text_norm) >= 3 and (text_norm in name or name in text_norm):
             print(f"⚠️ Частичное совпадение: '{cell_text}' ~ '{name}' → {code}")
             return code
     return None

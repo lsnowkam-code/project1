@@ -49,7 +49,7 @@ def main():
 
     # === ШАГ 2: Генерация шаблона Word с тегами ===
     print("\n=== ШАГ 2: Генерация шаблона Word с умными тегами ===")
-    generate_word_template(input_word_file, okved_file, template_word_file)
+    generate_word_template(input_word_file, okved_file, table_mapping_file, column_mapping_file, template_word_file)
     print(f"📄 Шаблон с тегами сохранен: {template_word_file}")
 
     # === ШАГ 3: Предварительная загрузка данных из Excel ===

@@ -12,7 +12,7 @@ def pre_load_all_excel_data(excel_dir, table_source_mapping, okved_codes_set, co
     """
     print("\n📊 Шаг 3: Загрузка данных из Excel")
 
-    _, indicator_to_excel, indicator_to_file = load_column_mapping(column_mapping_path)
+    _, indicator_to_excel, indicator_to_file, _ = load_column_mapping(column_mapping_path)
     master_data = {}
 
     excel_files_to_load = set(table_source_mapping.values())
@@ -39,13 +39,23 @@ def pre_load_all_excel_data(excel_dir, table_source_mapping, okved_codes_set, co
 
                 loaded = False
 
-                if str(col_22) in values_by_col_num:
-                    master_data[okved][f"{indicator}_22"] = values_by_col_num[str(col_22)]
-                    loaded = True
+                if col_22:
+                    try:
+                        col_22_key = str(int(col_22) - 1)
+                    except ValueError:
+                        col_22_key = str(col_22)
+                    if col_22_key in values_by_col_num:
+                        master_data[okved][f"{indicator}_22"] = values_by_col_num[col_22_key]
+                        loaded = True
 
-                if str(col_23) in values_by_col_num:
-                    master_data[okved][f"{indicator}_23"] = values_by_col_num[str(col_23)]
-                    loaded = True
+                if col_23:
+                    try:
+                        col_23_key = str(int(col_23) - 1)
+                    except ValueError:
+                        col_23_key = str(col_23)
+                    if col_23_key in values_by_col_num:
+                        master_data[okved][f"{indicator}_23"] = values_by_col_num[col_23_key]
+                        loaded = True
 
                 if loaded:
                     indicators_loaded.append(indicator)
@@ -94,7 +104,7 @@ def pre_load_all_excel_data(excel_dir, table_source_mapping, okved_codes_set, co
         print(f"⚠️ Не найдены данные для {len(unfilled_tags)} тегов. Они заменены на '—'.")
     return unfilled_tags"""
 
-TAG_PATTERN = re.compile(r"\{\{([A-Za-z0-9_]+)\}\}")
+TAG_PATTERN = re.compile(r"\{\{([^}]+)\}\}")
 
 
 def extract_tags(text):
@@ -113,9 +123,9 @@ def fill_word_template_by_tags(doc, master_data, column_mapping, log_path=None, 
     unfilled_tags = []
     log = []
     
-    # Регулярное выражение для поиска тегов: {{OKVED_xxx_YyYy_nn}}
-    # Пример: {{OKVED_50_13_11_ValBal_22}}
-    tag_regex = re.compile(r"\{\{(OKVED[_A-Za-z0-9]+)\}\}")
+    # Регулярное выражение для поиска тегов: {{OKVED_xxx_YyYy_nn}} или {{xxx_YyYy_nn}}
+    # Примеры: {{OKVED_50_13_11_ValBal_22}}, {{A_ValBal_22}}, {{OKVED_101_АГ_ValBal_22}}
+    tag_regex = re.compile(r"\{\{([^}]+)\}\}")
 
     # Обрабатываем только таблицы
     for table in doc.tables:
@@ -127,38 +137,51 @@ def fill_word_template_by_tags(doc, master_data, column_mapping, log_path=None, 
                         matches = list(tag_regex.finditer(text))
                         
                         for match in matches:
-                            full_tag = match.group(1)  # "OKVED_50_13_11_ValBal_22"
+                            full_tag = match.group(1)
+                            raw_tag = full_tag
+                            if raw_tag.startswith("OKVED_"):
+                                raw_tag = raw_tag[len("OKVED_"):]
                             
-                            # Парсим тег: OKVED_<code>_<indicator>_<year>
-                            # Пример: OKVED_50_13_11_ValBal_22
-                            parts = full_tag.split("_")
-                            
-                            if len(parts) < 3:
+                            parts = raw_tag.split("_")
+                            if len(parts) < 2:
                                 log.append(f"⚠️ Ошибка формата тега: {full_tag}")
                                 continue
                             
-                            # Часть с кодом ОКВЭД (может быть несколько частей через _)
-                            # Берем элементы до последних двух (indicator и year)
-                            year_suffix = parts[-1]  # "22" или "23"
-                            indicator = parts[-2]    # "ValBal"
-                            okved_parts = parts[1:-2]  # ["50", "13", "11"]
-                            okved_code = ".".join(okved_parts)  # "50.13.11"
-                            
-                            indicator_year = f"{indicator}_{year_suffix}"  # "ValBal_22"
-                            
+                            year_suffix = None
+                            if parts[-1] in ("22", "23"):
+                                year_suffix = parts[-1]
+                                indicator = parts[-2]
+                                okved_parts = parts[0:-2]
+                            else:
+                                indicator = parts[-1]
+                                okved_parts = parts[0:-1]
+
+                            okved_code = ".".join(okved_parts)
+                            if year_suffix:
+                                indicator_key = f"{indicator}_{year_suffix}"
+                            else:
+                                indicator_key = indicator
+
                             if okved_code not in master_data:
                                 log.append(f"⏭️ Код ОКВЭД '{okved_code}' не найден в данных")
-                                unfilled_tags.append({"tag": full_tag, "okved_code": okved_code, "indicator": indicator_year, "reason": "Code not found"})
+                                unfilled_tags.append({"tag": full_tag, "okved_code": okved_code, "indicator": indicator_key, "reason": "Code not found"})
                                 continue
-                            
-                            value = master_data[okved_code].get(indicator_year)
+
+                            value = master_data[okved_code].get(indicator_key)
+                            if value is None and year_suffix is None:
+                                for fallback in (f"{indicator}_23", f"{indicator}_22"):
+                                    value = master_data[okved_code].get(fallback)
+                                    if value is not None:
+                                        indicator_key = fallback
+                                        break
+
                             if value is None or value == "—":
                                 text = text.replace(f"{{{{{full_tag}}}}}", "—")
-                                log.append(f"⚠️ Нет данных: {full_tag} ({okved_code}/{indicator_year}) → '—'")
-                                unfilled_tags.append({"tag": full_tag, "okved_code": okved_code, "indicator": indicator_year, "reason": "No data"})
+                                log.append(f"⚠️ Нет данных: {full_tag} ({okved_code}/{indicator_key}) → '—'")
+                                unfilled_tags.append({"tag": full_tag, "okved_code": okved_code, "indicator": indicator_key, "reason": "No data"})
                             else:
                                 text = text.replace(f"{{{{{full_tag}}}}}", str(value))
-                                log.append(f"✅ Заполнено: {full_tag} ({okved_code}/{indicator_year}) → {value}")
+                                log.append(f"✅ Заполнено: {full_tag} ({okved_code}/{indicator_key}) → {value}")
                         
                         run.text = text
 
