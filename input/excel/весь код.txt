@@ -1,0 +1,853 @@
+from pathlib import Path
+from docx import Document
+from config import (
+    load_okved_map,
+    load_column_mapping,
+    _normalize_text
+)
+from map_columns import YEAR_SUFFIX_MAP
+
+
+def generate_word_template(input_doc_path, okved_mapping_path, column_mapping_path):
+    print("\n--- ШАГ 2: Генерация шаблона с умными тегами ---")
+
+    # ?? Загрузка справочников
+    okved_to_name, name_to_okved_cleaned = load_okved_map(okved_mapping_path)
+    word_to_indicator, indicator_to_excel = load_column_mapping(column_mapping_path)
+
+    # ?? Загрузка документа
+    doc = Document(input_doc_path)
+
+    total_tags = 0
+
+    for table_index, table in enumerate(doc.tables):
+        print(f"\n?? Таблица {table_index + 1}")
+
+        for row_index, row in enumerate(table.rows):
+            first_cell_text = _normalize_text(row.cells[0].text)
+            okved_code = name_to_okved_cleaned.get(first_cell_text)
+
+            if not okved_code:
+                continue  # Пропускаем строку, если ОКВЭД не найден
+
+            for col_index in range(1, len(row.cells)):
+                header_text = _normalize_text(table.rows[0].cells[col_index].text)
+                indicator = word_to_indicator.get(header_text)
+
+                if not indicator:
+                    continue
+
+                col_22, col_23 = indicator_to_excel.get(indicator, (None, None))
+                for j, excel_col in enumerate((col_22, col_23)):
+                    if excel_col is None:
+                        continue
+
+                    year_suffix = YEAR_SUFFIX_MAP[j]
+                    tag = f"{{{{{okved_code}_{indicator}_{year_suffix}}}}}"
+                    row.cells[col_index].text = tag
+                    print(f"   ??? Строка {row_index + 1}: вставлен тег {tag}")
+                    total_tags += 1
+                    break  # вставляем только один тег на ячейку
+
+    # ?? Сохранение шаблона
+    output_path = Path(__file__).parent.resolve() / "output" / "Бюллетень_ШАБЛОН_С_ТЕГАМИ_v2.docx"
+    output_path.parent.mkdir(exist_ok=True)
+    doc.save(output_path)
+
+    print(f"\n? Шаблон с тегами сохранён: {output_path}")
+    print(f"?? Всего вставлено тегов: {total_tags}")
+
+from pathlib import Path
+from docx import Document
+import pandas as pd
+import chardet
+from config import (
+    load_okved_map,
+    load_table_source_map,
+)
+
+from logic import (
+    generate_word_template,
+    collect_okved_codes_from_template,
+    compare_okved_sets
+)
+
+from data_filler import (
+    pre_load_all_excel_data,
+    fill_word_template_by_tags
+)
+
+
+def main():
+    print("\n?? === НАЧАЛО РАБОТЫ (v2.0 с умными тегами) ===")
+
+    # ?? Пути
+    base_dir = Path(__file__).parent.resolve()
+    input_dir = base_dir / "input"
+    mappings_dir = input_dir / "mappings"
+    excel_dir = input_dir / "excel"
+    output_dir = base_dir / "output"
+    output_dir.mkdir(exist_ok=True)
+
+    # ?? Файлы
+    okved_file = mappings_dir / "okved_mapping.csv"
+    table_mapping_file = mappings_dir / "table_source_data_mapping.csv"
+    column_mapping_file = mappings_dir / "column_mapping.csv"
+
+    input_word_file = input_dir / "Бюллетень_17.2.8 раздел 1-8.docx"
+    template_word_file = output_dir / "Бюллетень_ШАБЛОН_С_ТЕГАМИ_v2.docx"
+    final_word_file = output_dir / "Бюллетень_17.2.8_ГОТОВЫЙ_v2.docx"
+
+    with open(mappings_dir / 'column_mapping.csv', 'rb') as f:
+        raw = f.read(10000)
+        print("\n=== ШАГ 1: column_mapping.csv ===")
+        print(chardet.detect(raw))
+
+    # === ШАГ 1: Загрузка справочников ===
+    print("\n=== ШАГ 1: Загрузка справочников ===")
+    okved_to_name, name_to_okved_cleaned = load_okved_map(okved_file)
+    table_mapping = load_table_source_map(table_mapping_file)
+    okved_codes_set = set(okved_to_name.keys())
+    print("? Справочники успешно загружены.")
+
+    # === ШАГ 2: Генерация шаблона Word с тегами ===
+    print("\n=== ШАГ 2: Генерация шаблона Word с умными тегами ===")
+    generate_word_template(input_word_file, okved_file, column_mapping_file)
+    print(f"?? Шаблон с тегами сохранен: {template_word_file}")
+
+    # === ШАГ 3: Предварительная загрузка данных из Excel ===
+    print("\n=== ШАГ 3: Предварительная загрузка данных из Excel ===")
+    master_data = pre_load_all_excel_data(excel_dir, table_mapping, okved_codes_set, column_mapping_file)
+
+    # === ШАГ 4: Заполнение шаблона по тегам ===
+    print("\n=== ШАГ 4: Заполнение шаблона по умным тегам ===")
+    doc = Document(template_word_file)
+    unfilled_tags = fill_word_template_by_tags(doc, master_data)
+    doc.save(final_word_file)
+    print(f"?? Заполненный документ сохранен: {final_word_file}")
+
+    # === ШАГ 5: Диагностика и сверка ===
+    print("\n=== ШАГ 5: Диагностика и сверка ===")
+    template_codes = collect_okved_codes_from_template(template_word_file)
+    excel_codes = set(master_data.keys())
+    compare_okved_sets(template_codes, excel_codes)
+
+    # ? Финальный отчёт
+    print("\n? === ПРОЦЕСС ЗАВЕРШЁН ===")
+    print(f"?? Шаблон с тегами: {template_word_file}")
+    print(f"?? Заполненный документ: {final_word_file}")
+    if unfilled_tags:
+        print(f"?? Найдено {len(unfilled_tags)} тегов, для которых не нашлось данных (заменены на '—').")
+
+from logic import collect_okved_codes_from_template
+
+template_codes = collect_okved_codes_from_template("output/Бюллетень_ШАБЛОН_С_ТЕГАМИ_v2.docx")
+print(template_codes)
+if __name__ == "__main__":
+    main()
+import re
+from config import get_excel_data, load_column_mapping
+
+
+def pre_load_all_excel_data(excel_dir, table_source_mapping, okved_codes_set, column_mapping_path):
+    """
+    Загружает все данные из Excel по справочнику столбцов.
+    Возвращает master_data[okved][indicator_year] = value
+    """
+    print("\n?? Шаг 3: Загрузка данных из Excel")
+    _, indicator_to_excel = load_column_mapping(column_mapping_path)
+    master_data = {}
+
+    excel_files_to_load = set(table_source_mapping.values())
+
+    for filename in excel_files_to_load:
+        excel_path = excel_dir / filename
+        if not excel_path.exists():
+            print(f"?? Файл не найден: {filename}")
+            continue
+
+        excel_data = get_excel_data(excel_path, okved_codes_set)
+
+        for okved, values_by_col_num in excel_data.items():
+            if okved not in master_data:
+                master_data[okved] = {}
+
+            for indicator, (col_22, col_23) in indicator_to_excel.items():
+                if str(col_22) in values_by_col_num:
+                    master_data[okved][f"{indicator}_22"] = values_by_col_num[str(col_22)]
+                if str(col_23) in values_by_col_num:
+                    master_data[okved][f"{indicator}_23"] = values_by_col_num[str(col_23)]
+
+    print(f"? Загружено данных для {len(master_data)} кодов ОКВЭД")
+    return master_data
+
+
+def fill_word_template_by_tags(doc, master_data):
+    """
+    Заполняет шаблон Word по тегам {{OKVED_INDICATOR_YEAR}}.
+    """
+    print("\n?? Шаг 4: Заполнение шаблона по тегам")
+    tag_regex = re.compile(r"\{\{([\w\.]+)_([A-Za-z]+_\d{2})\}\}")
+
+    filled_count = 0
+    unfilled_tags = []
+
+    for table in doc.tables:
+        for row in table.rows:
+            for cell in row.cells:
+                for paragraph in cell.paragraphs:
+                    for match in tag_regex.finditer(paragraph.text):
+                        full_tag = match.group(0)
+                        okved_code = match.group(1)
+                        indicator_key = match.group(2)
+
+                        value = master_data.get(okved_code, {}).get(indicator_key, "—")
+
+                        for run in paragraph.runs:
+                            if full_tag in run.text:
+                                run.text = run.text.replace(full_tag, str(value))
+                                filled_count += 1
+                                break
+
+                        if value == "—":
+                            unfilled_tags.append(full_tag)
+
+    print(f"? Заполнено ячеек: {filled_count}")
+    if unfilled_tags:
+        print(f"?? Не найдены данные для {len(unfilled_tags)} тегов. Они заменены на '—'.")
+    return unfilled_tags
+import pandas as pd
+from map_columns import FINANCIAL_INDICATORS, YEAR_SUFFIX_MAP
+
+
+def read_excel_data(file_path):#!!!
+    """
+    Считывает данные из XLSX-файла, автоматически определяя,
+    с какой строки начинаются данные (по первому найденному коду ОКВЭД).
+    """
+    try:
+        df_raw = pd.read_excel(file_path, header=None, sheet_name=0)
+    except FileNotFoundError:
+        print(f"? Файл не найден: {file_path}")
+        return []
+    except Exception as e:
+        print(f"? Ошибка чтения XLSX-файла: {e}")
+        return []
+
+    start_row_index = -1
+    for index, cell_value in df_raw.iloc[:, 0].items():
+        cell_value_str = str(cell_value).strip()
+        if (cell_value_str and
+                not cell_value_str.replace('.', '', 1).isdigit() and
+                (len(cell_value_str) > 1 or cell_value_str.isalpha())):
+            start_row_index = index
+            break
+
+    if start_row_index == -1:
+        print(f"?? Не удалось найти строку начала данных в файле {file_path}")
+        return []
+
+    df_data = df_raw.iloc[start_row_index:]
+    return df_data.values.tolist()
+
+
+def generate_tags(data_rows):
+    """
+    Обрабатывает строки данных и генерирует словарь {тег: значение}.
+    Теги формируются по шаблону: {{T1_<ОКВЭД>_<ПОКАЗАТЕЛЬ>_<ГОД>}}
+    """
+    tags_data = {}
+
+    for row in data_rows:
+        if not row or not str(row[0]).strip():
+            continue
+
+        okved_code = str(row[0]).strip().replace('.', '_')
+        if not okved_code:
+            continue
+
+        for indicator_abbr, col_indices in FINANCIAL_INDICATORS.items():
+            for j, col_index in enumerate(col_indices):
+                year_suffix = YEAR_SUFFIX_MAP[j]
+
+                try:
+                    raw_value = str(row[col_index + 1])
+                    value = raw_value.strip().replace(' ', '')
+                except IndexError:
+                    value = ""
+
+                if value.lower() == 'nan':
+                    value = ""
+
+                tag_name = f"{{{{T1_{okved_code}_{indicator_abbr}_{year_suffix}}}}}"
+                tags_data[tag_name] = value
+
+    return tags_data
+import re
+from pathlib import Path
+from config import (
+    get_table_name,
+    get_cleaned_cell_text,
+    _normalize_text,
+    get_excel_data,
+    load_column_mapping
+)
+from docx import Document
+from config import load_okved_map, get_cleaned_cell_text, _normalize_text
+from map_columns import WORD_COLUMNS_MAP
+
+TAG_REGEX = re.compile(r"\{\{([A-Za-z0-9\.\-_]+)_([0-9]+)\}\}")
+
+
+# ==========================================================
+# === ГЕНЕРАЦИЯ ШАБЛОНА ====================================
+# ==========================================================
+
+
+def generate_word_template(input_doc_path, okved_map_path, output_doc_path):
+    """
+    Генерация шаблона Word с тегами {{<OKVED_CODE>_<INDICATOR>}}.
+    Расширенный поиск заголовков по первым 5 строкам таблицы.
+    """
+    print("\n--- ШАГ 2: Генерация шаблона с умными тегами ---")
+    _, name_to_okved_cleaned = load_okved_map(okved_map_path)
+
+    doc = Document(input_doc_path)
+    total_tags = 0
+
+    for t_index, table in enumerate(doc.tables):
+        print(f"\n?? Таблица {t_index + 1}")
+
+        # 1. Поиск заголовков в первых 5 строках
+        col_to_indicator_map = {}
+        for row in table.rows[:5]:
+            for i, cell in enumerate(row.cells):
+                header_text = _normalize_text(get_cleaned_cell_text(cell))
+                for name, indicators in WORD_COLUMNS_MAP.items():
+                    if _normalize_text(name) in header_text:
+                        col_to_indicator_map[i] = indicators[0]  # 2022
+                        if i + 1 < len(row.cells):
+                            col_to_indicator_map[i + 1] = indicators[1]  # 2023
+                        break
+
+        if not col_to_indicator_map:
+            print("?? Заголовки не найдены. Пропускаем таблицу.")
+            continue
+
+        # 2. Вставка тегов в строки с кодами ОКВЭД
+        for row_idx, row in enumerate(table.rows[2:]):  # Пропускаем заголовки
+            first_cell_text = get_cleaned_cell_text(row.cells[0])
+            okved_code = name_to_okved_cleaned.get(_normalize_text(first_cell_text))
+
+            if not okved_code:
+                    continue
+
+            okved_tag_part = okved_code.replace('.', '_')
+
+            for col_idx, indicator_tag_part in col_to_indicator_map.items():
+                if col_idx < len(row.cells):
+                    tag = f"{{{{{okved_tag_part}_{indicator_tag_part}}}}}"
+                    for p in row.cells[col_idx].paragraphs:
+                        p.text = ""
+                    row.cells[col_idx].paragraphs[0].text = tag
+                    total_tags += 1
+                    print(f"   ??? Строка {row_idx + 2}: вставлен тег {tag}")
+
+    doc.save(output_doc_path)
+    print(f"\n? Шаблон с тегами сохранён: {output_doc_path}")
+    print(f"?? Всего вставлено тегов: {total_tags}")
+
+
+# ==========================================================
+# === ЗАПОЛНЕНИЕ ШАБЛОНА ==================================
+# ==========================================================
+"""
+def fill_word_template(doc, table_source_mapping, name_to_okved_cleaned, okved_codes_set, known_table_names):
+    Заполнение шаблона Word данными из Excel.
+    ? исправлено:
+      - ищет Excel-файл по названию таблицы
+      - сопоставляет колонки через WORD_TO_EXCEL_MAP
+      - форматирует числа как в Excel
+      - пишет детальный лог для каждой подстановки
+    skipped_tables = []
+    skipped_rows = []
+    base_dir = Path(__file__).parent.resolve()
+    excel_dir = base_dir / "input" / "excel"
+
+    print("\n=== ШАГ 2: Заполнение шаблона данными ===")
+
+    for i, table in enumerate(doc.tables):
+        table_key_norm = get_table_name(table, known_table_names)
+
+        if not table_key_norm or table_key_norm not in table_source_mapping:
+            print(f"?? Пропуск таблицы {i + 1}: '{table_key_norm}' — нет источника Excel")
+            skipped_tables.append({
+                'table_index': i,
+                'table_name': table_key_norm,
+                'reason': 'Нет Excel-источника'
+            })
+            continue
+
+        excel_filename = table_source_mapping[table_key_norm]
+        excel_full_path = excel_dir / excel_filename
+
+        if not excel_full_path.exists():
+            print(f"? Excel-файл не найден: {excel_full_path}")
+            skipped_tables.append({
+                'table_index': i,
+                'table_name': table_key_norm,
+                'reason': f'Файл не найден: {excel_filename}'
+            })
+            continue
+
+        print(f"\n?? Таблица {i + 1}: {table_key_norm}")
+        print(f"   ?? Источник Excel: {excel_filename}")
+
+        try:
+            data_dict = get_excel_data(excel_full_path, okved_codes_set)
+            print(f"   ?? Загружено данных для {len(data_dict)} кодов ОКВЭД")
+        except Exception as e:
+            print(f"? Ошибка при чтении Excel: {e}")
+            skipped_tables.append({
+                'table_index': i,
+                'table_name': table_key_norm,
+                'reason': f'Ошибка Excel: {e}'
+            })
+            continue
+
+        filled_count = 0
+
+        # Заполняем строки таблицы
+        for row_index, row in enumerate(table.rows):
+            cell_text_clean = _normalize_text(get_cleaned_cell_text(row.cells[0]))
+            if not cell_text_clean:
+                continue
+
+            # Определяем код ОКВЭД
+            okved_code = name_to_okved_cleaned.get(cell_text_clean)
+
+            # спец. случай для итоговой строки
+            if not okved_code and "всего по обследуемым видам" in cell_text_clean:
+                okved_code = "101.АГ"
+
+            if not okved_code:
+                skipped_rows.append({
+                    'table_index': i,
+                    'row_index': row_index,
+                    'text': cell_text_clean,
+                    'reason': 'Код ОКВЭД не найден'
+                })
+                continue
+
+            # Заполняем ячейки Word
+            for word_col_idx in range(1, len(row.cells)):
+                excel_col = WORD_TO_EXCEL_MAP.get(word_col_idx)
+                if not excel_col:
+                    continue
+
+                value = data_dict.get(okved_code, {}).get(str(excel_col), '—')
+                if value != '—':
+                    row.cells[word_col_idx].text = str(value)
+                    filled_count += 1
+
+                    print(f"   ?? {okved_code}: Excel col {excel_col} > Word tag {{{{{okved_code}_{word_col_idx}}}}} = {value}")
+
+        print(f"   ? Заполнено ячеек: {filled_count}")
+
+    print(f"\n?? Итог: Пропущено таблиц: {len(skipped_tables)}, Пропущено строк: {len(skipped_rows)}")
+
+    return skipped_tables, skipped_rows"""
+
+def fill_word_template(doc, table_source_mapping, name_to_okved_cleaned, okved_codes_set, known_table_names, column_mapping_file):
+    """
+    Заполняет таблицы Word напрямую, используя справочник столбцов column_mapping.csv.
+    """
+    word_to_indicator, indicator_to_excel = load_column_mapping(column_mapping_file)
+
+    skipped_tables = []
+    skipped_rows = []
+    base_dir = Path(__file__).parent.resolve()
+    excel_dir = base_dir / "input" / "excel"
+
+    print("\n?? Шаг 2: Заполнение шаблона Word напрямую")
+
+    for i, table in enumerate(doc.tables):
+        table_key_norm = get_table_name(table, known_table_names)
+
+        if not table_key_norm or table_key_norm not in table_source_mapping:
+            print(f"?? Таблица {i + 1}: '{table_key_norm}' — нет Excel-источника")
+            skipped_tables.append({
+                'table_index': i,
+                'table_name': table_key_norm,
+                'reason': 'Нет Excel-источника'
+            })
+            continue
+
+        excel_filename = table_source_mapping[table_key_norm]
+        excel_full_path = excel_dir / excel_filename
+
+        if not excel_full_path.exists():
+            print(f"? Excel-файл не найден: {excel_full_path}")
+            skipped_tables.append({
+                'table_index': i,
+                'table_name': table_key_norm,
+                'reason': f'Файл не найден: {excel_filename}'
+            })
+            continue
+
+        print(f"\n?? Таблица {i + 1}: {table_key_norm}")
+        print(f"   ?? Источник Excel: {excel_filename}")
+
+        try:
+            data_dict = get_excel_data(excel_full_path, okved_codes_set)
+            print(f"   ? Загружено данных для {len(data_dict)} кодов ОКВЭД")
+        except Exception as e:
+            print(f"? Ошибка чтения Excel: {e}")
+            skipped_tables.append({
+                'table_index': i,
+                'table_name': table_key_norm,
+                'reason': f'Ошибка Excel: {e}'
+            })
+            continue
+
+        filled_count = 0
+
+        for row_index, row in enumerate(table.rows):
+            cell_text_clean = _normalize_text(get_cleaned_cell_text(row.cells[0]))
+            if not cell_text_clean:
+                continue
+
+            okved_code = name_to_okved_cleaned.get(cell_text_clean)
+            if not okved_code:
+                skipped_rows.append({
+                    'table_index': i,
+                    'row_index': row_index,
+                    'text': cell_text_clean,
+                    'reason': 'Код ОКВЭД не найден'
+                })
+                continue
+
+            for col_idx in range(1, len(row.cells)):
+                header_text = _normalize_text(get_cleaned_cell_text(table.rows[0].cells[col_idx]))
+                indicator = word_to_indicator.get(header_text)
+                if not indicator:
+                    continue
+
+                excel_col_22, excel_col_23 = indicator_to_excel.get(indicator, (None, None))
+                if col_idx % 2 == 1:
+                    excel_col = excel_col_22
+                else:
+                    excel_col = excel_col_23
+
+                if excel_col is None:
+                    continue
+
+                value = data_dict.get(okved_code, {}).get(str(excel_col), '—')
+                if value != '—':
+                    row.cells[col_idx].text = str(value)
+                    filled_count += 1
+
+        print(f"   ? Заполнено ячеек: {filled_count}")
+
+    print(f"\n?? Итог: пропущено таблиц — {len(skipped_tables)}, строк — {len(skipped_rows)}")
+    return skipped_tables, skipped_rows
+
+
+
+# ==========================================================
+# === ДИАГНОСТИКА И ПОМОЩЬНЫЕ ==============================
+# ==========================================================
+
+def find_unfilled_tags(doc_path):
+    """Диагностика незаполненных тегов."""
+    doc = Document(doc_path)
+    unfilled_tags = set()
+
+    for para in doc.paragraphs:
+        matches = TAG_REGEX.findall(para.text)
+        for code, index in matches:
+            unfilled_tags.add(f"{{{{{code}_{index}}}}}")
+
+    for table in doc.tables:
+        for row in table.rows:
+            for cell in row.cells:
+                for para in cell.paragraphs:
+                    matches = TAG_REGEX.findall(para.text)
+                    for code, index in matches:
+                        unfilled_tags.add(f"{{{{{code}_{index}}}}}")
+
+    print(f"\n?? Незаполненные теги: {len(unfilled_tags)}")
+    for tag in sorted(unfilled_tags):
+        print(f" - {tag}")
+    return unfilled_tags
+
+
+def collect_okved_codes_from_template(doc_path):
+    """Собирает коды ОКВЭД из тегов шаблона."""
+    doc = Document(doc_path)
+    codes = set()
+    for para in doc.paragraphs:
+        matches = TAG_REGEX.findall(para.text)
+        for code, _ in matches:
+            codes.add(code)
+    for table in doc.tables:
+        for row in table.rows:
+            for cell in row.cells:
+                for para in cell.paragraphs:
+                    matches = TAG_REGEX.findall(para.text)
+                    for code, _ in matches:
+                        codes.add(code)
+    print(f"\n?? Коды ОКВЭД в шаблоне: {len(codes)}")
+    return codes
+
+
+def collect_okved_codes_from_excel(excel_dir, table_mapping, okved_codes_set):
+    """Собирает коды ОКВЭД, реально присутствующие в Excel."""
+    all_codes = set()
+    for _, excel_filename in table_mapping.items():
+        excel_path = Path(excel_dir) / excel_filename
+        if not excel_path.exists():
+            print(f"?? Excel-файл не найден: {excel_path}")
+            continue
+        try:
+            data = get_excel_data(excel_path, okved_codes_set)
+            all_codes.update(data.keys())
+        except Exception as e:
+            print(f"?? Ошибка при чтении {excel_filename}: {e}")
+    print(f"\n?? Коды ОКВЭД в Excel: {len(all_codes)}")
+    return all_codes
+
+
+def compare_okved_sets(template_codes, excel_codes):
+    """Сравнение множеств кодов ОКВЭД."""
+    missing = template_codes - excel_codes
+    extra = excel_codes - template_codes
+    print("\n?? В шаблоне, но нет в Excel:")
+    for code in sorted(missing):
+        print(f" - {code}")
+    print("\n?? В Excel, но не используется в шаблоне:")
+    for code in sorted(extra):
+        print(f" - {code}")
+# map_columns.py
+
+# ?? Справочник: код показателя > (номер колонки Excel 2022, номер колонки Excel 2023)
+# Эти номера соответствуют индексам колонок в Excel-файле, начиная с 1
+FINANCIAL_INDICATORS = {
+    'ValBal': (1, 2),     # Валюта баланса
+    'VneObAk': (3, 4),    # Внеоборотные активы
+    'ObAk': (5, 6),       # Оборотные активы
+    'KapRez': (7, 8),     # Капитал и резервы
+    'DlOb': (9, 10),      # Долгосрочные обязательства
+    'KrOb': (11, 12)      # Краткосрочные обязательства
+}
+
+# ?? Справочник: индекс > суффикс года
+# Используется при генерации тегов: ValBal_22, ValBal_23
+YEAR_SUFFIX_MAP = {
+    0: '2022',
+    1: '2023'
+}
+
+
+# Справочник для колонок в Word-шаблоне.
+# Заголовок в Word -> (короткое имя для 2022, короткое имя для 2023)
+# Это нужно для автоматической генерации шаблона с тегами.
+WORD_COLUMNS_MAP = {
+    'Валюта баланса': ('ValBal_22', 'ValBal_23'),
+    'Внеоборотные активы': ('VneObAk_22', 'VneObAk_23'),
+    'Оборотные активы': ('ObAk_22', 'ObAk_23'),
+    'Капитал и резервы': ('KapRez_22', 'KapRez_23'),
+    'Долгосрочные обязательства': ('DlOb_22', 'DlOb_23'),
+    'Краткосрочные обязательства': ('KrOb_22', 'KrOb_23')
+}
+import pandas as pd
+from pathlib import Path
+from docx.table import _Cell, Table
+import re
+import chardet
+
+# === Константы ===
+EMPTY_CELL_MARKER = "—"
+EXCEL_DATA_HEADER_ROW = 5
+EXCEL_DATA_START_ROW = 9
+OKVED_CODE_COLUMN_INDEX = 0
+OKVED_NAME_COLUMN_INDEX = 1
+
+
+# === Утилиты ===
+def _normalize_text(text: str) -> str:
+    return re.sub(r'\s+', ' ', text).strip().lower()
+
+
+def get_cleaned_cell_text(cell: _Cell) -> str:
+    return ' '.join(p.text.replace('\n', ' ').strip() for p in cell.paragraphs).strip()
+
+
+def _read_csv_robustly(filepath, header_row=0, names_list=None):
+    """Улучшенное чтение CSV с обработкой кодировки"""
+    encodings = ['utf-8-sig', 'windows-1251', 'cp1251', 'utf-8', 'latin1']
+    for encoding in encodings:
+        try:
+            print(f"Попытка чтения {filepath} с кодировкой {encoding}")
+            # Для column_mapping.csv используем явный разделитель
+            if 'column_mapping' in str(filepath):
+                df = pd.read_csv(filepath, sep=';', encoding=encoding, header=header_row)
+            else:
+                df = pd.read_csv(filepath, sep=None, engine='python', encoding=encoding, header=header_row)
+            print(f"? Успешно прочитано с кодировкой {encoding}")
+            return df
+        except UnicodeDecodeError as e:
+            print(f"? Ошибка кодировки {encoding}: {e}")
+            continue
+        except Exception as e:
+            print(f"? Другая ошибка с {encoding}: {e}")
+            continue
+    # Если ничего не сработало, пробуем с указанием engine и без разделителя
+    try:
+        df = pd.read_csv(filepath, sep=None, engine='python', encoding='windows-1251', header=header_row)
+        print("? Успешно прочитано с запасным методом")
+        return df
+    except Exception as e:
+        print(f"? Все методы чтения не удались: {e}")
+        raise e
+
+
+# === Загрузка справочников ===
+def load_okved_map(filepath):
+    print(f"Загрузка справочника ОКВЭД из: {filepath}")
+    df = _read_csv_robustly(filepath, header_row=None)
+    df = df.iloc[:, :2]
+    df.columns = ['Код', 'Наименование']
+    df = df.dropna(subset=['Код'])
+    df['Код'] = df['Код'].astype(str).str.strip()
+    df['Наименование'] = df['Наименование'].astype(str).str.strip()
+    df['Наименование_норм'] = df['Наименование'].apply(_normalize_text)
+    okved_to_name = dict(zip(df['Код'], df['Наименование']))
+    name_to_okved_cleaned = dict(zip(df['Наименование_норм'], df['Код']))
+    print(f"?? Загружено {len(df)} записей ОКВЭД.")
+    return okved_to_name, name_to_okved_cleaned
+
+
+def load_table_source_map(filepath):
+    print(f"Загрузка сопоставления таблиц из: {filepath}")
+    df = _read_csv_robustly(filepath, header_row=None)
+    first_row = [str(x).strip().lower() for x in df.iloc[0].tolist()]
+    if "таблица" in first_row and "файл" in first_row:
+        df = _read_csv_robustly(filepath, header_row=0)
+    else:
+        df.columns = ["Таблица", "Файл"]
+    mapping_dict = {}
+    for _, row in df.iterrows():
+        raw_name = str(row["Таблица"]).strip()
+        raw_src = str(row["Файл"]).strip()
+        norm_key = _normalize_text(raw_name)
+        mapping_dict[norm_key] = raw_src
+    print(f"?? Загружено сопоставлений: {len(mapping_dict)}")
+    return mapping_dict
+
+
+def load_column_mapping(filepath):
+    print(f"Загрузка сопоставления столбцов из: {filepath}")
+    df = _read_csv_robustly(filepath, header_row=0)
+    df.columns = [c.strip() for c in df.columns]
+    word_to_indicator = {}
+    indicator_to_excel = {}
+    for _, row in df.iterrows():
+        word_col = str(row['Название столбца Word']).strip()
+        indicator = str(row['Код показателя']).strip()
+        col_22 = int(row['Excel колонка 2022'])
+        col_23 = int(row['Excel колонка 2023'])
+        word_to_indicator[_normalize_text(word_col)] = indicator
+        indicator_to_excel[indicator] = (col_22, col_23)
+    print(f"?? Загружено столбцов: {len(indicator_to_excel)}")
+    return word_to_indicator, indicator_to_excel
+
+
+# === Определение названия таблицы ===
+def get_table_name(table: Table, known_table_names):
+    ignore_phrases = [
+        'продолжение таблицы', 'таблица', 'график', 'рис.', 'рис',
+        'по всей форме', 'приложение', 'форма', 'лист', 'страница'
+    ]
+    prev_elem = table._element.getprevious()
+    while prev_elem is not None:
+        if prev_elem.tag.endswith('p'):
+            text = (prev_elem.text or "").strip()
+            if not text:
+                prev_elem = prev_elem.getprevious()
+                continue
+            text_norm = _normalize_text(text)
+            if any(phrase in text_norm for phrase in ignore_phrases):
+                prev_elem = prev_elem.getprevious()
+                continue
+            for known_title in known_table_names:
+                if text_norm in _normalize_text(known_title) or _normalize_text(known_title) in text_norm:
+                    print(f"?? Заголовок найден: {known_title}")
+                    return known_title
+            print(f"?? Заголовок не распознан: {text}")
+            return text_norm
+        prev_elem = prev_elem.getprevious()
+    # Резерв: поиск текста внутри таблицы
+    collected_texts = []
+    for row in table.rows[:5]:
+        for cell in row.cells[:3]:
+            txt = get_cleaned_cell_text(cell)
+            if txt:
+                collected_texts.append(txt)
+    combined = _normalize_text(" ".join(collected_texts))
+    for known_title in known_table_names:
+        if _normalize_text(known_title) in combined or combined in _normalize_text(known_title):
+            print(f"?? Заголовок найден внутри таблицы: {known_title}")
+            return known_title
+    print("?? Не удалось определить заголовок таблицы.")
+    return ""
+
+
+# === Загрузка Excel-данных ===
+def get_excel_data(excel_path, okved_codes_set):
+    try:
+        df = pd.read_excel(excel_path, header=None, dtype=str)
+    except Exception as e:
+        print(f"? Ошибка чтения Excel: {e}")
+        return {}
+    header_map = {}
+    header_row_index = -1
+    for i, row in df.head(15).iterrows():
+        if len(row) > 2 and pd.notna(row.iloc[0]) and pd.notna(row.iloc[2]):
+            if str(row.iloc[0]).strip().upper() == 'А' and str(row.iloc[2]).strip() == '1':
+                header_row_index = i
+                break
+    if header_row_index == -1:
+        print(f"?? Не найдена строка заголовков в {excel_path.name}")
+        return {}
+    header_row = df.iloc[header_row_index]
+    for i, val in enumerate(header_row):
+        if pd.notna(val) and i >= 2:
+            header_map[i] = str(val).strip()
+    data_start_row = header_row_index + 1
+    data_dict = {}
+    for _, row in df.iloc[data_start_row:].iterrows():
+        if row.empty or pd.isna(row.iloc[OKVED_CODE_COLUMN_INDEX]):
+            continue
+        okved_code = str(row.iloc[OKVED_CODE_COLUMN_INDEX]).strip()
+        if not okved_code or okved_code not in okved_codes_set:
+            continue
+        data_dict[okved_code] = {}
+        for col_idx, key_from_header in header_map.items():
+            if col_idx >= len(row):
+                continue
+            value = row.iloc[col_idx]
+            if pd.isna(value) or str(value).strip() in ('-', '""', ''):
+                formatted_value = EMPTY_CELL_MARKER
+            else:
+                try:
+                    num_value = float(str(value).replace(',', '.').replace(' ', ''))
+                    if num_value == int(num_value):
+                        formatted_value = f"{int(num_value):,}".replace(',', ' ')
+                    else:
+                        formatted_value = f"{num_value:,.2f}".replace(',', ' ').replace('.', ',')
+                except (ValueError, TypeError):
+                    formatted_value = str(value).strip()
+            data_dict[okved_code][key_from_header] = formatted_value
+    print(f"?? Загружено данных для {len(data_dict)} кодов ОКВЭД из {excel_path.name}")
+    return data_dict
