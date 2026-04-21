@@ -12,7 +12,7 @@ def pre_load_all_excel_data(excel_dir, table_source_mapping, okved_codes_set, co
     """
     print("\n📊 Шаг 3: Загрузка данных из Excel")
 
-    _, indicator_to_excel, indicator_to_file, _ = load_column_mapping(column_mapping_path)
+    _, indicator_to_excel, indicator_to_file, file_word_to_indicator = load_column_mapping(column_mapping_path)
     master_data = {}
 
     excel_files_to_load = set(table_source_mapping.values())
@@ -24,46 +24,25 @@ def pre_load_all_excel_data(excel_dir, table_source_mapping, okved_codes_set, co
             continue
 
         print(f"📥 Загружаем: {filename}")
-        excel_data = get_excel_data(excel_path, okved_codes_set)
+        # 🔧 ПЕРЕДАЁМ file_word_to_indicator для конвертации названий в коды
+        excel_data = get_excel_data(excel_path, okved_codes_set, file_word_to_indicator)
 
         # 👇 Лог по каждому показателю
         indicators_loaded = []
 
-        for okved, values_by_col_num in excel_data.items():
+        for okved, values_by_indicator in excel_data.items():
             if okved not in master_data:
                 master_data[okved] = {}
 
-            for indicator, (col_22, col_23) in indicator_to_excel.items():
-                if indicator_to_file[indicator] != filename:
-                    continue  # ❗ Пропускаем, если источник не совпадает
-
-                loaded = False
-
-                if col_22:
-                    try:
-                        col_22_key = str(int(col_22) - 1)
-                    except ValueError:
-                        col_22_key = str(col_22)
-                    if col_22_key in values_by_col_num:
-                        master_data[okved][f"{indicator}_22"] = values_by_col_num[col_22_key]
-                        loaded = True
-
-                if col_23:
-                    try:
-                        col_23_key = str(int(col_23) - 1)
-                    except ValueError:
-                        col_23_key = str(col_23)
-                    if col_23_key in values_by_col_num:
-                        master_data[okved][f"{indicator}_23"] = values_by_col_num[col_23_key]
-                        loaded = True
-
-                if loaded:
-                    indicators_loaded.append(indicator)
+            # Теперь значения уже имеют правильные ключи (например, ValBal_22)
+            for indicator_key, value in values_by_indicator.items():
+                master_data[okved][indicator_key] = value
+                indicators_loaded.append(indicator_key)
 
         # 📊 Сводка по файлу
         if indicators_loaded:
             unique_indicators = sorted(set(indicators_loaded))
-            print(f"   ✅ Показатели из {filename}: {', '.join(unique_indicators)}")
+            print(f"   ✅ Показатели из {filename}: {', '.join(unique_indicators[:10])}{'...' if len(unique_indicators) > 10 else ''}")
         else:
             print(f"   ⚠️ Нет показателей, соответствующих этому файлу")
 

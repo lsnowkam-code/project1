@@ -82,62 +82,59 @@ def generate_word_template(input_doc_path, okved_map_path, table_source_mapping_
 
         # 3. Строим маппинг: столбец -> (показатель, год)
         col_to_indicator_map = {}
-        if indicator_row and year_row:
-            # Для каждого столбца найдём его показатель из indicator_row
-            # и год из year_row
+        
+        # Проходим по всем колонкам таблицы и для каждой определяем показатель и год
+        num_cols = len(table.columns)
+        
+        for col_idx in range(num_cols):
             current_indicator = None
-            for i, cell in enumerate(indicator_row.cells):
-                header_text = _normalize_text(get_cleaned_cell_text(cell))
-                if header_text:  # Если ячейка не пустая
-                    # Ищем точное совпадение или содержание в текущем заголовке (не наоборот).
-                    # Это предотвращает ложное срабатывание "оборотные активы" на "внеоборотные активы"
+            current_year = None
+            
+            # Определяем показатель для этой колонки
+            if indicator_row and col_idx < len(indicator_row.cells):
+                header_text = _normalize_text(get_cleaned_cell_text(indicator_row.cells[col_idx]))
+                if header_text:
+                    # Ищем наилучшее совпадение: название показателя должно содержаться в заголовке колонки
                     best_match = None
                     best_len = 0
                     for name, indicator in source_word_to_indicator.items():
+                        # Проверка: название показателя содержится в тексте заголовка
                         if name in header_text and len(name) > best_len:
                             best_match = indicator
                             best_len = len(name)
+                    
                     if best_match:
                         current_indicator = best_match
-                        print(f"   🔍 Столбец {i}: найден показатель по совпадению в '{header_text}' -> {best_match}")
-                
-                # Если текущий столбец пуст, используем предыдущий показатель
-                # (для объединённых ячеек)
-                if i < len(year_row.cells) and current_indicator:
-                    year_text = get_cleaned_cell_text(year_row.cells[i]).strip()
-                    if year_text == '2022':
-                        col_to_indicator_map[i] = (current_indicator, '22')
-                    elif year_text == '2023':
-                        col_to_indicator_map[i] = (current_indicator, '23')
-        else:
-            # Fallback: используем старую логику если не нашли нужные строки
-            base_indicator_map = {}
-            last_indicator = None
-            for row in table.rows[:5]:
-                for i, cell in enumerate(row.cells):
-                    header_text = _normalize_text(get_cleaned_cell_text(cell))
-                    for name, indicator in source_word_to_indicator.items():
-                        if name in header_text:
-                            base_indicator_map[i] = indicator
-                            last_indicator = indicator
-                            break
-                    else:
-                        if last_indicator is not None and not header_text:
-                            base_indicator_map[i] = last_indicator
-
-            if year_row:
-                for i, cell in enumerate(year_row.cells):
-                    year_text = get_cleaned_cell_text(cell).strip()
-                    indicator = base_indicator_map.get(i)
-                    if indicator is None:
-                        continue
-                    if year_text == '2022':
-                        col_to_indicator_map[i] = (indicator, '22')
-                    elif year_text == '2023':
-                        col_to_indicator_map[i] = (indicator, '23')
-            else:
-                for i, indicator in base_indicator_map.items():
-                    col_to_indicator_map[i] = (indicator, None)
+                        print(f"   🔍 Столбец {col_idx}: найден показатель '{header_text}' -> {best_match}")
+            
+            # Если не нашли в текущей ячейке, пробуем найти в предыдущих (для объединённых ячеек)
+            if not current_indicator:
+                for prev_idx in range(col_idx - 1, -1, -1):
+                    if prev_idx in col_to_indicator_map:
+                        current_indicator = col_to_indicator_map[prev_idx][0]
+                        print(f"   🔍 Столбец {col_idx}: унаследован показатель от столбца {prev_idx} -> {current_indicator}")
+                        break
+            
+            # Определяем год для этой колонки
+            if year_row and col_idx < len(year_row.cells):
+                year_text = get_cleaned_cell_text(year_row.cells[col_idx]).strip()
+                if year_text == '2022':
+                    current_year = '22'
+                elif year_text == '2023':
+                    current_year = '23'
+            
+            # Если год не найден в year_row, пробуем извлечь его из заголовка показателя
+            if not current_year and indicator_row and col_idx < len(indicator_row.cells):
+                header_full = get_cleaned_cell_text(indicator_row.cells[col_idx])
+                if '2022' in header_full:
+                    current_year = '22'
+                elif '2023' in header_full:
+                    current_year = '23'
+            
+            # Сохраняем результат, если нашли хотя бы показатель
+            if current_indicator:
+                col_to_indicator_map[col_idx] = (current_indicator, current_year)
+                print(f"   ✅ Столбец {col_idx}: {current_indicator}" + (f"_{current_year}" if current_year else ""))
 
         if not col_to_indicator_map:
             print("⚠️ Заголовки не найдены. Пропускаем таблицу.")

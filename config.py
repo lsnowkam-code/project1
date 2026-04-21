@@ -6,7 +6,7 @@ import pandas as pd
 from docx.table import _Cell, Table
 
 # === Константы ===
-EMPTY_CELL_MARKER = "—"
+EMPTY_CELL_MARKER = "-"  # Обычный дефис вместо длинного тире
 OKVED_CODE_COLUMN_INDEX = 0
 OKVED_NAME_COLUMN_INDEX = 1
 
@@ -86,6 +86,8 @@ def load_column_mapping(filepath):
     - indicator_to_excel: код индикатора → (номер колонки 2022, номер колонки 2023)
     - indicator_to_file: код индикатора → имя Excel-файла
     - file_word_to_indicator: (файл, нормализованное название) → код индикатора
+    
+    ИСПРАВЛЕНО: Исправлен дубликат кода SobAkc для Нераспределенной прибыли
     """
     word_to_indicator = {}
     indicator_to_excel = {}
@@ -106,6 +108,11 @@ def load_column_mapping(filepath):
             col_22 = str(row[3]).strip() if len(row) > 3 else ''
             col_23 = str(row[4]).strip() if len(row) > 4 else ''
 
+            # 🔧 ИСПРАВЛЕНИЕ ДУБЛИКАТА: Собственные акции vs Нераспределенная прибыль
+            if "Нераспределенная" in word_name and indicator == "SobAkc":
+                print(f"⚠️ АВТО-ИСПРАВЛЕНИЕ: Код для '{word_name}' изменён с SobAkc на NeraspPribyl")
+                indicator = "NeraspPribyl"
+            
             if col_22.lower() == 'nan':
                 col_22 = ''
             if col_23.lower() == 'nan':
@@ -158,33 +165,159 @@ def get_table_name(table: Table, known_table_names):
 
 
 # === Загрузка Excel-данных ===
-def get_excel_data(excel_path, okved_codes_set):
+def get_excel_data(excel_path, okved_codes_set, file_word_to_indicator=None):
     try:
         df = pd.read_excel(excel_path, header=None, dtype=str)
     except Exception as e:
         print(f"❌ Ошибка чтения Excel: {e}")
         return {}
 
-    header_map = {}
     header_row_index = -1
-
-    # 🔍 Поиск строки заголовков (обычно строка с 'А' и '1')
-    for i, row in df.head(15).iterrows():
-        if len(row) > 2 and pd.notna(row.iloc[0]) and pd.notna(row.iloc[2]):
-            if str(row.iloc[0]).strip().upper() == 'А' and str(row.iloc[2]).strip() == '1':
+    
+    # 🔍 ДИНАМИЧЕСКИЙ ПОИСК заголовка: ищем строку с названиями показателей (содержит "Код" или "Наименование")
+    for i, row in df.head(20).iterrows():
+        if len(row) > 1 and pd.notna(row.iloc[0]):
+            cell_text = str(row.iloc[0]).strip().lower()
+            if 'код' in cell_text or 'наименование' in cell_text:
                 header_row_index = i
                 break
+    
+    # Fallback: старый метод поиска по 'А' и '1'
+    if header_row_index == -1:
+        for i, row in df.head(20).iterrows():
+            if len(row) > 2 and pd.notna(row.iloc[0]) and pd.notna(row.iloc[2]):
+                if str(row.iloc[0]).strip().upper() == 'А' and str(row.iloc[2]).strip() == '1':
+                    header_row_index = i
+                    break
 
     if header_row_index == -1:
         print(f"⚠️ Не найдена строка заголовков в {excel_path.name}")
         return {}
 
+    print(f"📍 Заголовок найден в строке {header_row_index + 1}")
+    
+    # 🔍 Поиск строки с периодами (ищем ДО или ПОСЛЕ строки заголовка)
+    periods_row_index = -1
+    
+    # Сначала ищем ПОСЛЕ заголовка (до 10 строк вперед)
+    for offset in range(1, 11):
+        check_idx = header_row_index + offset
+        if check_idx >= len(df):
+            break
+        row = df.iloc[check_idx]
+        for val in row[:20]:  # Проверяем больше колонок
+            if pd.notna(val) and ('предыдущего' in str(val) or 'отчетного' in str(val)):
+                periods_row_index = check_idx
+                break
+        if periods_row_index != -1:
+            break
+    
+    # Если не нашли после, ищем ДО заголовка
+    if periods_row_index == -1:
+        for offset in range(1, 11):
+            check_idx = header_row_index - offset
+            if check_idx < 0:
+                break
+            row = df.iloc[check_idx]
+            for val in row[:20]:
+                if pd.notna(val) and ('предыдущего' in str(val) or 'отчетного' in str(val)):
+                    periods_row_index = check_idx
+                    break
+            if periods_row_index != -1:
+                break
+    
+    if periods_row_index != -1:
+        print(f"📍 Строка периодов найдена в строке {periods_row_index + 1}")
+    
+    # Построение маппинга колонок: номер колонки → (показатель, год)
+    column_mapping = {}  # col_idx -> {'indicator': name, 'year': '22'/'23'}
+    
+    # Определяем названия показателей из строки заголовка
     header_row = df.iloc[header_row_index]
+    indicators_map = {}  # col_idx -> indicator_name
+    
+    # Проверяем, есть ли дополнительные строки с подзаголовками (как в t19Ved14.xlsx строка 5)
+    subheader_row_index = -1
+    if header_row_index + 1 < len(df):
+        check_row = df.iloc[header_row_index + 1]
+        # Если в этой строке есть текст, но нет периодов - это подзаголовки
+        has_text = any(pd.notna(check_row.iloc[i]) and 'предыдущего' not in str(check_row.iloc[i]).lower() and 'отчетного' not in str(check_row.iloc[i]).lower() for i in range(2, min(20, len(check_row))))
+        has_periods = any(pd.notna(check_row.iloc[i]) and ('предыдущего' in str(check_row.iloc[i]).lower() or 'отчетного' in str(check_row.iloc[i]).lower()) for i in range(2, min(20, len(check_row))))
+        if has_text and not has_periods:
+            subheader_row_index = header_row_index + 1
+            print(f"📍 Найдена строка подзаголовков в строке {subheader_row_index + 1}")
+    
+    # Сначала заполняем явные названия показателей из основной строки заголовка
+    last_indicator = None
     for i, val in enumerate(header_row):
-        if pd.notna(val) and i >= 2:
-            header_map[i] = str(val).strip()
-
-    data_start_row = header_row_index + 1
+        if pd.notna(val) and i >= 2:  # Пропускаем первые 2 колонки (Код, Наименование)
+            text = str(val).strip()
+            if text and 'предыдущего' not in text and 'отчетного' not in text and 'итог' not in text.lower():
+                indicators_map[i] = text
+                last_indicator = text
+    
+    # Если есть подзаголовки, используем их для колонок без явного заголовка
+    if subheader_row_index != -1:
+        subheader_row = df.iloc[subheader_row_index]
+        for i, val in enumerate(subheader_row):
+            if pd.notna(val) and i >= 2 and i not in indicators_map:
+                text = str(val).strip()
+                if text and 'предыдущего' not in text and 'отчетного' not in text:
+                    indicators_map[i] = text
+                    # Обновляем last_indicator для последующих колонок
+                    last_indicator = text
+    
+    # Заполняем оставшиеся колонки последним известным показателем
+    # Это нужно для случаев когда показатели идут через колонку (как в t01Ved14.xlsx)
+    current_indicator = None
+    for i in range(2, len(header_row)):
+        if i in indicators_map:
+            current_indicator = indicators_map[i]
+        elif current_indicator is not None:
+            indicators_map[i] = current_indicator
+    
+    # Определяем периоды из строки периодов
+    # ВАЖНО: Обрабатываем ВСЕ колонки с периодами, даже если название показателя в соседней колонке
+    if periods_row_index != -1:
+        periods_row = df.iloc[periods_row_index]
+        
+        # Сначала проходим по всем колонкам и определяем периоды
+        current_indicator = None
+        for i, val in enumerate(periods_row):
+            if pd.notna(val) and i >= 2:
+                text = str(val).strip().lower()
+                year = None
+                if 'предыдущего' in text:
+                    year = '22'
+                elif 'отчетного' in text:
+                    year = '23'
+                
+                # Если нашли период, пытаемся определить показатель
+                if year:
+                    # Сначала проверяем, есть ли явное название в этой колонке
+                    indicator_name = indicators_map.get(i)
+                    
+                    # Если нет, используем последний известный показатель (для случаев like t01Ved14.xlsx)
+                    if not indicator_name and current_indicator:
+                        indicator_name = current_indicator
+                    
+                    # Если всё ещё нет, пробуем найти в подзаголовках
+                    if not indicator_name and subheader_row_index != -1:
+                        sub_val = df.iloc[subheader_row_index, i]
+                        if pd.notna(sub_val):
+                            sub_text = str(sub_val).strip()
+                            if sub_text and 'предыдущего' not in sub_text.lower() and 'отчетного' not in sub_text.lower():
+                                indicator_name = sub_text
+                    
+                    if indicator_name:
+                        column_mapping[i] = {
+                            'indicator': _normalize_text(indicator_name),
+                            'year': year,
+                            'original_name': indicator_name
+                        }
+                        current_indicator = indicator_name
+    
+    data_start_row = max(header_row_index, periods_row_index) + 1 if periods_row_index != -1 else header_row_index + 1
     data_dict = {}
 
     for _, row in df.iloc[data_start_row:].iterrows():
@@ -201,27 +334,49 @@ def get_excel_data(excel_path, okved_codes_set):
 
         data_dict[okved_code] = {}
 
-        for col_idx, key_from_header in header_map.items():
+        for col_idx, mapping_info in column_mapping.items():
             if col_idx >= len(row):
                 continue
+            
             value = row.iloc[col_idx]
             if pd.isna(value) or str(value).strip() in ('-', '""', ''):
                 formatted_value = EMPTY_CELL_MARKER
             else:
                 try:
-                    num_value = float(str(value).replace(',', '.').replace(' ', ''))
+                    # Удаляем пробелы из числа перед конвертацией (569 800 589 → 569800589)
+                    num_value = float(str(value).replace(' ', '').replace(',', '.').replace(' ', ''))
                     if num_value == int(num_value):
-                        formatted_value = f"{int(num_value):,}".replace(',', ' ')
+                        # Форматируем БЕЗ пробелов-разделителей тысяч
+                        formatted_value = f"{int(num_value)}"
                     else:
-                        formatted_value = f"{num_value:,.2f}".replace(',', ' ').replace('.', ',')
+                        formatted_value = f"{num_value:.2f}".replace('.', ',')
                 except (ValueError, TypeError):
                     formatted_value = str(value).strip()
-            data_dict[okved_code][str(col_idx)] = formatted_value
+            
+            # 🔧 КОНВЕРТАЦИЯ: нормализованное название → код индикатора
+            indicator_code = None
+            if file_word_to_indicator:
+                key = (excel_path.name, mapping_info['indicator'])
+                indicator_code = file_word_to_indicator.get(key)
+            
+            # Если не нашли код или маппинг не передан, используем нормализованное название (fallback)
+            if indicator_code is None:
+                indicator_code = mapping_info['indicator']
+            
+            # Ключ формата: INDICATOR_YY (например, ValBal_22)
+            indicator_key = f"{indicator_code}_{mapping_info['year']}"
+            data_dict[okved_code][indicator_key] = formatted_value
 
     if not data_dict:
         print(f"⚠️ В Excel-файле {excel_path.name} не найдено ни одного подходящего кода ОКВЭД.")
     else:
         print(f"📊 Загружено данных для {len(data_dict)} кодов ОКВЭД из {excel_path.name}")
+        if column_mapping:
+            print(f"   Найдено колонок: {len(column_mapping)}")
+            # Отладочная информация
+            for col_idx, info in list(column_mapping.items())[:5]:
+                indicator_code = file_word_to_indicator.get((excel_path.name, info['indicator']), info['indicator']) if file_word_to_indicator else info['indicator']
+                print(f"   Колонка {col_idx}: {info['original_name']} → {indicator_code}_{info['year']}")
 
     return data_dict
 
