@@ -1,24 +1,24 @@
 # main.py
 from pathlib import Path
 from docx import Document
-import pandas as pd
 
 from config import (
     load_okved_map,
     load_table_source_map,
 )
+from config_v2 import load_column_mapping_v2
 from logic import (
     generate_word_template,
     collect_okved_codes_from_template,
     compare_okved_sets
 )
-from data_filler import (
-    pre_load_all_excel_data,
-    fill_word_template_by_tags
+from data_filler_v2 import (
+    pre_load_all_excel_data_v2,
+    fill_word_template_by_tags_v2
 )
 
 
-def main():
+def main(input_template_override=None, output_file_override=None):
     print("\n🚀 === НАЧАЛО РАБОТЫ (v2.0 с умными тегами) ===")
 
     # 📁 Пути
@@ -33,17 +33,17 @@ def main():
     # 📄 Файлы
     okved_file = mappings_dir / "okved_mapping.csv"
     table_mapping_file = mappings_dir / "table_source_data_mapping.csv"
-    column_mapping_file = mappings_dir / "column_mapping.csv"
+    column_mapping_file = mappings_dir / "column_mapping_v2.csv"
 
-    input_word_file = input_dir / "Бюллетень_17.2.8 раздел 1-8.docx"
+    input_word_file = input_template_override or input_dir / "Бюллетень_17.2.8 раздел 1-8.docx"
     template_word_file = output_dir / "Бюллетень_ШАБЛОН_С_ТЕГАМИ_v2.docx"
-    final_word_file = output_dir / "Бюллетень_17.2.8_ГОТОВЫЙ.docx"
+    final_word_file = Path(output_file_override) if output_file_override else output_dir / "Бюллетень_17.2.8_ГОТОВЫЙ.docx"
 
     # === ШАГ 1: Загрузка справочников ===
     print("\n=== ШАГ 1: Загрузка справочников ===")
     okved_to_name, name_to_okved_cleaned = load_okved_map(okved_file)
     table_mapping = load_table_source_map(table_mapping_file)
-    column_mapping = pd.read_csv(column_mapping_file, sep=";")
+    word_to_indicator, indicator_to_excel, indicator_to_file, file_word_to_indicator, indicator_keywords = load_column_mapping_v2(column_mapping_file)
     okved_codes_set = set(okved_to_name.keys())
     print("✅ Справочники успешно загружены.")
 
@@ -53,17 +53,24 @@ def main():
     print(f"📄 Шаблон с тегами сохранен: {template_word_file}")
 
     # === ШАГ 3: Предварительная загрузка данных из Excel ===
-    print("\n=== ШАГ 3: Предварительная загрузка данных из Excel ===")
-    master_data = pre_load_all_excel_data(excel_dir, table_mapping, okved_codes_set, column_mapping_file)
+    print("\n=== ШАГ 3: Предварительная загрузка данных из Excel (УМНЫЙ поиск) ===")
+    master_data, stats = pre_load_all_excel_data_v2(
+        excel_dir=excel_dir,
+        table_source_mapping=table_mapping,
+        okved_codes_set=okved_codes_set,
+        column_mapping_path=column_mapping_file,
+        use_fuzzy_match=True,
+        fuzzy_threshold=0.80
+    )
+    print(f"📊 Статистика загрузки: {stats}")
     print(f"✅ Загружено данных для {len(master_data)} кодов ОКВЭД")
 
     # === ШАГ 4: Заполнение шаблона по тегам ===
-    print("\n=== ШАГ 4: Заполнение шаблона по умным тегам ===")
+    print("\n=== ШАГ 4: Заполнение шаблона по умным тегам (с нормализацией) ===")
     doc = Document(template_word_file)
-    unfilled_tags = fill_word_template_by_tags(
+    unfilled_tags = fill_word_template_by_tags_v2(
         doc,
         master_data,
-        column_mapping,
         log_path=output_dir / "fill_log.txt",
         report_path=output_dir / "unfilled_tags.xlsx"
     )

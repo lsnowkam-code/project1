@@ -64,6 +64,12 @@ def compare_documents(generated_path, reference_path):
                 # Очищаем от лишних пробелов и сравниваем
                 gen_clean = gen_cell.strip()
                 ref_clean = ref_cell.strip()
+                
+                # Обработка пустых значений на клиентской стороне (None может быть представлен как 'nan')
+                if gen_clean == 'nan' or gen_clean == '':
+                    gen_clean = ''
+                if ref_clean == 'nan':
+                    ref_clean = ''
 
                 if gen_clean != ref_clean:
                     differences.append({

@@ -96,6 +96,8 @@ def load_column_mapping(filepath):
         reader = csv.reader(f, delimiter=';')
         headers = next(reader)  # Пропускаем заголовок
 
+        duplicate_indicator_names = {}
+
         for row in reader:
             if len(row) < 5:
                 continue  # Пропускаем неполные строки
@@ -117,23 +119,36 @@ def load_column_mapping(filepath):
             # NEW: Added mapping per file to avoid conflicts when same indicator in multiple files
             file_word_to_indicator[(excel_file, _normalize_text(word_name))] = indicator
 
+            duplicate_indicator_names.setdefault(indicator, set()).add(word_name)
+
+    for indicator, names in duplicate_indicator_names.items():
+        if len(names) > 1:
+            print(f"⚠️ Дублирующийся код индикатора '{indicator}' для разных названий: {sorted(names)}")
+
     return word_to_indicator, indicator_to_excel, indicator_to_file, file_word_to_indicator
 
 
 # === Поиск названия таблицы ===
 def get_table_name(table: Table, known_table_names):
     ignore_phrases = ['продолжение таблицы', 'таблица', 'график', 'рис.', 'рис', 'по всей форме', 'приложение', 'форма',
-                      'лист', 'страница']
+                      'лист', 'страница', 'тысяч рублей', 'на конец года']
+    
+    # Ограничиваем поиск первыми 20 параграфами выше таблицы (вместо всех)
+    para_count = 0
+    MAX_PARAS_TO_CHECK = 20
+    
     prev_elem = table._element.getprevious()
-    while prev_elem is not None:
+    while prev_elem is not None and para_count < MAX_PARAS_TO_CHECK:
         if prev_elem.tag.endswith('p'):
             text = (prev_elem.text or "").strip()
             if not text:
                 prev_elem = prev_elem.getprevious()
+                para_count += 1
                 continue
             text_norm = _normalize_text(text)
             if any(phrase in text_norm for phrase in ignore_phrases):
                 prev_elem = prev_elem.getprevious()
+                para_count += 1
                 continue
             for known_title in known_table_names:
                 if text_norm in _normalize_text(known_title) or _normalize_text(known_title) in text_norm:
@@ -142,6 +157,9 @@ def get_table_name(table: Table, known_table_names):
             print(f"⚠️ Заголовок не распознан: {text}")
             return text_norm
         prev_elem = prev_elem.getprevious()
+        para_count += 1
+    
+    # Fallback: определяем по содержимому таблицы
     collected_texts = []
     for row in table.rows[:5]:
         for cell in row.cells[:3]:

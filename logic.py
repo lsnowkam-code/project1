@@ -11,9 +11,40 @@ from config import (
     find_okved_code,
     get_table_name
 )
+from config_v2 import load_column_mapping_v2
 from docx import Document
 
 TAG_REGEX = re.compile(r"{{([^}]+?)_([0-9]+)}}")
+
+
+# ==========================================================
+# === ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ==============================
+# ==========================================================
+def auto_detect_table_source(table, table_source_mapping, word_to_indicator):
+    """
+    Автоматически определяет источник Excel файла для таблицы 
+    по её содержимому (проверяет наличие ключевых показателей).
+    """
+    # Собираем текст из первых 5 строк таблицы
+    table_content = ' '.join([
+        get_cleaned_cell_text(cell).lower()
+        for row in table.rows[:5]
+        for cell in row.cells
+    ])
+    
+    # Пробуем найти текстовые совпадения показателей в таблице
+    for indicator_name in word_to_indicator.keys():
+        indicator_name_lower = indicator_name.lower()
+        if indicator_name_lower in table_content:
+            # Нашли совпадение! Нужно найти файл для этого показателя
+            # word_to_indicator[indicator_name] = (file, indicator_code)
+            file_info = word_to_indicator.get(indicator_name)
+            if isinstance(file_info, tuple) and len(file_info) >= 1:
+                return file_info[0]  # Возвращаем файл
+            elif isinstance(file_info, str):
+                return file_info  # Если просто строка
+    
+    return None
 
 
 # ==========================================================
@@ -27,7 +58,7 @@ def generate_word_template(input_doc_path, okved_map_path, table_source_mapping_
     print("\n--- ШАГ 2: Генерация шаблона с умными тегами ---")
     _, name_to_okved_cleaned = load_okved_map(okved_map_path)
     table_source_mapping = load_table_source_map(table_source_mapping_path)
-    word_to_indicator, _, indicator_to_file, file_word_to_indicator = load_column_mapping(column_mapping_path)
+    word_to_indicator, _, indicator_to_file, file_word_to_indicator, _ = load_column_mapping_v2(column_mapping_path)
     doc = Document(input_doc_path)
     total_tags = 0
     current_source_file = None
@@ -36,17 +67,29 @@ def generate_word_template(input_doc_path, okved_map_path, table_source_mapping_
     for t_index, table in enumerate(doc.tables):
         print(f"\n📄 Таблица {t_index + 1}")
 
-        # 0. Определение источника данных по названию таблицы
-        table_title = get_table_name(table, table_source_mapping.keys())
-        if table_title:
-            table_title_norm = _normalize_text(table_title)
-            if table_title_norm in normalized_title_to_src:
-                current_source_file = normalized_title_to_src[table_title_norm]
-                print(f"🔍 Источник таблицы: {current_source_file}")
-            else:
-                print(f"⚠️ Не найден источник для заголовка таблицы: '{table_title}'")
+        # СПЕЦИАЛЬНЫЙ СЛУЧАЙ: Таблица 17 - это таблица 7 (Долгосрочные обязательства)
+        if t_index + 1 == 17:
+            print(f"⚠️ Таблица 17 - применяем специальное определение (таблица 7)")
+            current_source_file = 'T23_000000_t20Ved14.xlsx'
+            print(f"   → Установлен источник: {current_source_file}")
         else:
-            print("ℹ️ Заголовок таблицы не определён, используем предыдущий источник")
+            # 0. Определение источника данных по названию таблицы
+            table_title = get_table_name(table, table_source_mapping.keys())
+            if table_title:
+                table_title_norm = _normalize_text(table_title)
+                if table_title_norm in normalized_title_to_src:
+                    current_source_file = normalized_title_to_src[table_title_norm]
+                    print(f"🔍 Источник таблицы: {current_source_file}")
+                else:
+                    print(f"⚠️ Не найден источник для заголовка таблицы: '{table_title}'")
+                    # Fallback: try to auto-detect by table content
+                    print(f"   → Пытаемся определить по содержимому таблицы...")
+                    detected = auto_detect_table_source(table, table_source_mapping, word_to_indicator)
+                    if detected:
+                        current_source_file = detected
+                        print(f"   ✓ Автоматически определен источник: {current_source_file}")
+            else:
+                print("ℹ️ Заголовок таблицы не определён, используем предыдущий источник")
 
         if not current_source_file:
             print("⚠️ Источник не определён. Пропускаем таблицу.")
@@ -63,13 +106,29 @@ def generate_word_template(input_doc_path, okved_map_path, table_source_mapping_
             print(f"⚠️ Нет показателей для источника {current_source_file}. Пропускаем таблицу.")
             continue
 
+        # DEBUG для таблицы 17
+        if t_index + 1 == 17:
+            print(f"   DEBUG: Таблица 17")
+            print(f"   Источник: {current_source_file}")
+            print(f"   Показатели ({len(source_word_to_indicator)}):")
+            for name, indicator in list(source_word_to_indicator.items())[:5]:
+                print(f"      {name} → {indicator}")
+
         # 1. Поиск строки с названиями показателей (внеоборотные активы, оборотные активы и т.д.)
         # Обычно это вторая строка заголовков
         indicator_row = None
-        for row in table.rows[:5]:
+        for row_idx, row in enumerate(table.rows[:5]):
             row_text = [_normalize_text(get_cleaned_cell_text(cell)) for cell in row.cells]
-            if any(ind_name in ' '.join(row_text) for ind_name in source_word_to_indicator.keys()):
+            row_text_joined = ' '.join(row_text)
+            
+            # DEBUG для таблицы 17
+            if t_index + 1 == 17:
+                print(f"   Строка {row_idx}: {row_text_joined[:100]}")
+            
+            if any(ind_name in row_text_joined for ind_name in source_word_to_indicator.keys()):
                 indicator_row = row
+                if t_index + 1 == 17:
+                    print(f"   ✓ найдена indicator_row на строке {row_idx}")
                 break
 
         # 2. Находим строку с годами (2022 / 2023)

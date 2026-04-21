@@ -1,0 +1,8 @@
+{
+    "chat.tools.terminal.autoApprove": {
+        "/^cd /workspaces/project && python3 -c \"\nfrom docx import Document\ndoc_gen = Document\\('output/Бюллетень_17\\.2\\.8_ГОТОВЫЙ\\.docx'\\)\ntable_gen = doc_gen\\.tables\\[0\\]\n\nprint\\('Вся строка 64 в генерировано:'\\)\nrow = table_gen\\.rows\\[63\\]\nfor i, cell in enumerate\\(row\\.cells\\):\n    print\\(f'  \\[\\{i\\}\\]: \\\\\"\\{cell\\.text\\}\\\\\"'\\)\n\"$/": {
+            "approve": true,
+            "matchCommandLine": true
+        }
+    }
+}
