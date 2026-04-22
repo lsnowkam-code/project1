@@ -114,62 +114,77 @@ def generate_word_template(input_doc_path, okved_map_path, table_source_mapping_
             for name, indicator in list(source_word_to_indicator.items())[:5]:
                 print(f"      {name} → {indicator}")
 
-        # 1. Поиск строки с названиями показателей (внеоборотные активы, оборотные активы и т.д.)
-        # Обычно это вторая строка заголовков
-        indicator_row = None
-        for row_idx, row in enumerate(table.rows[:5]):
-            row_text = [_normalize_text(get_cleaned_cell_text(cell)) for cell in row.cells]
-            row_text_joined = ' '.join(row_text)
-            
-            # DEBUG для таблицы 17
-            if t_index + 1 == 17:
-                print(f"   Строка {row_idx}: {row_text_joined[:100]}")
-            
-            if any(ind_name in row_text_joined for ind_name in source_word_to_indicator.keys()):
-                indicator_row = row
-                if t_index + 1 == 17:
-                    print(f"   ✓ найдена indicator_row на строке {row_idx}")
-                break
-
-        # 2. Находим строку с годами (2022 / 2023)
+        # 1. Находим строку с годами (2022 / 2023) в зоне заголовка
         year_row = None
-        for row in table.rows[:5]:
+        year_row_idx = None
+        header_scan_limit = min(8, len(table.rows))
+        for row_idx, row in enumerate(table.rows[:header_scan_limit]):
             row_years = [get_cleaned_cell_text(cell).strip() for cell in row.cells]
             if any(year in ('2022', '2023') for year in row_years):
                 year_row = row
+                year_row_idx = row_idx
                 break
 
-        # 3. Строим маппинг: столбец -> (показатель, год)
+        # 2. Строим маппинг: столбец -> (показатель, год)
+        # КЛЮЧЕВОЕ ИЗМЕНЕНИЕ:
+        # Используем несколько строк заголовка до year_row, а не одну indicator_row.
         col_to_indicator_map = {}
-        if indicator_row and year_row:
-            # Для каждого столбца найдём его показатель из indicator_row
-            # и год из year_row
-            current_indicator = None
-            for i, cell in enumerate(indicator_row.cells):
-                header_text = _normalize_text(get_cleaned_cell_text(cell))
-                if header_text:  # Если ячейка не пустая
-                    # Ищем точное совпадение или содержание в текущем заголовке (не наоборот).
-                    # Это предотвращает ложное срабатывание "оборотные активы" на "внеоборотные активы"
-                    best_match = None
-                    best_len = 0
-                    for name, indicator in source_word_to_indicator.items():
-                        if name in header_text and len(name) > best_len:
-                            best_match = indicator
-                            best_len = len(name)
-                    if best_match:
-                        current_indicator = best_match
-                        print(f"   🔍 Столбец {i}: найден показатель по совпадению в '{header_text}' -> {best_match}")
-                
-                # Если текущий столбец пуст, используем предыдущий показатель
-                # (для объединённых ячеек)
-                if i < len(year_row.cells) and current_indicator:
-                    year_text = get_cleaned_cell_text(year_row.cells[i]).strip()
-                    if year_text == '2022':
-                        col_to_indicator_map[i] = (current_indicator, '22')
-                    elif year_text == '2023':
-                        col_to_indicator_map[i] = (current_indicator, '23')
-        else:
-            # Fallback: используем старую логику если не нашли нужные строки
+        if year_row is not None and year_row_idx is not None:
+            # Собираем "сетку" заголовков с horizontal forward-fill для объединённых ячеек.
+            header_rows_filled = []
+            for row in table.rows[:year_row_idx]:
+                row_values = []
+                last_non_empty = ""
+                for cell in row.cells:
+                    value = _normalize_text(get_cleaned_cell_text(cell))
+                    if value:
+                        last_non_empty = value
+                    else:
+                        value = last_non_empty
+                    row_values.append(value)
+                header_rows_filled.append(row_values)
+
+            # Для каждого столбца года пытаемся найти лучший indicator по составному заголовку.
+            last_indicator = None
+            for i, cell in enumerate(year_row.cells):
+                year_text = get_cleaned_cell_text(cell).strip()
+                if year_text not in ('2022', '2023'):
+                    continue
+
+                parts = []
+                seen = set()
+                for header_row in header_rows_filled:
+                    if i >= len(header_row):
+                        continue
+                    header_part = header_row[i].strip()
+                    if not header_part or header_part in seen:
+                        continue
+                    seen.add(header_part)
+                    parts.append(header_part)
+                composed_header = " ".join(parts)
+
+                best_match = None
+                best_len = 0
+                for name, indicator in source_word_to_indicator.items():
+                    if name in composed_header and len(name) > best_len:
+                        best_match = indicator
+                        best_len = len(name)
+
+                # Fallback: если в конкретном столбце не нашли показатель,
+                # используем последний найденный (типичный случай пары 2022/2023).
+                if best_match:
+                    last_indicator = best_match
+                elif last_indicator:
+                    best_match = last_indicator
+
+                if not best_match:
+                    continue
+
+                col_to_indicator_map[i] = (best_match, '22' if year_text == '2022' else '23')
+                print(f"   🔍 Столбец {i}: '{composed_header[:90]}' -> {best_match}, год {year_text}")
+
+        if not col_to_indicator_map:
+            # Fallback: старая логика для нестандартных таблиц.
             base_indicator_map = {}
             last_indicator = None
             for row in table.rows[:5]:

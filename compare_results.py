@@ -81,7 +81,7 @@ def compare_documents(generated_path, reference_path):
 
         # Статистика
         similarity = difflib.SequenceMatcher(None, generated_text, reference_text).ratio()
-        print(".1%")
+        print(f"📈 Процент сходства: {similarity:.1%}")
 
         return False
 
