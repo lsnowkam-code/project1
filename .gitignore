@@ -1,4 +1,8 @@
 ```
-__pycache__/
-*.pyc
+# Logs and temp files
+*.log
+*.tmp
+
+# Build/output directories
+output/
 ```
