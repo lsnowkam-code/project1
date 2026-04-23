@@ -1,0 +1,17 @@
+tables: generated=19, reference=19
+skip_table: 2
+total_diff: 1057
+tables_matched: 6/18
+diff_by_table:
+  table 8: 319
+  table 5: 203
+  table 14: 99
+  table 17: 87
+  table 16: 76
+  table 15: 73
+  table 9: 66
+  table 13: 48
+  table 11: 44
+  table 10: 24
+  table 12: 16
+  table 7: 2

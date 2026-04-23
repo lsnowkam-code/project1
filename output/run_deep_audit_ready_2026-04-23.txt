@@ -1,0 +1,6 @@
+docx=output/Бюллетень_17.2.8_ГОТОВЫЙ.docx
+tables_total=19
+table 5: rows_with_duplicates=0, extra_duplicate_occurrences=0, duplicate_tag_kinds=0
+table 8: rows_with_duplicates=0, extra_duplicate_occurrences=0, duplicate_tag_kinds=0
+table 14: rows_with_duplicates=0, extra_duplicate_occurrences=0, duplicate_tag_kinds=0
+table 17: rows_with_duplicates=0, extra_duplicate_occurrences=0, duplicate_tag_kinds=0

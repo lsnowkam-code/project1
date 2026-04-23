@@ -5,10 +5,11 @@
 ### Шаг 1: Переверьте тесты (2 минуты)
 ```bash
 cd /workspaces/project
+pip install -r requirements.txt
 python test_smart_loader.py
 ```
 
-Ожидите вывод:
+Ожидайте вывод:
 ```
 🧪 ЗАПУСК ТЕСТОВ УМНОГО ПОИСКА
 ═══════════════════════════════════════════════════
@@ -167,7 +168,7 @@ else:
 
 - **IMPLEMENTATION_PLAN_V2.md** - Пошаговое руководство
 - **SUMMARY_V2.md** - Полная сводка изменений
-- **THIS_FILE.md** - Быстрый старт
+- **QUICK_START_V2.md** - Быстрый старт
 
 ---
 
