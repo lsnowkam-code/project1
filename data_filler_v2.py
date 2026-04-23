@@ -70,15 +70,20 @@ def pre_load_all_excel_data_v2(excel_dir: Path, table_source_mapping: Dict,
         
         try:
             print(f"\n📥 Загружаем: {filename}")
-            df = pd.read_excel(excel_path)
+            # ИСПРАВЛЕНИЕ: header=None, чтобы первая строка осталась данными (заголовками)
+            df = pd.read_excel(excel_path, header=None)
             
             if df.empty:
                 print(f"⚠️ Excel файл пуст: {filename}")
                 stats['errors'].append(f"Empty file: {filename}")
                 continue
             
-            # Фильтруем по кодам ОКВЭД (первый столбец)
-            df_filtered = df[df.iloc[:, 0].astype(str).isin(okved_codes_set)]
+            # Теперь df.iloc[0] содержит заголовки, а df.iloc[1:] - данные
+            headers = df.iloc[0]  # Сохраняем заголовки отдельно
+            data_rows = df.iloc[1:]  # Данные без заголовков
+            
+            # Фильтруем по кодам ОКВЭД (первый столбец в данных)
+            df_filtered = data_rows[data_rows.iloc[:, 0].astype(str).isin(okved_codes_set)]
             
             if df_filtered.empty:
                 print(f"ℹ️ Нет данных для нужных кодов ОКВЭД в файле {filename}")
@@ -147,7 +152,7 @@ def _find_column_smart(df: pd.DataFrame, hardcode_idx: str, year: str, keywords:
     Умный поиск колонки: сначала пробует ключевые слова, потом жесткий индекс.
     
     Args:
-        df: DataFrame
+        df: DataFrame (уже с header=None, поэтому df.iloc[0] - это заголовки)
         hardcode_idx: Жесткий индекс из column_mapping.csv (fallback)
         year: Год для поиска ("2022" или "2023")
         keywords: Список ключевых слов для поиска
@@ -155,29 +160,53 @@ def _find_column_smart(df: pd.DataFrame, hardcode_idx: str, year: str, keywords:
     Returns:
         Индекс колонки или None
     """
-    # 1️⃣ Пытаемся найти по ключевым словам
+    # 1️⃣ Пытаемся найти по ключевым словам с нормализацией
     if keywords:
         for keyword in keywords:
+            keyword_normalized = normalize_text(keyword)
             for col_idx, header in enumerate(df.iloc[0]):
                 header_str = str(header).strip()
-                if keyword.lower() in header_str.lower():
+                header_normalized = normalize_text(header_str)
+                if keyword_normalized in header_normalized:
+                    print(f"   🔍 Найдено по ключевому слову '{keyword}' → колонка {col_idx} ('{header_str}')")
                     return col_idx
     
-    # 2️⃣ Пытаемся найти по году
+    # 2️⃣ Fuzzy matching (нечеткое совпадение)
+    from difflib import SequenceMatcher
+    for keyword in keywords:
+        keyword_normalized = normalize_text(keyword)
+        best_match_ratio = 0
+        best_match_idx = None
+        for col_idx, header in enumerate(df.iloc[0]):
+            header_str = str(header).strip()
+            header_normalized = normalize_text(header_str)
+            ratio = SequenceMatcher(None, keyword_normalized, header_normalized).ratio()
+            if ratio > best_match_ratio:
+                best_match_ratio = ratio
+                best_match_idx = col_idx
+        
+        if best_match_ratio >= 0.75:  # Порог fuzzy matching
+            print(f"   🔍 Найдено по fuzzy match (сходство {best_match_ratio:.2f}) → колонка {best_match_idx}")
+            return best_match_idx
+    
+    # 3️⃣ Пытаемся найти по году
     for col_idx, header in enumerate(df.iloc[0]):
         header_str = str(header).strip()
         if year in header_str:
+            print(f"   🔍 Найдено по году '{year}' → колонка {col_idx} ('{header_str}')")
             return col_idx
     
-    # 3️⃣ Fallback на жесткий индекс
+    # 4️⃣ Fallback на жесткий индекс
     if hardcode_idx:
         try:
             idx = int(hardcode_idx) - 1  # CSV использует 1-based индексы
             if 0 <= idx < len(df.columns):
+                print(f"   🔍 Использован жесткий индекс {hardcode_idx} → колонка {idx}")
                 return idx
         except ValueError:
             pass
     
+    print(f"   ⚠️ Колонка не найдена для года {year}, keywords={keywords}, hardcode={hardcode_idx}")
     return None
 
 
