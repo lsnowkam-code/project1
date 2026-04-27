@@ -63,25 +63,41 @@ def load_column_mapping_v2(filepath) -> Tuple[Dict[str, str], Dict[str, Tuple[st
 
     try:
         with open(filepath, encoding="utf-8-sig") as f:
-            reader = csv.reader(f, delimiter=';')
-            headers = next(reader)  # Пропускаем заголовок
+            lines = f.readlines()
             
-            # Определяем индексы колонок
-            col_idx = {name: idx for idx, name in enumerate(headers)}
+            # Пропускаем заголовок
+            if lines:
+                lines = lines[1:]
             
-            for row in reader:
+            for line in lines:
+                line = line.strip()
+                if not line or line.startswith('#'):
+                    continue
+                
+                # Убираем кавычки в начале и конце строки, если они есть
+                if line.startswith('"') and line.endswith('"'):
+                    line = line[1:-1]
+                
+                # Разделяем по точке с запятой
+                row = line.split(';')
+                
                 if len(row) < 3:
                     continue
                 
-                excel_file = str(row[col_idx.get('Excel файл', 0)]).strip()
-                word_name = str(row[col_idx.get('Название показателя', 1)]).strip()
-                indicator = str(row[col_idx.get('Код показателя', 2)]).strip()
-                col_22 = str(row[col_idx.get('Excel колонка 2022', 3)]).strip() if len(row) > 3 else ''
-                col_23 = str(row[col_idx.get('Excel колонка 2023', 4)]).strip() if len(row) > 4 else ''
+                excel_file = str(row[0]).strip()
+                word_name = str(row[1]).strip()
+                indicator = str(row[2]).strip()
+                col_22 = str(row[3]).strip() if len(row) > 3 else ''
+                col_23 = str(row[4]).strip() if len(row) > 4 else ''
                 
-                # Новые поля: ключевые слова
-                kw_2022 = str(row[col_idx.get('Ключевое слово 2022', 5)]).strip() if len(row) > 5 else ''
-                kw_2023 = str(row[col_idx.get('Ключевое слово 2023', 6)]).strip() if len(row) > 6 else ''
+                # Новые поля: ключевые слова (если есть)
+                kw_2022 = str(row[5]).strip() if len(row) > 5 else ''
+                kw_2023 = str(row[6]).strip() if len(row) > 6 else ''
+                
+                if col_22.lower() == 'nan':
+                    col_22 = ''
+                if col_23.lower() == 'nan':
+                    col_23 = ''
                 
                 if col_22.lower() == 'nan':
                     col_22 = ''

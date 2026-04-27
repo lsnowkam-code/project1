@@ -17,13 +17,141 @@ from docx import Document
 TAG_REGEX = re.compile(r"{{([^}]+?)_([0-9]+)}}")
 
 
+def _find_year_header_row(table, min_year_cells=2, max_search_rows=40):
+    """Находит последнюю строку заголовка с годами (2022/2023) в таблице."""
+    candidates = []
+    for row_idx, row in enumerate(table.rows[:max_search_rows]):
+        row_years = [get_cleaned_cell_text(cell).strip() for cell in row.cells]
+        year_count = sum(1 for year in row_years if year in ('2022', '2023'))
+        if year_count >= min_year_cells:
+            candidates.append((row, row_idx))
+    return candidates[-1] if candidates else (None, None)
+
+
+def _find_header_row_by_indicators(table, source_word_to_indicator, max_search_rows=20, start_row=0):
+    """Находит строку заголовка по наилучшему совпадению с названиями показателей."""
+    best_match = None
+    best_score = 0
+    for row_idx, row in enumerate(table.rows[start_row:max_search_rows], start=start_row):
+        row_texts = [_normalize_text(get_cleaned_cell_text(cell)) for cell in row.cells]
+        score = 0
+        for cell_text in row_texts:
+            for name in source_word_to_indicator.keys():
+                if name in cell_text:
+                    score += 1
+        if score > best_score:
+            best_score = score
+            best_match = (row, row_idx)
+    return best_match if best_score > 0 else (None, None)
+
+
+def _find_header_rows(table, source_word_to_indicator, max_search_rows=80):
+    """Собирает все строки заголовков таблицы (year или indicator rows)."""
+    headers = []
+    for row_idx, row in enumerate(table.rows[:max_search_rows]):
+        row_years = [get_cleaned_cell_text(cell).strip() for cell in row.cells]
+        year_count = sum(1 for year in row_years if year in ('2022', '2023'))
+        row_texts = [_normalize_text(get_cleaned_cell_text(cell)) for cell in row.cells]
+        indicator_score = sum(1 for cell_text in row_texts for name in source_word_to_indicator.keys() if name in cell_text)
+        if year_count >= 2 or indicator_score >= 2:
+            headers.append(row_idx)
+    return sorted(set(headers))
+
+
+def _compute_section_mapping(table, header_idx, source_word_to_indicator):
+    """Вычисляет маппинг столбцов для данной секции таблицы."""
+    year_row = table.rows[header_idx]
+    year_texts = [get_cleaned_cell_text(cell).strip() for cell in year_row.cells]
+    has_years = sum(1 for text in year_texts if text in ('2022', '2023')) >= 2
+
+    col_to_indicator_map = {}
+    if has_years:
+        header_start = max(0, header_idx - 6)
+        header_rows_filled = []
+        for row in table.rows[header_start:header_idx]:
+            row_values = []
+            last_non_empty = ""
+            for cell in row.cells:
+                value = _normalize_text(get_cleaned_cell_text(cell))
+                if value:
+                    last_non_empty = value
+                else:
+                    value = last_non_empty
+                row_values.append(value)
+            header_rows_filled.append(row_values)
+
+        last_indicator = None
+        for i, cell in enumerate(year_row.cells):
+            year_text = get_cleaned_cell_text(cell).strip()
+            if year_text not in ('2022', '2023'):
+                continue
+
+            parts = []
+            seen = set()
+            for header_row in header_rows_filled:
+                if i >= len(header_row):
+                    continue
+                header_part = header_row[i].strip()
+                if not header_part or header_part in seen:
+                    continue
+                seen.add(header_part)
+                parts.append(header_part)
+            composed_header = " ".join(parts)
+
+            best_match = None
+            best_len = 0
+            for name, indicator in source_word_to_indicator.items():
+                if name in composed_header and len(name) > best_len:
+                    best_match = indicator
+                    best_len = len(name)
+
+            if best_match:
+                last_indicator = best_match
+            elif last_indicator and not composed_header:
+                best_match = last_indicator
+
+            if not best_match:
+                continue
+
+            col_to_indicator_map[i] = (best_match, '22' if year_text == '2022' else '23')
+            print(f"   🔍 Столбец {i}: '{composed_header[:90]}' -> {best_match}, год {year_text}")
+    else:
+        header_row = year_row
+        for i, cell in enumerate(header_row.cells):
+            header_text = _normalize_text(get_cleaned_cell_text(cell))
+            if not header_text:
+                continue
+            best_match = None
+            best_len = 0
+            for name, indicator in source_word_to_indicator.items():
+                if name in header_text and len(name) > best_len:
+                    best_match = indicator
+                    best_len = len(name)
+            if best_match:
+                col_to_indicator_map[i] = (best_match, None)
+                print(f"   🔍 Индикаторный заголовок: столбец {i}, текст '{header_text[:50]}' -> {best_match}")
+
+    # Убираем дубликаты
+    seen_specs = set()
+    filtered_map = {}
+    for col_idx in sorted(col_to_indicator_map):
+        spec = col_to_indicator_map[col_idx]
+        if spec in seen_specs:
+            print(f"   ⚠️ Пропускаем дубликат столбца {col_idx} для {spec[0]}_{spec[1] if spec[1] else ''}")
+            continue
+        seen_specs.add(spec)
+        filtered_map[col_idx] = spec
+
+    return filtered_map
+
+
 # ==========================================================
 # === ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ==============================
 # ==========================================================
-def auto_detect_table_source(table, table_source_mapping, word_to_indicator):
+def auto_detect_table_source(table, table_source_mapping, file_word_to_indicator):
     """
     Автоматически определяет источник Excel файла для таблицы 
-    по её содержимому (проверяет наличие ключевых показателей).
+    по её содержимому (по ключевым показателям из одного файла).
     """
     # Собираем текст из первых 5 строк таблицы
     table_content = ' '.join([
@@ -33,18 +161,30 @@ def auto_detect_table_source(table, table_source_mapping, word_to_indicator):
     ])
     
     # Пробуем найти текстовые совпадения показателей в таблице
-    for indicator_name in word_to_indicator.keys():
-        indicator_name_lower = indicator_name.lower()
-        if indicator_name_lower in table_content:
-            # Нашли совпадение! Нужно найти файл для этого показателя
-            # word_to_indicator[indicator_name] = (file, indicator_code)
-            file_info = word_to_indicator.get(indicator_name)
-            if isinstance(file_info, tuple) and len(file_info) >= 1:
-                return file_info[0]  # Возвращаем файл
-            elif isinstance(file_info, str):
-                return file_info  # Если просто строка
-    
+    for (excel_file, indicator_name), indicator in file_word_to_indicator.items():
+        if indicator_name.lower() in table_content:
+            return excel_file
     return None
+
+
+def get_continuation_table_number(table):
+    """Возвращает номер логической таблицы из метки "Продолжение таблицы N"."""
+    for row in table.rows[:3]:
+        for cell in row.cells:
+            text = _normalize_text(get_cleaned_cell_text(cell))
+            match = re.search(r'продолжение таблицы\s*(\d+)', text)
+            if match:
+                try:
+                    return int(match.group(1))
+                except ValueError:
+                    continue
+    return None
+
+
+def get_table_source_by_number(table_source_mapping, table_number):
+    if table_number < 1 or table_number > len(table_source_mapping):
+        return None
+    return list(table_source_mapping.values())[table_number - 1]
 
 
 # ==========================================================
@@ -82,14 +222,23 @@ def generate_word_template(input_doc_path, okved_map_path, table_source_mapping_
                     print(f"🔍 Источник таблицы: {current_source_file}")
                 else:
                     print(f"⚠️ Не найден источник для заголовка таблицы: '{table_title}'")
-                    # Fallback: try to auto-detect by table content
-                    print(f"   → Пытаемся определить по содержимому таблицы...")
-                    detected = auto_detect_table_source(table, table_source_mapping, word_to_indicator)
-                    if detected:
-                        current_source_file = detected
-                        print(f"   ✓ Автоматически определен источник: {current_source_file}")
-            else:
-                print("ℹ️ Заголовок таблицы не определён, используем предыдущий источник")
+
+            if not current_source_file:
+                continuation_number = get_continuation_table_number(table)
+                if continuation_number:
+                    continuation_source = get_table_source_by_number(table_source_mapping, continuation_number)
+                    if continuation_source:
+                        current_source_file = continuation_source
+                        print(f"🔁 Источник по метке продолжения таблицы {continuation_number}: {current_source_file}")
+
+            if not current_source_file:
+                print(f"   → Пытаемся определить по содержимому таблицы...")
+                detected = auto_detect_table_source(table, table_source_mapping, file_word_to_indicator)
+                if detected:
+                    current_source_file = detected
+                    print(f"   ✓ Автоматически определен источник: {current_source_file}")
+                else:
+                    print("ℹ️ Заголовок таблицы не определён, используем предыдущий источник")
 
         if not current_source_file:
             print("⚠️ Источник не определён. Пропускаем таблицу.")
@@ -114,106 +263,38 @@ def generate_word_template(input_doc_path, okved_map_path, table_source_mapping_
             for name, indicator in list(source_word_to_indicator.items())[:5]:
                 print(f"      {name} → {indicator}")
 
-        # 1. Находим строку с годами (2022 / 2023) в зоне заголовка
-        year_row = None
-        year_row_idx = None
-        header_scan_limit = min(8, len(table.rows))
-        for row_idx, row in enumerate(table.rows[:header_scan_limit]):
-            row_years = [get_cleaned_cell_text(cell).strip() for cell in row.cells]
-            if any(year in ('2022', '2023') for year in row_years):
-                year_row = row
-                year_row_idx = row_idx
-                break
+        header_rows = _find_header_rows(table, source_word_to_indicator)
+        section_ranges = []
+        for header_idx in header_rows:
+            mapping = _compute_section_mapping(table, header_idx, source_word_to_indicator)
+            if mapping:
+                section_ranges.append((header_idx, mapping))
 
-        # 2. Строим маппинг: столбец -> (показатель, год)
-        # КЛЮЧЕВОЕ ИЗМЕНЕНИЕ:
-        # Используем несколько строк заголовка до year_row, а не одну indicator_row.
+        mapped_sections = []
         col_to_indicator_map = {}
-        if year_row is not None and year_row_idx is not None:
-            # Собираем "сетку" заголовков с horizontal forward-fill для объединённых ячеек.
-            header_rows_filled = []
-            for row in table.rows[:year_row_idx]:
-                row_values = []
-                last_non_empty = ""
-                for cell in row.cells:
-                    value = _normalize_text(get_cleaned_cell_text(cell))
-                    if value:
-                        last_non_empty = value
-                    else:
-                        value = last_non_empty
-                    row_values.append(value)
-                header_rows_filled.append(row_values)
-
-            # Для каждого столбца года пытаемся найти лучший indicator по составному заголовку.
-            last_indicator = None
-            for i, cell in enumerate(year_row.cells):
-                year_text = get_cleaned_cell_text(cell).strip()
-                if year_text not in ('2022', '2023'):
-                    continue
-
-                parts = []
-                seen = set()
-                for header_row in header_rows_filled:
-                    if i >= len(header_row):
-                        continue
-                    header_part = header_row[i].strip()
-                    if not header_part or header_part in seen:
-                        continue
-                    seen.add(header_part)
-                    parts.append(header_part)
-                composed_header = " ".join(parts)
-
-                best_match = None
-                best_len = 0
-                for name, indicator in source_word_to_indicator.items():
-                    if name in composed_header and len(name) > best_len:
-                        best_match = indicator
-                        best_len = len(name)
-
-                # Fallback только для реально пустого составного заголовка
-                # (типичный случай объединённых ячеек 2022/2023).
-                # ВАЖНО: если composed_header не пустой, но не распознан,
-                # не наследуем прошлый indicator, чтобы не размазывать
-                # один код по нескольким разным подколонкам.
-                if best_match:
-                    last_indicator = best_match
-                elif last_indicator and not composed_header:
-                    best_match = last_indicator
-
-                if not best_match:
-                    continue
-
-                col_to_indicator_map[i] = (best_match, '22' if year_text == '2022' else '23')
-                print(f"   🔍 Столбец {i}: '{composed_header[:90]}' -> {best_match}, год {year_text}")
-
-        # Диагностика: один и тот же (indicator, year) не должен массово
-        # повторяться в разных столбцах одной таблицы.
-        duplicate_indicator_year = {}
-        for col_idx, spec in col_to_indicator_map.items():
-            duplicate_indicator_year.setdefault(spec, []).append(col_idx)
-        for (indicator, year), cols in duplicate_indicator_year.items():
-            if len(cols) > 1:
-                print(
-                    f"⚠️ Дубликат маппинга в таблице {t_index + 1}: "
-                    f"{indicator}_{year} назначен колонкам {cols}"
-                )
-
-        if not col_to_indicator_map:
+        if not section_ranges:
             # Fallback: старая логика для нестандартных таблиц.
+            print(f"   🔄 Fallback: используем старую логику для таблицы {t_index + 1}")
             base_indicator_map = {}
-            last_indicator = None
-            for row in table.rows[:5]:
-                for i, cell in enumerate(row.cells):
-                    header_text = _normalize_text(get_cleaned_cell_text(cell))
+            # Ищем строку заголовка по явным названиям показателей, если она не на первой позиции.
+            header_row, header_row_idx = _find_header_row_by_indicators(table, source_word_to_indicator, max_search_rows=20)
+            if header_row is not None:
+                print(f"   🔍 Fallback: используем строку заголовка {header_row_idx + 1} для поиска показателей")
+            else:
+                header_row = table.rows[1] if len(table.rows) > 1 else table.rows[0]
+
+            for i, cell in enumerate(header_row.cells):
+                header_text = _normalize_text(get_cleaned_cell_text(cell))
+                if header_text:
                     for name, indicator in source_word_to_indicator.items():
                         if name in header_text:
                             base_indicator_map[i] = indicator
-                            last_indicator = indicator
+                            print(f"   🔍 Fallback: столбец {i}, текст '{header_text[:50]}' → {indicator}")
                             break
-                    else:
-                        if last_indicator is not None and not header_text:
-                            base_indicator_map[i] = last_indicator
+            
+            print(f"   📈 base_indicator_map: {base_indicator_map}")
 
+            year_row, year_row_idx = _find_year_header_row(table)
             if year_row:
                 for i, cell in enumerate(year_row.cells):
                     year_text = get_cleaned_cell_text(cell).strip()
@@ -227,13 +308,34 @@ def generate_word_template(input_doc_path, okved_map_path, table_source_mapping_
             else:
                 for i, indicator in base_indicator_map.items():
                     col_to_indicator_map[i] = (indicator, None)
+            
+            print(f"   📊 col_to_indicator_map: {col_to_indicator_map}")
+            if not col_to_indicator_map:
+                print("⚠️ Заголовки не найдены. Пропускаем таблицу.")
+                continue
 
-        if not col_to_indicator_map:
+            mapped_sections = [(0, len(table.rows), col_to_indicator_map)]
+        else:
+            section_ranges.sort(key=lambda x: x[0])
+            for idx, (header_idx, mapping) in enumerate(section_ranges):
+                start = header_idx + 1
+                end = section_ranges[idx + 1][0] if idx + 1 < len(section_ranges) else len(table.rows)
+                mapped_sections.append((start, end, mapping))
+
+        if not mapped_sections:
             print("⚠️ Заголовки не найдены. Пропускаем таблицу.")
             continue
 
         # 4. Вставка тегов в строки с кодами ОКВЭД
-        for row_idx, row in enumerate(table.rows[2:]):  # Пропускаем заголовки
+        for row_idx, row in enumerate(table.rows):
+            mapping = None
+            for start, end, section_map in mapped_sections:
+                if start <= row_idx < end:
+                    mapping = section_map
+                    break
+            if mapping is None:
+                continue
+
             first_cell_text = get_cleaned_cell_text(row.cells[0])
             okved_code = find_okved_code(first_cell_text, name_to_okved_cleaned)
             if not okved_code:
@@ -241,7 +343,7 @@ def generate_word_template(input_doc_path, okved_map_path, table_source_mapping_
 
             okved_tag_part = okved_code.replace('.', '_')
 
-            for col_idx, indicator_spec in col_to_indicator_map.items():
+            for col_idx, indicator_spec in mapping.items():
                 if col_idx < len(row.cells):
                     indicator, year = indicator_spec
                     if year:
@@ -254,7 +356,7 @@ def generate_word_template(input_doc_path, okved_map_path, table_source_mapping_
                     if row.cells[col_idx].paragraphs:
                         row.cells[col_idx].paragraphs[0].text = tag
                     total_tags += 1
-                    print(f"   🏷️ Строка {row_idx + 2}: вставлен тег {tag}")
+                    print(f"   🏷️ Строка {row_idx + 1}: вставлен тег {tag}")
 
     doc.save(output_doc_path)
     print(f"\n✅ Шаблон с тегами сохранён: {output_doc_path}")

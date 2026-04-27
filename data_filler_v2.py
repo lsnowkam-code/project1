@@ -87,6 +87,7 @@ def pre_load_all_excel_data_v2(excel_dir: Path, table_source_mapping: Dict,
             stats['files_processed'] += 1
             
             # Обрабатываем каждый показатель для этого файла
+            force_decimal = filename == 'T23_000000_t13Ved14.xlsx'
             for indicator, (col_22_hardcode, col_23_hardcode) in indicator_to_excel.items():
                 if indicator_to_file[indicator] != filename:
                     continue  # Пропускаем, если источник не совпадает
@@ -110,12 +111,14 @@ def pre_load_all_excel_data_v2(excel_dir: Path, table_source_mapping: Dict,
                         master_data[okved] = {}
                     
                     # Получаем значения за 2022 и 2023
+                    value_22 = None
                     if col_idx_2022 is not None:
                         for idx, row in group.iterrows():
                             value = get_cell_value_safely(row, col_idx_2022)
                             if value:
-                                normalized = clean_excel_value_for_word(value)
+                                normalized = clean_excel_value_for_word(value, force_decimal=force_decimal)
                                 master_data[okved][f"{indicator}_22"] = normalized
+                                value_22 = normalized
                                 stats['found_by_keyword' if keywords_2022 else 'found_by_hardcode'] += 1
                                 break
                     
@@ -123,10 +126,14 @@ def pre_load_all_excel_data_v2(excel_dir: Path, table_source_mapping: Dict,
                         for idx, row in group.iterrows():
                             value = get_cell_value_safely(row, col_idx_2023)
                             if value:
-                                normalized = clean_excel_value_for_word(value)
+                                normalized = clean_excel_value_for_word(value, force_decimal=force_decimal)
                                 master_data[okved][f"{indicator}_23"] = normalized
                                 stats['found_by_keyword' if keywords_2023 else 'found_by_hardcode'] += 1
                                 break
+                    elif value_22 is not None:
+                        # Если колонка 2023 не указана, но есть данные за 2022, используем их для 2023
+                        master_data[okved][f"{indicator}_23"] = value_22
+                        stats['found_by_keyword' if keywords_2022 else 'found_by_hardcode'] += 1
         
         except Exception as e:
             print(f"❌ Ошибка обработки {filename}: {e}")
@@ -144,18 +151,27 @@ def pre_load_all_excel_data_v2(excel_dir: Path, table_source_mapping: Dict,
 
 def _find_column_smart(df: pd.DataFrame, hardcode_idx: str, year: str, keywords: list) -> Optional[int]:
     """
-    Умный поиск колонки: сначала пробует ключевые слова, потом жесткий индекс.
+    Умный поиск колонки: сначала жесткий индекс, потом ключевые слова, потом год.
     
     Args:
         df: DataFrame
-        hardcode_idx: Жесткий индекс из column_mapping.csv (fallback)
+        hardcode_idx: Жесткий индекс из column_mapping.csv (приоритет)
         year: Год для поиска ("2022" или "2023")
         keywords: Список ключевых слов для поиска
     
     Returns:
         Индекс колонки или None
     """
-    # 1️⃣ Пытаемся найти по ключевым словам
+    # 1️⃣ Сначала используем жесткий индекс, если он есть
+    if hardcode_idx and hardcode_idx.strip():
+        try:
+            idx = int(hardcode_idx) - 1  # CSV использует 1-based индексы
+            if 0 <= idx < len(df.columns):
+                return idx
+        except ValueError:
+            pass
+    
+    # 2️⃣ Пытаемся найти по ключевым словам
     if keywords:
         for keyword in keywords:
             for col_idx, header in enumerate(df.iloc[0]):
@@ -163,20 +179,12 @@ def _find_column_smart(df: pd.DataFrame, hardcode_idx: str, year: str, keywords:
                 if keyword.lower() in header_str.lower():
                     return col_idx
     
-    # 2️⃣ Пытаемся найти по году
-    for col_idx, header in enumerate(df.iloc[0]):
-        header_str = str(header).strip()
-        if year in header_str:
-            return col_idx
-    
-    # 3️⃣ Fallback на жесткий индекс
-    if hardcode_idx:
-        try:
-            idx = int(hardcode_idx) - 1  # CSV использует 1-based индексы
-            if 0 <= idx < len(df.columns):
-                return idx
-        except ValueError:
-            pass
+    # 3️⃣ Пытаемся найти по году (только если жесткий индекс был указан, но не найден)
+    if hardcode_idx and hardcode_idx.strip():
+        for col_idx, header in enumerate(df.iloc[0]):
+            header_str = str(header).strip()
+            if year in header_str:
+                return col_idx
     
     return None
 
@@ -248,6 +256,12 @@ def fill_word_template_by_tags_v2(doc, master_data: Dict, log_path: Optional[Pat
                             
                             # Ищем значение в master_data
                             value = master_data.get(okved_code, {}).get(indicator_key)
+                            
+                            if value is None and not year_suffix:
+                                # Если год не указан в теге, пробуем найти с суффиксами года
+                                value = master_data.get(okved_code, {}).get(f"{indicator}_22")
+                                if value is None:
+                                    value = master_data.get(okved_code, {}).get(f"{indicator}_23")
                             
                             if value is None:
                                 # Если 2023 не найдена, пробуем 2022 (fallback)

@@ -10,15 +10,17 @@ import re
 from typing import Union
 
 
-def normalize_number_string(value: str) -> str:
+def normalize_number_string(value: str, force_decimal: bool = False) -> str:
     """
-    Нормализает числовые строки:
+    Нормализует числовые строки:
     - Убирает пробелы: "569 800 589" -> "569800589"
     - Исправляет минусы: "- " или "- -" -> "-"
-    - Сохраняет десятичные запятые
+    - Заменяет точки на запятые в десятичных числах: "123.45" -> "123,45"
+    - При force_decimal добавляет ",0" для целых чисел: "237" -> "237,0"
     
     Args:
         value: Строковое значение
+        force_decimal: Принудительно оставлять одну десятичную цифру для целых чисел
     
     Returns:
         Нормализованное значение
@@ -32,6 +34,12 @@ def normalize_number_string(value: str) -> str:
         
         >>> normalize_number_string("1 234,56")
         "1234,56"
+        
+        >>> normalize_number_string("123.45")
+        "123,45"
+        
+        >>> normalize_number_string("237", force_decimal=True)
+        "237,0"
     """
     if not isinstance(value, str):
         value = str(value)
@@ -43,19 +51,27 @@ def normalize_number_string(value: str) -> str:
         # Удаляем пробелы после минуса
         value = "-" + value[1:].lstrip()
     
-    # Удаляем пробелы из чисел, но сохраняем запятую как разделитель десятичных
-    # Пример: "1 234,56" -> "1234,56"
+    # Удаляем пробелы из чисел
     value = value.replace(" ", "")
+    
+    # Заменяем точку на запятую в десятичных числах
+    # Ищем паттерн: цифры, точка, цифры (десятичное число)
+    import re
+    value = re.sub(r'(\d)\.(\d)', r'\1,\2', value)
+    
+    if force_decimal and re.fullmatch(r'-?\d+', value):
+        value = value + ',0'
     
     return value
 
 
-def normalize_cell_value(value: Union[str, int, float]) -> str:
+def normalize_cell_value(value: Union[str, int, float], force_decimal: bool = False) -> str:
     """
     Универсальная нормализация значения для вставки в Word.
     
     Args:
         value: Любое значение из Excel
+        force_decimal: Принудительно оставлять одну десятичную цифру для целых чисел
     
     Returns:
         Нормализованная строка
@@ -78,7 +94,7 @@ def normalize_cell_value(value: Union[str, int, float]) -> str:
     try:
         # Проверяем, содержит ли строка цифры
         if any(char.isdigit() for char in value_str):
-            return normalize_number_string(value_str)
+            return normalize_number_string(value_str, force_decimal=force_decimal)
     except:
         pass
     
@@ -110,7 +126,7 @@ def normalize_text_value(value: str) -> str:
     return value
 
 
-def clean_excel_value_for_word(value: Union[str, int, float]) -> str:
+def clean_excel_value_for_word(value: Union[str, int, float], force_decimal: bool = False) -> str:
     """
     Комплексная очистка значения из Excel перед вставкой в Word.
     
@@ -121,6 +137,7 @@ def clean_excel_value_for_word(value: Union[str, int, float]) -> str:
     
     Args:
         value: Значение из Excel
+        force_decimal: Принудительно оставлять одну десятичную цифру для целых чисел
     
     Returns:
         Готовое для вставки значение
@@ -139,7 +156,7 @@ def clean_excel_value_for_word(value: Union[str, int, float]) -> str:
         "текст"
     """
     # Базовая нормализация
-    value_str = normalize_cell_value(value)
+    value_str = normalize_cell_value(value, force_decimal=force_decimal)
     
     if not value_str:
         return ""

@@ -63,18 +63,33 @@ def load_okved_map(filepath):
 
 def load_table_source_map(filepath):
     print(f"Загрузка сопоставления таблиц из: {filepath}")
-    df = _read_csv_robustly(filepath, header_row=None)
-    first_row = [str(x).strip().lower() for x in df.iloc[0].tolist()]
-    if "таблица" in first_row and "файл" in first_row:
-        df = _read_csv_robustly(filepath, header_row=0)
-    else:
-        df.columns = ["Таблица", "Файл"]
     mapping_dict = {}
-    for _, row in df.iterrows():
-        raw_name = str(row["Таблица"]).strip()
-        raw_src = str(row["Файл"]).strip()
+
+    with open(filepath, encoding='utf-8-sig', newline='') as f:
+        reader = csv.reader(f, delimiter=';')
+        rows = [row for row in reader if row]
+
+    if not rows:
+        print("⚠️ Файл маппинга пуст.")
+        return mapping_dict
+
+    header = [str(col).strip().lower() for col in rows[0]]
+    if 'таблица' in header and ('файл' in header or 'источник' in header):
+        data_rows = rows[1:]
+    else:
+        # Если заголовки не обнаружены, возможно файл читается без заголовка
+        data_rows = rows
+
+    for row in data_rows:
+        if len(row) < 2:
+            continue
+        raw_name = str(row[0]).strip().strip('"').strip()
+        raw_src = str(row[1]).strip().strip('"').strip()
+        if not raw_name or not raw_src:
+            continue
         norm_key = _normalize_text(raw_name)
         mapping_dict[norm_key] = raw_src
+
     print(f"📘 Загружено сопоставлений: {len(mapping_dict)}")
     return mapping_dict
 
@@ -133,31 +148,43 @@ def get_table_name(table: Table, known_table_names):
     ignore_phrases = ['продолжение таблицы', 'таблица', 'график', 'рис.', 'рис', 'по всей форме', 'приложение', 'форма',
                       'лист', 'страница', 'тысяч рублей', 'на конец года']
     
-    # Ограничиваем поиск первыми 20 параграфами выше таблицы (вместо всех)
+    # Собираем все параграфы выше таблицы, чтобы выбрать наиболее подходящий заголовок.
+    candidates = []
     para_count = 0
     MAX_PARAS_TO_CHECK = 20
-    
     prev_elem = table._element.getprevious()
+
     while prev_elem is not None and para_count < MAX_PARAS_TO_CHECK:
         if prev_elem.tag.endswith('p'):
             text = (prev_elem.text or "").strip()
+            prev_elem = prev_elem.getprevious()
+            para_count += 1
             if not text:
-                prev_elem = prev_elem.getprevious()
-                para_count += 1
                 continue
+
             text_norm = _normalize_text(text)
             if any(phrase in text_norm for phrase in ignore_phrases):
-                prev_elem = prev_elem.getprevious()
-                para_count += 1
                 continue
+
             for known_title in known_table_names:
-                if text_norm in _normalize_text(known_title) or _normalize_text(known_title) in text_norm:
-                    print(f"🔍 Заголовок найден: {known_title}")
-                    return known_title
-            print(f"⚠️ Заголовок не распознан: {text}")
-            return text_norm
-        prev_elem = prev_elem.getprevious()
-        para_count += 1
+                known_norm = _normalize_text(known_title)
+                if text_norm == known_norm or text_norm in known_norm or known_norm in text_norm:
+                    score = len(known_norm)
+                    candidates.append((score, known_title, text_norm))
+
+        else:
+            prev_elem = prev_elem.getprevious()
+            para_count += 1
+
+    if candidates:
+        candidates.sort(reverse=True)
+        best_title = candidates[0][1]
+        print(f"🔍 Заголовок найден: {best_title}")
+        return best_title
+
+    print("⚠️ Заголовок не распознан")
+    return None
+
     
     # Fallback: определяем по содержимому таблицы
     collected_texts = []

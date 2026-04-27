@@ -175,73 +175,61 @@
 ✅ Заполнено: OKVED_55_ValBal_22 → 7789542
 ✅ Заполнено: OKVED_55_ValBal_23 → 9562876
 ✅ Заполнено: OKVED_55_VneObAk_22 → 6183618
-✅ Заполнено: OKVED_55_VneObAk_23 → 7949580
 ✅ Заполнено: OKVED_55_ObAk_22 → 1605924
 ✅ Заполнено: OKVED_55_ObAk_23 → 1613296
 ✅ Заполнено: OKVED_J_ValBal_22 → 3979
 ✅ Заполнено: OKVED_J_ValBal_23 → 1210
 ✅ Заполнено: OKVED_J_VneObAk_22 → 453
-✅ Заполнено: OKVED_J_VneObAk_23 → 429
 ✅ Заполнено: OKVED_J_ObAk_22 → 3526
 ✅ Заполнено: OKVED_J_ObAk_23 → 781
 ✅ Заполнено: OKVED_63_ValBal_22 → 3979
 ✅ Заполнено: OKVED_63_ValBal_23 → 1210
 ✅ Заполнено: OKVED_63_VneObAk_22 → 453
-✅ Заполнено: OKVED_63_VneObAk_23 → 429
 ✅ Заполнено: OKVED_63_ObAk_22 → 3526
 ✅ Заполнено: OKVED_63_ObAk_23 → 781
 ✅ Заполнено: OKVED_K_ValBal_22 → 12859150
 ✅ Заполнено: OKVED_K_ValBal_23 → 10408606
 ✅ Заполнено: OKVED_K_VneObAk_22 → 8492636
-✅ Заполнено: OKVED_K_VneObAk_23 → 6460291
 ✅ Заполнено: OKVED_K_ObAk_22 → 4366514
 ✅ Заполнено: OKVED_K_ObAk_23 → 3948315
 ✅ Заполнено: OKVED_64_ValBal_22 → 12859150
 ✅ Заполнено: OKVED_64_ValBal_23 → 10408606
 ✅ Заполнено: OKVED_64_VneObAk_22 → 8492636
-✅ Заполнено: OKVED_64_VneObAk_23 → 6460291
 ✅ Заполнено: OKVED_64_ObAk_22 → 4366514
 ✅ Заполнено: OKVED_64_ObAk_23 → 3948315
 ✅ Заполнено: OKVED_L_ValBal_22 → 5209633
 ✅ Заполнено: OKVED_L_ValBal_23 → 6957469
 ✅ Заполнено: OKVED_L_VneObAk_22 → 4240162
-✅ Заполнено: OKVED_L_VneObAk_23 → 5780604
 ✅ Заполнено: OKVED_L_ObAk_22 → 969471
 ✅ Заполнено: OKVED_L_ObAk_23 → 1176865
 ✅ Заполнено: OKVED_68_ValBal_22 → 5209633
 ✅ Заполнено: OKVED_68_ValBal_23 → 6957469
 ✅ Заполнено: OKVED_68_VneObAk_22 → 4240162
-✅ Заполнено: OKVED_68_VneObAk_23 → 5780604
 ✅ Заполнено: OKVED_68_ObAk_22 → 969471
 ✅ Заполнено: OKVED_68_ObAk_23 → 1176865
 ✅ Заполнено: OKVED_M_ValBal_22 → 6879291
 ✅ Заполнено: OKVED_M_ValBal_23 → 9493877
 ✅ Заполнено: OKVED_M_VneObAk_22 → 2913810
-✅ Заполнено: OKVED_M_VneObAk_23 → 3957110
 ✅ Заполнено: OKVED_M_ObAk_22 → 3965481
 ✅ Заполнено: OKVED_M_ObAk_23 → 5536767
 ✅ Заполнено: OKVED_69_ValBal_22 → 124258
 ✅ Заполнено: OKVED_69_ValBal_23 → 74523
 ✅ Заполнено: OKVED_69_VneObAk_22 → 67236
-✅ Заполнено: OKVED_69_VneObAk_23 → 67773
 ✅ Заполнено: OKVED_69_ObAk_22 → 57022
 ✅ Заполнено: OKVED_69_ObAk_23 → 6750
 ✅ Заполнено: OKVED_70_ValBal_22 → 4712556
 ✅ Заполнено: OKVED_70_ValBal_23 → 6704625
 ✅ Заполнено: OKVED_70_VneObAk_22 → 1161133
-✅ Заполнено: OKVED_70_VneObAk_23 → 1791332
 ✅ Заполнено: OKVED_70_ObAk_22 → 3551423
 ✅ Заполнено: OKVED_70_ObAk_23 → 4913293
 ✅ Заполнено: OKVED_71_ValBal_22 → 2034973
 ✅ Заполнено: OKVED_71_ValBal_23 → 2709154
 ✅ Заполнено: OKVED_71_VneObAk_22 → 1679298
-✅ Заполнено: OKVED_71_VneObAk_23 → 2093284
 ✅ Заполнено: OKVED_71_ObAk_22 → 355675
 ✅ Заполнено: OKVED_71_ObAk_23 → 615870
 ✅ Заполнено: OKVED_74_ValBal_22 → 7504
 ✅ Заполнено: OKVED_74_ValBal_23 → 5575
 ✅ Заполнено: OKVED_74_VneObAk_22 → 6143
-✅ Заполнено: OKVED_74_VneObAk_23 → 4721
 ✅ Заполнено: OKVED_74_ObAk_22 → 1361
 ✅ Заполнено: OKVED_74_ObAk_23 → 854
 ✅ Заполнено: OKVED_N_ValBal_22 → 1719424
@@ -696,340 +684,340 @@
 ✅ Заполнено: OKVED_96_KrOb_23 → 21118
 ✅ Заполнено: OKVED_101_АГ_VneObAk_22 → 319353980
 ✅ Заполнено: OKVED_101_АГ_VneObAk_23 → 376215625
-✅ Заполнено: OKVED_101_АГ_VneObAk_22 → 319353980
-✅ Заполнено: OKVED_101_АГ_VneObAk_23 → 376215625
-✅ Заполнено: OKVED_101_АГ_VneObAk_22 → 319353980
-✅ Заполнено: OKVED_101_АГ_VneObAk_23 → 376215625
+✅ Заполнено: OKVED_101_АГ_NemAk_22 → 22816612
+✅ Заполнено: OKVED_101_АГ_NemAk_23 → 21953529
+✅ Заполнено: OKVED_101_АГ_OsnSr_22 → 220390352
+✅ Заполнено: OKVED_101_АГ_OsnSr_23 → 243077595
 ✅ Заполнено: OKVED_A_VneObAk_22 → 143143680
 ✅ Заполнено: OKVED_A_VneObAk_23 → 170199721
-✅ Заполнено: OKVED_A_VneObAk_22 → 143143680
-✅ Заполнено: OKVED_A_VneObAk_23 → 170199721
-✅ Заполнено: OKVED_A_VneObAk_22 → 143143680
-✅ Заполнено: OKVED_A_VneObAk_23 → 170199721
+✅ Заполнено: OKVED_A_NemAk_22 → 10403869
+✅ Заполнено: OKVED_A_NemAk_23 → 9758710
+✅ Заполнено: OKVED_A_OsnSr_22 → 107053058
+✅ Заполнено: OKVED_A_OsnSr_23 → 112945784
 ✅ Заполнено: OKVED_01_VneObAk_22 → 3017850
 ✅ Заполнено: OKVED_01_VneObAk_23 → 2786821
-✅ Заполнено: OKVED_01_VneObAk_22 → 3017850
-✅ Заполнено: OKVED_01_VneObAk_23 → 2786821
-✅ Заполнено: OKVED_01_VneObAk_22 → 3017850
-✅ Заполнено: OKVED_01_VneObAk_23 → 2786821
+✅ Заполнено: OKVED_01_NemAk_22 → 17
+✅ Заполнено: OKVED_01_NemAk_23 → 987
+✅ Заполнено: OKVED_01_OsnSr_22 → 2918193
+✅ Заполнено: OKVED_01_OsnSr_23 → 2715015
 ✅ Заполнено: OKVED_03_VneObAk_22 → 140125830
 ✅ Заполнено: OKVED_03_VneObAk_23 → 167412900
-✅ Заполнено: OKVED_03_VneObAk_22 → 140125830
-✅ Заполнено: OKVED_03_VneObAk_23 → 167412900
-✅ Заполнено: OKVED_03_VneObAk_22 → 140125830
-✅ Заполнено: OKVED_03_VneObAk_23 → 167412900
+✅ Заполнено: OKVED_03_NemAk_22 → 10403852
+✅ Заполнено: OKVED_03_NemAk_23 → 9757723
+✅ Заполнено: OKVED_03_OsnSr_22 → 104134865
+✅ Заполнено: OKVED_03_OsnSr_23 → 110230769
 ✅ Заполнено: OKVED_B_VneObAk_22 → 64411656
 ✅ Заполнено: OKVED_B_VneObAk_23 → 73692301
-✅ Заполнено: OKVED_B_VneObAk_22 → 64411656
-✅ Заполнено: OKVED_B_VneObAk_23 → 73692301
-✅ Заполнено: OKVED_B_VneObAk_22 → 64411656
-✅ Заполнено: OKVED_B_VneObAk_23 → 73692301
+✅ Заполнено: OKVED_B_NemAk_22 → 11880906
+✅ Заполнено: OKVED_B_NemAk_23 → 11678069
+✅ Заполнено: OKVED_B_OsnSr_22 → 30265505
+✅ Заполнено: OKVED_B_OsnSr_23 → 29609787
 ✅ Заполнено: OKVED_07_VneObAk_22 → 64411656
 ✅ Заполнено: OKVED_07_VneObAk_23 → 73692301
-✅ Заполнено: OKVED_07_VneObAk_22 → 64411656
-✅ Заполнено: OKVED_07_VneObAk_23 → 73692301
-✅ Заполнено: OKVED_07_VneObAk_22 → 64411656
-✅ Заполнено: OKVED_07_VneObAk_23 → 73692301
+✅ Заполнено: OKVED_07_NemAk_22 → 11880906
+✅ Заполнено: OKVED_07_NemAk_23 → 11678069
+✅ Заполнено: OKVED_07_OsnSr_22 → 30265505
+✅ Заполнено: OKVED_07_OsnSr_23 → 29609787
 ✅ Заполнено: OKVED_C_VneObAk_22 → 20396194
 ✅ Заполнено: OKVED_C_VneObAk_23 → 22587609
-✅ Заполнено: OKVED_C_VneObAk_22 → 20396194
-✅ Заполнено: OKVED_C_VneObAk_23 → 22587609
-✅ Заполнено: OKVED_C_VneObAk_22 → 20396194
-✅ Заполнено: OKVED_C_VneObAk_23 → 22587609
+✅ Заполнено: OKVED_C_NemAk_22 → 466883
+✅ Заполнено: OKVED_C_NemAk_23 → 439030
+✅ Заполнено: OKVED_C_OsnSr_22 → 17254443
+✅ Заполнено: OKVED_C_OsnSr_23 → 16970304
 ✅ Заполнено: OKVED_10_VneObAk_22 → 17488166
 ✅ Заполнено: OKVED_10_VneObAk_23 → 20015482
-✅ Заполнено: OKVED_10_VneObAk_22 → 17488166
-✅ Заполнено: OKVED_10_VneObAk_23 → 20015482
-✅ Заполнено: OKVED_10_VneObAk_22 → 17488166
-✅ Заполнено: OKVED_10_VneObAk_23 → 20015482
+✅ Заполнено: OKVED_10_NemAk_22 → 466441
+✅ Заполнено: OKVED_10_NemAk_23 → 437071
+✅ Заполнено: OKVED_10_OsnSr_22 → 15163009
+✅ Заполнено: OKVED_10_OsnSr_23 → 15164951
 ✅ Заполнено: OKVED_11_VneObAk_22 → 947567
 ✅ Заполнено: OKVED_11_VneObAk_23 → 941901
-✅ Заполнено: OKVED_11_VneObAk_22 → 947567
-✅ Заполнено: OKVED_11_VneObAk_23 → 941901
-✅ Заполнено: OKVED_11_VneObAk_22 → 947567
-✅ Заполнено: OKVED_11_VneObAk_23 → 941901
+ℹ️ Отсутствующие данные: OKVED_11_NemAk_22 → [-]
+ℹ️ Отсутствующие данные: OKVED_11_NemAk_23 → [-]
+✅ Заполнено: OKVED_11_OsnSr_22 → 482961
+✅ Заполнено: OKVED_11_OsnSr_23 → 477680
 ✅ Заполнено: OKVED_32_VneObAk_22 → 6585
 ✅ Заполнено: OKVED_32_VneObAk_23 → 5654
-✅ Заполнено: OKVED_32_VneObAk_22 → 6585
-✅ Заполнено: OKVED_32_VneObAk_23 → 5654
-✅ Заполнено: OKVED_32_VneObAk_22 → 6585
-✅ Заполнено: OKVED_32_VneObAk_23 → 5654
+ℹ️ Отсутствующие данные: OKVED_32_NemAk_22 → [-]
+ℹ️ Отсутствующие данные: OKVED_32_NemAk_23 → [-]
+✅ Заполнено: OKVED_32_OsnSr_22 → 6144
+✅ Заполнено: OKVED_32_OsnSr_23 → 5524
 ✅ Заполнено: OKVED_33_VneObAk_22 → 1953876
 ✅ Заполнено: OKVED_33_VneObAk_23 → 1624572
-✅ Заполнено: OKVED_33_VneObAk_22 → 1953876
-✅ Заполнено: OKVED_33_VneObAk_23 → 1624572
-✅ Заполнено: OKVED_33_VneObAk_22 → 1953876
-✅ Заполнено: OKVED_33_VneObAk_23 → 1624572
+✅ Заполнено: OKVED_33_NemAk_22 → 442
+✅ Заполнено: OKVED_33_NemAk_23 → 1959
+✅ Заполнено: OKVED_33_OsnSr_22 → 1602329
+✅ Заполнено: OKVED_33_OsnSr_23 → 1322149
 ✅ Заполнено: OKVED_35_VneObAk_22 → 28987028
 ✅ Заполнено: OKVED_35_VneObAk_23 → 33313054
+ℹ️ Отсутствующие данные: OKVED_35_NemAk_22 → [-]
+✅ Заполнено: OKVED_35_NemAk_23 → 232
+✅ Заполнено: OKVED_35_OsnSr_22 → 25655328
+✅ Заполнено: OKVED_35_OsnSr_23 → 29677524
 ✅ Заполнено: OKVED_35_VneObAk_22 → 28987028
 ✅ Заполнено: OKVED_35_VneObAk_23 → 33313054
-✅ Заполнено: OKVED_35_VneObAk_22 → 28987028
-✅ Заполнено: OKVED_35_VneObAk_23 → 33313054
-✅ Заполнено: OKVED_35_VneObAk_22 → 28987028
-✅ Заполнено: OKVED_35_VneObAk_23 → 33313054
-✅ Заполнено: OKVED_35_VneObAk_22 → 28987028
-✅ Заполнено: OKVED_35_VneObAk_23 → 33313054
-✅ Заполнено: OKVED_35_VneObAk_22 → 28987028
-✅ Заполнено: OKVED_35_VneObAk_23 → 33313054
+ℹ️ Отсутствующие данные: OKVED_35_NemAk_22 → [-]
+✅ Заполнено: OKVED_35_NemAk_23 → 232
+✅ Заполнено: OKVED_35_OsnSr_22 → 25655328
+✅ Заполнено: OKVED_35_OsnSr_23 → 29677524
 ✅ Заполнено: OKVED_E_VneObAk_22 → 7514598
 ✅ Заполнено: OKVED_E_VneObAk_23 → 8057780
-✅ Заполнено: OKVED_E_VneObAk_22 → 7514598
-✅ Заполнено: OKVED_E_VneObAk_23 → 8057780
-✅ Заполнено: OKVED_E_VneObAk_22 → 7514598
-✅ Заполнено: OKVED_E_VneObAk_23 → 8057780
+✅ Заполнено: OKVED_E_NemAk_22 → 33
+✅ Заполнено: OKVED_E_NemAk_23 → 49
+✅ Заполнено: OKVED_E_OsnSr_22 → 6567934
+✅ Заполнено: OKVED_E_OsnSr_23 → 6965116
 ✅ Заполнено: OKVED_36_VneObAk_22 → 6630154
 ✅ Заполнено: OKVED_36_VneObAk_23 → 6921499
-✅ Заполнено: OKVED_36_VneObAk_22 → 6630154
-✅ Заполнено: OKVED_36_VneObAk_23 → 6921499
-✅ Заполнено: OKVED_36_VneObAk_22 → 6630154
-✅ Заполнено: OKVED_36_VneObAk_23 → 6921499
+✅ Заполнено: OKVED_36_NemAk_22 → 33
+✅ Заполнено: OKVED_36_NemAk_23 → 49
+✅ Заполнено: OKVED_36_OsnSr_22 → 5683490
+✅ Заполнено: OKVED_36_OsnSr_23 → 5828835
 ✅ Заполнено: OKVED_38_VneObAk_22 → 884444
 ✅ Заполнено: OKVED_38_VneObAk_23 → 1136281
-✅ Заполнено: OKVED_38_VneObAk_22 → 884444
-✅ Заполнено: OKVED_38_VneObAk_23 → 1136281
-✅ Заполнено: OKVED_38_VneObAk_22 → 884444
-✅ Заполнено: OKVED_38_VneObAk_23 → 1136281
+ℹ️ Отсутствующие данные: OKVED_38_NemAk_22 → [-]
+ℹ️ Отсутствующие данные: OKVED_38_NemAk_23 → [-]
+✅ Заполнено: OKVED_38_OsnSr_22 → 884444
+✅ Заполнено: OKVED_38_OsnSr_23 → 1136281
 ✅ Заполнено: OKVED_F_VneObAk_22 → 2682251
 ✅ Заполнено: OKVED_F_VneObAk_23 → 3752566
-✅ Заполнено: OKVED_F_VneObAk_22 → 2682251
-✅ Заполнено: OKVED_F_VneObAk_23 → 3752566
-✅ Заполнено: OKVED_F_VneObAk_22 → 2682251
-✅ Заполнено: OKVED_F_VneObAk_23 → 3752566
+ℹ️ Отсутствующие данные: OKVED_F_NemAk_22 → [-]
+✅ Заполнено: OKVED_F_NemAk_23 → 9704
+✅ Заполнено: OKVED_F_OsnSr_22 → 2479613
+✅ Заполнено: OKVED_F_OsnSr_23 → 3426758
 ✅ Заполнено: OKVED_41_VneObAk_22 → 1310651
 ✅ Заполнено: OKVED_41_VneObAk_23 → 995637
-✅ Заполнено: OKVED_41_VneObAk_22 → 1310651
-✅ Заполнено: OKVED_41_VneObAk_23 → 995637
-✅ Заполнено: OKVED_41_VneObAk_22 → 1310651
-✅ Заполнено: OKVED_41_VneObAk_23 → 995637
+ℹ️ Отсутствующие данные: OKVED_41_NemAk_22 → [-]
+ℹ️ Отсутствующие данные: OKVED_41_NemAk_23 → [-]
+✅ Заполнено: OKVED_41_OsnSr_22 → 1185720
+✅ Заполнено: OKVED_41_OsnSr_23 → 793620
 ✅ Заполнено: OKVED_42_VneObAk_22 → 1370379
 ✅ Заполнено: OKVED_42_VneObAk_23 → 2754273
-✅ Заполнено: OKVED_42_VneObAk_22 → 1370379
-✅ Заполнено: OKVED_42_VneObAk_23 → 2754273
-✅ Заполнено: OKVED_42_VneObAk_22 → 1370379
-✅ Заполнено: OKVED_42_VneObAk_23 → 2754273
+ℹ️ Отсутствующие данные: OKVED_42_NemAk_22 → [-]
+✅ Заполнено: OKVED_42_NemAk_23 → 9704
+✅ Заполнено: OKVED_42_OsnSr_22 → 1293822
+✅ Заполнено: OKVED_42_OsnSr_23 → 2633138
 ✅ Заполнено: OKVED_43_VneObAk_22 → 1221
 ✅ Заполнено: OKVED_43_VneObAk_23 → 2656
-✅ Заполнено: OKVED_43_VneObAk_22 → 1221
-✅ Заполнено: OKVED_43_VneObAk_23 → 2656
-✅ Заполнено: OKVED_43_VneObAk_22 → 1221
-✅ Заполнено: OKVED_43_VneObAk_23 → 2656
+ℹ️ Отсутствующие данные: OKVED_43_NemAk_22 → [-]
+ℹ️ Отсутствующие данные: OKVED_43_NemAk_23 → [-]
+✅ Заполнено: OKVED_43_OsnSr_22 → 71
+ℹ️ Отсутствующие данные: OKVED_43_OsnSr_23 → [-]
 ✅ Заполнено: OKVED_G_VneObAk_22 → 5700114
 ✅ Заполнено: OKVED_G_VneObAk_23 → 5452177
-✅ Заполнено: OKVED_G_VneObAk_22 → 5700114
-✅ Заполнено: OKVED_G_VneObAk_23 → 5452177
-✅ Заполнено: OKVED_G_VneObAk_22 → 5700114
-✅ Заполнено: OKVED_G_VneObAk_23 → 5452177
+✅ Заполнено: OKVED_G_NemAk_22 → 2249
+✅ Заполнено: OKVED_G_NemAk_23 → 15721
+✅ Заполнено: OKVED_G_OsnSr_22 → 3642504
+✅ Заполнено: OKVED_G_OsnSr_23 → 2622716
 ✅ Заполнено: OKVED_46_VneObAk_22 → 3772052
 ✅ Заполнено: OKVED_46_VneObAk_23 → 3647516
-✅ Заполнено: OKVED_46_VneObAk_22 → 3772052
-✅ Заполнено: OKVED_46_VneObAk_23 → 3647516
-✅ Заполнено: OKVED_46_VneObAk_22 → 3772052
-✅ Заполнено: OKVED_46_VneObAk_23 → 3647516
+✅ Заполнено: OKVED_46_NemAk_22 → 1829
+✅ Заполнено: OKVED_46_NemAk_23 → 15617
+✅ Заполнено: OKVED_46_OsnSr_22 → 1851663
+✅ Заполнено: OKVED_46_OsnSr_23 → 963247
 ✅ Заполнено: OKVED_47_VneObAk_22 → 1928062
 ✅ Заполнено: OKVED_47_VneObAk_23 → 1804661
-✅ Заполнено: OKVED_47_VneObAk_22 → 1928062
-✅ Заполнено: OKVED_47_VneObAk_23 → 1804661
-✅ Заполнено: OKVED_47_VneObAk_22 → 1928062
-✅ Заполнено: OKVED_47_VneObAk_23 → 1804661
+✅ Заполнено: OKVED_47_NemAk_22 → 420
+✅ Заполнено: OKVED_47_NemAk_23 → 104
+✅ Заполнено: OKVED_47_OsnSr_22 → 1790841
+✅ Заполнено: OKVED_47_OsnSr_23 → 1659469
 ✅ Заполнено: OKVED_H_VneObAk_22 → 23219057
 ✅ Заполнено: OKVED_H_VneObAk_23 → 33262498
-✅ Заполнено: OKVED_H_VneObAk_22 → 23219057
-✅ Заполнено: OKVED_H_VneObAk_23 → 33262498
-✅ Заполнено: OKVED_H_VneObAk_22 → 23219057
-✅ Заполнено: OKVED_H_VneObAk_23 → 33262498
+✅ Заполнено: OKVED_H_NemAk_22 → 26712
+✅ Заполнено: OKVED_H_NemAk_23 → 25346
+✅ Заполнено: OKVED_H_OsnSr_22 → 18057949
+✅ Заполнено: OKVED_H_OsnSr_23 → 27721320
 ✅ Заполнено: OKVED_49_VneObAk_22 → 313001
 ✅ Заполнено: OKVED_49_VneObAk_23 → 355700
-✅ Заполнено: OKVED_49_VneObAk_22 → 313001
-✅ Заполнено: OKVED_49_VneObAk_23 → 355700
-✅ Заполнено: OKVED_49_VneObAk_22 → 313001
-✅ Заполнено: OKVED_49_VneObAk_23 → 355700
+ℹ️ Отсутствующие данные: OKVED_49_NemAk_22 → [-]
+ℹ️ Отсутствующие данные: OKVED_49_NemAk_23 → [-]
+✅ Заполнено: OKVED_49_OsnSr_22 → 312103
+✅ Заполнено: OKVED_49_OsnSr_23 → 354772
 ✅ Заполнено: OKVED_50_VneObAk_22 → 3463840
 ✅ Заполнено: OKVED_50_VneObAk_23 → 4757173
-✅ Заполнено: OKVED_50_VneObAk_22 → 3463840
-✅ Заполнено: OKVED_50_VneObAk_23 → 4757173
-✅ Заполнено: OKVED_50_VneObAk_22 → 3463840
-✅ Заполнено: OKVED_50_VneObAk_23 → 4757173
+✅ Заполнено: OKVED_50_NemAk_22 → 780
+✅ Заполнено: OKVED_50_NemAk_23 → 2264
+✅ Заполнено: OKVED_50_OsnSr_22 → 3446068
+✅ Заполнено: OKVED_50_OsnSr_23 → 4733944
 ✅ Заполнено: OKVED_51_VneObAk_22 → 3439049
 ✅ Заполнено: OKVED_51_VneObAk_23 → 4199444
-✅ Заполнено: OKVED_51_VneObAk_22 → 3439049
-✅ Заполнено: OKVED_51_VneObAk_23 → 4199444
-✅ Заполнено: OKVED_51_VneObAk_22 → 3439049
-✅ Заполнено: OKVED_51_VneObAk_23 → 4199444
+✅ Заполнено: OKVED_51_NemAk_22 → 762
+✅ Заполнено: OKVED_51_NemAk_23 → 1104
+✅ Заполнено: OKVED_51_OsnSr_22 → 3239263
+✅ Заполнено: OKVED_51_OsnSr_23 → 3888174
 ✅ Заполнено: OKVED_52_VneObAk_22 → 16003167
 ✅ Заполнено: OKVED_52_VneObAk_23 → 23950181
-✅ Заполнено: OKVED_52_VneObAk_22 → 16003167
-✅ Заполнено: OKVED_52_VneObAk_23 → 23950181
-✅ Заполнено: OKVED_52_VneObAk_22 → 16003167
-✅ Заполнено: OKVED_52_VneObAk_23 → 23950181
+✅ Заполнено: OKVED_52_NemAk_22 → 25170
+✅ Заполнено: OKVED_52_NemAk_23 → 21978
+✅ Заполнено: OKVED_52_OsnSr_22 → 11060515
+✅ Заполнено: OKVED_52_OsnSr_23 → 18744430
 ✅ Заполнено: OKVED_I_VneObAk_22 → 6183618
 ✅ Заполнено: OKVED_I_VneObAk_23 → 7949580
-✅ Заполнено: OKVED_I_VneObAk_22 → 6183618
-✅ Заполнено: OKVED_I_VneObAk_23 → 7949580
-✅ Заполнено: OKVED_I_VneObAk_22 → 6183618
-✅ Заполнено: OKVED_I_VneObAk_23 → 7949580
+✅ Заполнено: OKVED_I_NemAk_22 → 3715
+✅ Заполнено: OKVED_I_NemAk_23 → 9904
+✅ Заполнено: OKVED_I_OsnSr_22 → 5272315
+✅ Заполнено: OKVED_I_OsnSr_23 → 6965330
 ✅ Заполнено: OKVED_55_VneObAk_22 → 6183618
 ✅ Заполнено: OKVED_55_VneObAk_23 → 7949580
-✅ Заполнено: OKVED_55_VneObAk_22 → 6183618
-✅ Заполнено: OKVED_55_VneObAk_23 → 7949580
-✅ Заполнено: OKVED_55_VneObAk_22 → 6183618
-✅ Заполнено: OKVED_55_VneObAk_23 → 7949580
+✅ Заполнено: OKVED_55_NemAk_22 → 3715
+✅ Заполнено: OKVED_55_NemAk_23 → 9904
+✅ Заполнено: OKVED_55_OsnSr_22 → 5272315
+✅ Заполнено: OKVED_55_OsnSr_23 → 6965330
 ✅ Заполнено: OKVED_J_VneObAk_22 → 453
 ✅ Заполнено: OKVED_J_VneObAk_23 → 429
-✅ Заполнено: OKVED_J_VneObAk_22 → 453
-✅ Заполнено: OKVED_J_VneObAk_23 → 429
-✅ Заполнено: OKVED_J_VneObAk_22 → 453
-✅ Заполнено: OKVED_J_VneObAk_23 → 429
+ℹ️ Отсутствующие данные: OKVED_J_NemAk_22 → [-]
+ℹ️ Отсутствующие данные: OKVED_J_NemAk_23 → [-]
+✅ Заполнено: OKVED_J_OsnSr_22 → 453
+✅ Заполнено: OKVED_J_OsnSr_23 → 429
 ✅ Заполнено: OKVED_63_VneObAk_22 → 453
 ✅ Заполнено: OKVED_63_VneObAk_23 → 429
-✅ Заполнено: OKVED_63_VneObAk_22 → 453
-✅ Заполнено: OKVED_63_VneObAk_23 → 429
-✅ Заполнено: OKVED_63_VneObAk_22 → 453
-✅ Заполнено: OKVED_63_VneObAk_23 → 429
+ℹ️ Отсутствующие данные: OKVED_63_NemAk_22 → [-]
+ℹ️ Отсутствующие данные: OKVED_63_NemAk_23 → [-]
+✅ Заполнено: OKVED_63_OsnSr_22 → 453
+✅ Заполнено: OKVED_63_OsnSr_23 → 429
 ✅ Заполнено: OKVED_K_VneObAk_22 → 8492636
 ✅ Заполнено: OKVED_K_VneObAk_23 → 6460291
-✅ Заполнено: OKVED_K_VneObAk_22 → 8492636
-✅ Заполнено: OKVED_K_VneObAk_23 → 6460291
-✅ Заполнено: OKVED_K_VneObAk_22 → 8492636
-✅ Заполнено: OKVED_K_VneObAk_23 → 6460291
+ℹ️ Отсутствующие данные: OKVED_K_NemAk_22 → [-]
+ℹ️ Отсутствующие данные: OKVED_K_NemAk_23 → [-]
+✅ Заполнено: OKVED_K_OsnSr_22 → 94495
+✅ Заполнено: OKVED_K_OsnSr_23 → 224430
 ✅ Заполнено: OKVED_64_VneObAk_22 → 8492636
 ✅ Заполнено: OKVED_64_VneObAk_23 → 6460291
-✅ Заполнено: OKVED_64_VneObAk_22 → 8492636
-✅ Заполнено: OKVED_64_VneObAk_23 → 6460291
-✅ Заполнено: OKVED_64_VneObAk_22 → 8492636
-✅ Заполнено: OKVED_64_VneObAk_23 → 6460291
+ℹ️ Отсутствующие данные: OKVED_64_NemAk_22 → [-]
+ℹ️ Отсутствующие данные: OKVED_64_NemAk_23 → [-]
+✅ Заполнено: OKVED_64_OsnSr_22 → 94495
+✅ Заполнено: OKVED_64_OsnSr_23 → 224430
 ✅ Заполнено: OKVED_L_VneObAk_22 → 4240162
 ✅ Заполнено: OKVED_L_VneObAk_23 → 5780604
-✅ Заполнено: OKVED_L_VneObAk_22 → 4240162
-✅ Заполнено: OKVED_L_VneObAk_23 → 5780604
-✅ Заполнено: OKVED_L_VneObAk_22 → 4240162
-✅ Заполнено: OKVED_L_VneObAk_23 → 5780604
+✅ Заполнено: OKVED_L_NemAk_22 → 13546
+✅ Заполнено: OKVED_L_NemAk_23 → 7065
+✅ Заполнено: OKVED_L_OsnSr_22 → 2367963
+✅ Заполнено: OKVED_L_OsnSr_23 → 3823936
 ✅ Заполнено: OKVED_68_VneObAk_22 → 4240162
 ✅ Заполнено: OKVED_68_VneObAk_23 → 5780604
-✅ Заполнено: OKVED_68_VneObAk_22 → 4240162
-✅ Заполнено: OKVED_68_VneObAk_23 → 5780604
-✅ Заполнено: OKVED_68_VneObAk_22 → 4240162
-✅ Заполнено: OKVED_68_VneObAk_23 → 5780604
+✅ Заполнено: OKVED_68_NemAk_22 → 13546
+✅ Заполнено: OKVED_68_NemAk_23 → 7065
+✅ Заполнено: OKVED_68_OsnSr_22 → 2367963
+✅ Заполнено: OKVED_68_OsnSr_23 → 3823936
 ✅ Заполнено: OKVED_M_VneObAk_22 → 2913810
 ✅ Заполнено: OKVED_M_VneObAk_23 → 3957110
-✅ Заполнено: OKVED_M_VneObAk_22 → 2913810
-✅ Заполнено: OKVED_M_VneObAk_23 → 3957110
-✅ Заполнено: OKVED_M_VneObAk_22 → 2913810
-✅ Заполнено: OKVED_M_VneObAk_23 → 3957110
+✅ Заполнено: OKVED_M_NemAk_22 → 2529
+✅ Заполнено: OKVED_M_NemAk_23 → 2266
+✅ Заполнено: OKVED_M_OsnSr_22 → 439921
+✅ Заполнено: OKVED_M_OsnSr_23 → 774492
 ✅ Заполнено: OKVED_69_VneObAk_22 → 67236
 ✅ Заполнено: OKVED_69_VneObAk_23 → 67773
-✅ Заполнено: OKVED_69_VneObAk_22 → 67236
-✅ Заполнено: OKVED_69_VneObAk_23 → 67773
-✅ Заполнено: OKVED_69_VneObAk_22 → 67236
-✅ Заполнено: OKVED_69_VneObAk_23 → 67773
+ℹ️ Отсутствующие данные: OKVED_69_NemAk_22 → [-]
+ℹ️ Отсутствующие данные: OKVED_69_NemAk_23 → [-]
+ℹ️ Отсутствующие данные: OKVED_69_OsnSr_22 → [-]
+ℹ️ Отсутствующие данные: OKVED_69_OsnSr_23 → [-]
 ✅ Заполнено: OKVED_70_VneObAk_22 → 1161133
 ✅ Заполнено: OKVED_70_VneObAk_23 → 1791332
-✅ Заполнено: OKVED_70_VneObAk_22 → 1161133
-✅ Заполнено: OKVED_70_VneObAk_23 → 1791332
-✅ Заполнено: OKVED_70_VneObAk_22 → 1161133
-✅ Заполнено: OKVED_70_VneObAk_23 → 1791332
+✅ Заполнено: OKVED_70_NemAk_22 → 2510
+✅ Заполнено: OKVED_70_NemAk_23 → 2259
+✅ Заполнено: OKVED_70_OsnSr_22 → 187774
+✅ Заполнено: OKVED_70_OsnSr_23 → 570768
 ✅ Заполнено: OKVED_71_VneObAk_22 → 1679298
 ✅ Заполнено: OKVED_71_VneObAk_23 → 2093284
-✅ Заполнено: OKVED_71_VneObAk_22 → 1679298
-✅ Заполнено: OKVED_71_VneObAk_23 → 2093284
-✅ Заполнено: OKVED_71_VneObAk_22 → 1679298
-✅ Заполнено: OKVED_71_VneObAk_23 → 2093284
+✅ Заполнено: OKVED_71_NemAk_22 → 19
+✅ Заполнено: OKVED_71_NemAk_23 → 7
+✅ Заполнено: OKVED_71_OsnSr_22 → 246283
+✅ Заполнено: OKVED_71_OsnSr_23 → 199202
 ✅ Заполнено: OKVED_74_VneObAk_22 → 6143
 ✅ Заполнено: OKVED_74_VneObAk_23 → 4721
-✅ Заполнено: OKVED_74_VneObAk_22 → 6143
-✅ Заполнено: OKVED_74_VneObAk_23 → 4721
-✅ Заполнено: OKVED_74_VneObAk_22 → 6143
-✅ Заполнено: OKVED_74_VneObAk_23 → 4721
+ℹ️ Отсутствующие данные: OKVED_74_NemAk_22 → [-]
+ℹ️ Отсутствующие данные: OKVED_74_NemAk_23 → [-]
+✅ Заполнено: OKVED_74_OsnSr_22 → 5864
+✅ Заполнено: OKVED_74_OsnSr_23 → 4522
 ✅ Заполнено: OKVED_N_VneObAk_22 → 1422128
 ✅ Заполнено: OKVED_N_VneObAk_23 → 1552875
-✅ Заполнено: OKVED_N_VneObAk_22 → 1422128
-✅ Заполнено: OKVED_N_VneObAk_23 → 1552875
-✅ Заполнено: OKVED_N_VneObAk_22 → 1422128
-✅ Заполнено: OKVED_N_VneObAk_23 → 1552875
+✅ Заполнено: OKVED_N_NemAk_22 → 5172
+✅ Заполнено: OKVED_N_NemAk_23 → 5172
+✅ Заполнено: OKVED_N_OsnSr_22 → 1212847
+✅ Заполнено: OKVED_N_OsnSr_23 → 1221430
 ✅ Заполнено: OKVED_77_VneObAk_22 → 5172
 ✅ Заполнено: OKVED_77_VneObAk_23 → 72772
-✅ Заполнено: OKVED_77_VneObAk_22 → 5172
-✅ Заполнено: OKVED_77_VneObAk_23 → 72772
-✅ Заполнено: OKVED_77_VneObAk_22 → 5172
-✅ Заполнено: OKVED_77_VneObAk_23 → 72772
+✅ Заполнено: OKVED_77_NemAk_22 → 5172
+✅ Заполнено: OKVED_77_NemAk_23 → 5172
+ℹ️ Отсутствующие данные: OKVED_77_OsnSr_22 → [-]
+ℹ️ Отсутствующие данные: OKVED_77_OsnSr_23 → [-]
 ✅ Заполнено: OKVED_79_VneObAk_22 → 538195
 ✅ Заполнено: OKVED_79_VneObAk_23 → 630156
-✅ Заполнено: OKVED_79_VneObAk_22 → 538195
-✅ Заполнено: OKVED_79_VneObAk_23 → 630156
-✅ Заполнено: OKVED_79_VneObAk_22 → 538195
-✅ Заполнено: OKVED_79_VneObAk_23 → 630156
+ℹ️ Отсутствующие данные: OKVED_79_NemAk_22 → [-]
+ℹ️ Отсутствующие данные: OKVED_79_NemAk_23 → [-]
+✅ Заполнено: OKVED_79_OsnSr_22 → 537935
+✅ Заполнено: OKVED_79_OsnSr_23 → 604906
 ✅ Заполнено: OKVED_81_VneObAk_22 → 862462
 ✅ Заполнено: OKVED_81_VneObAk_23 → 834932
-✅ Заполнено: OKVED_81_VneObAk_22 → 862462
-✅ Заполнено: OKVED_81_VneObAk_23 → 834932
-✅ Заполнено: OKVED_81_VneObAk_22 → 862462
-✅ Заполнено: OKVED_81_VneObAk_23 → 834932
+ℹ️ Отсутствующие данные: OKVED_81_NemAk_22 → [-]
+ℹ️ Отсутствующие данные: OKVED_81_NemAk_23 → [-]
+✅ Заполнено: OKVED_81_OsnSr_22 → 658613
+✅ Заполнено: OKVED_81_OsnSr_23 → 601509
 ✅ Заполнено: OKVED_82_VneObAk_22 → 16299
 ✅ Заполнено: OKVED_82_VneObAk_23 → 15015
-✅ Заполнено: OKVED_82_VneObAk_22 → 16299
-✅ Заполнено: OKVED_82_VneObAk_23 → 15015
-✅ Заполнено: OKVED_82_VneObAk_22 → 16299
-✅ Заполнено: OKVED_82_VneObAk_23 → 15015
+ℹ️ Отсутствующие данные: OKVED_82_NemAk_22 → [-]
+ℹ️ Отсутствующие данные: OKVED_82_NemAk_23 → [-]
+✅ Заполнено: OKVED_82_OsnSr_22 → 16299
+✅ Заполнено: OKVED_82_OsnSr_23 → 15015
 ✅ Заполнено: OKVED_O_VneObAk_22 → 22892
 ✅ Заполнено: OKVED_O_VneObAk_23 → 107369
-✅ Заполнено: OKVED_O_VneObAk_22 → 22892
-✅ Заполнено: OKVED_O_VneObAk_23 → 107369
-✅ Заполнено: OKVED_O_VneObAk_22 → 22892
-✅ Заполнено: OKVED_O_VneObAk_23 → 107369
+✅ Заполнено: OKVED_O_NemAk_22 → 10996
+✅ Заполнено: OKVED_O_NemAk_23 → 2261
+✅ Заполнено: OKVED_O_OsnSr_22 → 11896
+✅ Заполнено: OKVED_O_OsnSr_23 → 50989
 ✅ Заполнено: OKVED_84_VneObAk_22 → 22892
 ✅ Заполнено: OKVED_84_VneObAk_23 → 107369
-✅ Заполнено: OKVED_84_VneObAk_22 → 22892
-✅ Заполнено: OKVED_84_VneObAk_23 → 107369
-✅ Заполнено: OKVED_84_VneObAk_22 → 22892
-✅ Заполнено: OKVED_84_VneObAk_23 → 107369
+✅ Заполнено: OKVED_84_NemAk_22 → 10996
+✅ Заполнено: OKVED_84_NemAk_23 → 2261
+✅ Заполнено: OKVED_84_OsnSr_22 → 11896
+✅ Заполнено: OKVED_84_OsnSr_23 → 50989
 ✅ Заполнено: OKVED_85_VneObAk_22 → 82
 ℹ️ Отсутствующие данные: OKVED_85_VneObAk_23 → [-]
+ℹ️ Отсутствующие данные: OKVED_85_NemAk_22 → [-]
+ℹ️ Отсутствующие данные: OKVED_85_NemAk_23 → [-]
+✅ Заполнено: OKVED_85_OsnSr_22 → 82
+ℹ️ Отсутствующие данные: OKVED_85_OsnSr_23 → [-]
 ✅ Заполнено: OKVED_85_VneObAk_22 → 82
 ℹ️ Отсутствующие данные: OKVED_85_VneObAk_23 → [-]
-✅ Заполнено: OKVED_85_VneObAk_22 → 82
-ℹ️ Отсутствующие данные: OKVED_85_VneObAk_23 → [-]
-✅ Заполнено: OKVED_85_VneObAk_22 → 82
-ℹ️ Отсутствующие данные: OKVED_85_VneObAk_23 → [-]
-✅ Заполнено: OKVED_85_VneObAk_22 → 82
-ℹ️ Отсутствующие данные: OKVED_85_VneObAk_23 → [-]
-✅ Заполнено: OKVED_85_VneObAk_22 → 82
-ℹ️ Отсутствующие данные: OKVED_85_VneObAk_23 → [-]
+ℹ️ Отсутствующие данные: OKVED_85_NemAk_22 → [-]
+ℹ️ Отсутствующие данные: OKVED_85_NemAk_23 → [-]
+✅ Заполнено: OKVED_85_OsnSr_22 → 82
+ℹ️ Отсутствующие данные: OKVED_85_OsnSr_23 → [-]
 ✅ Заполнено: OKVED_Q_VneObAk_22 → 18600
 ✅ Заполнено: OKVED_Q_VneObAk_23 → 85672
-✅ Заполнено: OKVED_Q_VneObAk_22 → 18600
-✅ Заполнено: OKVED_Q_VneObAk_23 → 85672
-✅ Заполнено: OKVED_Q_VneObAk_22 → 18600
-✅ Заполнено: OKVED_Q_VneObAk_23 → 85672
+ℹ️ Отсутствующие данные: OKVED_Q_NemAk_22 → [-]
+ℹ️ Отсутствующие данные: OKVED_Q_NemAk_23 → [-]
+✅ Заполнено: OKVED_Q_OsnSr_22 → 9027
+✅ Заполнено: OKVED_Q_OsnSr_23 → 73261
 ✅ Заполнено: OKVED_86_VneObAk_22 → 18501
 ✅ Заполнено: OKVED_86_VneObAk_23 → 85573
-✅ Заполнено: OKVED_86_VneObAk_22 → 18501
-✅ Заполнено: OKVED_86_VneObAk_23 → 85573
-✅ Заполнено: OKVED_86_VneObAk_22 → 18501
-✅ Заполнено: OKVED_86_VneObAk_23 → 85573
+ℹ️ Отсутствующие данные: OKVED_86_NemAk_22 → [-]
+ℹ️ Отсутствующие данные: OKVED_86_NemAk_23 → [-]
+✅ Заполнено: OKVED_86_OsnSr_22 → 8928
+✅ Заполнено: OKVED_86_OsnSr_23 → 73162
 ✅ Заполнено: OKVED_88_VneObAk_22 → 99
 ✅ Заполнено: OKVED_88_VneObAk_23 → 99
-✅ Заполнено: OKVED_88_VneObAk_22 → 99
-✅ Заполнено: OKVED_88_VneObAk_23 → 99
-✅ Заполнено: OKVED_88_VneObAk_22 → 99
-✅ Заполнено: OKVED_88_VneObAk_23 → 99
+ℹ️ Отсутствующие данные: OKVED_88_NemAk_22 → [-]
+ℹ️ Отсутствующие данные: OKVED_88_NemAk_23 → [-]
+✅ Заполнено: OKVED_88_OsnSr_22 → 99
+✅ Заполнено: OKVED_88_OsnSr_23 → 99
 ✅ Заполнено: OKVED_S_VneObAk_22 → 5021
 ✅ Заполнено: OKVED_S_VneObAk_23 → 3989
-✅ Заполнено: OKVED_S_VneObAk_22 → 5021
-✅ Заполнено: OKVED_S_VneObAk_23 → 3989
-✅ Заполнено: OKVED_S_VneObAk_22 → 5021
-✅ Заполнено: OKVED_S_VneObAk_23 → 3989
+✅ Заполнено: OKVED_S_NemAk_22 → 2
+ℹ️ Отсутствующие данные: OKVED_S_NemAk_23 → [-]
+✅ Заполнено: OKVED_S_OsnSr_22 → 5019
+✅ Заполнено: OKVED_S_OsnSr_23 → 3989
 ✅ Заполнено: OKVED_94_VneObAk_22 → 1821
 ✅ Заполнено: OKVED_94_VneObAk_23 → 1137
-✅ Заполнено: OKVED_94_VneObAk_22 → 1821
-✅ Заполнено: OKVED_94_VneObAk_23 → 1137
-✅ Заполнено: OKVED_94_VneObAk_22 → 1821
-✅ Заполнено: OKVED_94_VneObAk_23 → 1137
+✅ Заполнено: OKVED_94_NemAk_22 → 2
+ℹ️ Отсутствующие данные: OKVED_94_NemAk_23 → [-]
+✅ Заполнено: OKVED_94_OsnSr_22 → 1819
+✅ Заполнено: OKVED_94_OsnSr_23 → 1137
 ✅ Заполнено: OKVED_96_VneObAk_22 → 3200
 ✅ Заполнено: OKVED_96_VneObAk_23 → 2852
-✅ Заполнено: OKVED_96_VneObAk_22 → 3200
-✅ Заполнено: OKVED_96_VneObAk_23 → 2852
-✅ Заполнено: OKVED_96_VneObAk_22 → 3200
-✅ Заполнено: OKVED_96_VneObAk_23 → 2852
+ℹ️ Отсутствующие данные: OKVED_96_NemAk_22 → [-]
+ℹ️ Отсутствующие данные: OKVED_96_NemAk_23 → [-]
+✅ Заполнено: OKVED_96_OsnSr_22 → 3200
+✅ Заполнено: OKVED_96_OsnSr_23 → 2852
 ✅ Заполнено: OKVED_101_АГ_DolgFinVl_22 → 42697108
 ✅ Заполнено: OKVED_101_АГ_DolgFinVl_23 → 71556650
 ✅ Заполнено: OKVED_101_АГ_OtlNalogAK_22 → 12281457
@@ -1252,178 +1240,338 @@
 ✅ Заполнено: OKVED_70_OtlNalogAK_23 → 139132
 ✅ Заполнено: OKVED_70_PrVneObAk_22 → 312
 ✅ Заполнено: OKVED_70_PrVneObAk_23 → 95
-✅ Заполнено: OKVED_71_DolgFinVl_23 → 10
+✅ Заполнено: OKVED_71_DolgFinVl_22 → 10
 ✅ Заполнено: OKVED_71_DolgFinVl_23 → 10
 ✅ Заполнено: OKVED_71_OtlNalogAK_22 → 232746
 ✅ Заполнено: OKVED_71_OtlNalogAK_23 → 307221
 ℹ️ Отсутствующие данные: OKVED_71_PrVneObAk_22 → [-]
 ✅ Заполнено: OKVED_71_PrVneObAk_23 → 149
-ℹ️ Отсутствующие данные: OKVED_74_DolgFinVl_23 → [-]
+ℹ️ Отсутствующие данные: OKVED_74_DolgFinVl_22 → [-]
 ℹ️ Отсутствующие данные: OKVED_74_DolgFinVl_23 → [-]
 ℹ️ Отсутствующие данные: OKVED_74_OtlNalogAK_22 → [-]
 ℹ️ Отсутствующие данные: OKVED_74_OtlNalogAK_23 → [-]
 ✅ Заполнено: OKVED_74_PrVneObAk_22 → 279
 ✅ Заполнено: OKVED_74_PrVneObAk_23 → 199
-✅ Заполнено: OKVED_N_DolgFinVl_23 → 67600
+ℹ️ Отсутствующие данные: OKVED_N_DolgFinVl_22 → [-]
 ✅ Заполнено: OKVED_N_DolgFinVl_23 → 67600
 ✅ Заполнено: OKVED_N_OtlNalogAK_22 → 204108
 ✅ Заполнено: OKVED_N_OtlNalogAK_23 → 235058
 ✅ Заполнено: OKVED_N_PrVneObAk_22 → 1
 ✅ Заполнено: OKVED_N_PrVneObAk_23 → 23615
-✅ Заполнено: OKVED_77_DolgFinVl_23 → 67600
+ℹ️ Отсутствующие данные: OKVED_77_DolgFinVl_22 → [-]
 ✅ Заполнено: OKVED_77_DolgFinVl_23 → 67600
 ℹ️ Отсутствующие данные: OKVED_77_OtlNalogAK_22 → [-]
 ℹ️ Отсутствующие данные: OKVED_77_OtlNalogAK_23 → [-]
 ℹ️ Отсутствующие данные: OKVED_77_PrVneObAk_22 → [-]
 ℹ️ Отсутствующие данные: OKVED_77_PrVneObAk_23 → [-]
-ℹ️ Отсутствующие данные: OKVED_79_DolgFinVl_23 → [-]
+ℹ️ Отсутствующие данные: OKVED_79_DolgFinVl_22 → [-]
 ℹ️ Отсутствующие данные: OKVED_79_DolgFinVl_23 → [-]
 ✅ Заполнено: OKVED_79_OtlNalogAK_22 → 259
 ✅ Заполнено: OKVED_79_OtlNalogAK_23 → 1635
 ✅ Заполнено: OKVED_79_PrVneObAk_22 → 1
 ✅ Заполнено: OKVED_79_PrVneObAk_23 → 23615
-ℹ️ Отсутствующие данные: OKVED_81_DolgFinVl_23 → [-]
+ℹ️ Отсутствующие данные: OKVED_81_DolgFinVl_22 → [-]
 ℹ️ Отсутствующие данные: OKVED_81_DolgFinVl_23 → [-]
 ✅ Заполнено: OKVED_81_OtlNalogAK_22 → 203849
 ✅ Заполнено: OKVED_81_OtlNalogAK_23 → 233423
 ℹ️ Отсутствующие данные: OKVED_81_PrVneObAk_22 → [-]
 ℹ️ Отсутствующие данные: OKVED_81_PrVneObAk_23 → [-]
-ℹ️ Отсутствующие данные: OKVED_O_DolgFinVl_23 → [-]
+ℹ️ Отсутствующие данные: OKVED_O_DolgFinVl_22 → [-]
 ℹ️ Отсутствующие данные: OKVED_O_DolgFinVl_23 → [-]
 ℹ️ Отсутствующие данные: OKVED_O_OtlNalogAK_22 → [-]
 ℹ️ Отсутствующие данные: OKVED_O_OtlNalogAK_23 → [-]
 ℹ️ Отсутствующие данные: OKVED_O_PrVneObAk_22 → [-]
 ✅ Заполнено: OKVED_O_PrVneObAk_23 → 54119
-ℹ️ Отсутствующие данные: OKVED_84_DolgFinVl_23 → [-]
+ℹ️ Отсутствующие данные: OKVED_84_DolgFinVl_22 → [-]
 ℹ️ Отсутствующие данные: OKVED_84_DolgFinVl_23 → [-]
 ℹ️ Отсутствующие данные: OKVED_84_OtlNalogAK_22 → [-]
 ℹ️ Отсутствующие данные: OKVED_84_OtlNalogAK_23 → [-]
 ℹ️ Отсутствующие данные: OKVED_84_PrVneObAk_22 → [-]
 ✅ Заполнено: OKVED_84_PrVneObAk_23 → 54119
-ℹ️ Отсутствующие данные: OKVED_Q_DolgFinVl_23 → [-]
+ℹ️ Отсутствующие данные: OKVED_Q_DolgFinVl_22 → [-]
 ℹ️ Отсутствующие данные: OKVED_Q_DolgFinVl_23 → [-]
 ✅ Заполнено: OKVED_Q_OtlNalogAK_22 → 9573
 ✅ Заполнено: OKVED_Q_OtlNalogAK_23 → 12411
 ℹ️ Отсутствующие данные: OKVED_Q_PrVneObAk_22 → [-]
 ℹ️ Отсутствующие данные: OKVED_Q_PrVneObAk_23 → [-]
-ℹ️ Отсутствующие данные: OKVED_86_DolgFinVl_23 → [-]
+ℹ️ Отсутствующие данные: OKVED_86_DolgFinVl_22 → [-]
 ℹ️ Отсутствующие данные: OKVED_86_DolgFinVl_23 → [-]
 ✅ Заполнено: OKVED_86_OtlNalogAK_22 → 9573
 ✅ Заполнено: OKVED_86_OtlNalogAK_23 → 12411
 ℹ️ Отсутствующие данные: OKVED_86_PrVneObAk_22 → [-]
 ℹ️ Отсутствующие данные: OKVED_86_PrVneObAk_23 → [-]
-ℹ️ Отсутствующие данные: OKVED_101_АГ_ObAk → [-]
-ℹ️ Отсутствующие данные: OKVED_101_АГ_ObAk → [-]
-ℹ️ Отсутствующие данные: OKVED_A_ObAk → [-]
-ℹ️ Отсутствующие данные: OKVED_A_ObAk → [-]
-ℹ️ Отсутствующие данные: OKVED_01_ObAk → [-]
-ℹ️ Отсутствующие данные: OKVED_01_ObAk → [-]
-ℹ️ Отсутствующие данные: OKVED_03_ObAk → [-]
-ℹ️ Отсутствующие данные: OKVED_03_ObAk → [-]
-ℹ️ Отсутствующие данные: OKVED_B_ObAk → [-]
-ℹ️ Отсутствующие данные: OKVED_B_ObAk → [-]
-ℹ️ Отсутствующие данные: OKVED_07_ObAk → [-]
-ℹ️ Отсутствующие данные: OKVED_07_ObAk → [-]
-ℹ️ Отсутствующие данные: OKVED_C_ObAk → [-]
-ℹ️ Отсутствующие данные: OKVED_C_ObAk → [-]
-ℹ️ Отсутствующие данные: OKVED_10_ObAk → [-]
-ℹ️ Отсутствующие данные: OKVED_10_ObAk → [-]
-ℹ️ Отсутствующие данные: OKVED_11_ObAk → [-]
-ℹ️ Отсутствующие данные: OKVED_11_ObAk → [-]
-ℹ️ Отсутствующие данные: OKVED_32_ObAk → [-]
-ℹ️ Отсутствующие данные: OKVED_32_ObAk → [-]
-ℹ️ Отсутствующие данные: OKVED_33_ObAk → [-]
-ℹ️ Отсутствующие данные: OKVED_33_ObAk → [-]
-ℹ️ Отсутствующие данные: OKVED_35_ObAk → [-]
-ℹ️ Отсутствующие данные: OKVED_35_ObAk → [-]
-ℹ️ Отсутствующие данные: OKVED_35_ObAk → [-]
-ℹ️ Отсутствующие данные: OKVED_35_ObAk → [-]
-ℹ️ Отсутствующие данные: OKVED_E_ObAk → [-]
-ℹ️ Отсутствующие данные: OKVED_E_ObAk → [-]
-ℹ️ Отсутствующие данные: OKVED_36_ObAk → [-]
-ℹ️ Отсутствующие данные: OKVED_36_ObAk → [-]
-ℹ️ Отсутствующие данные: OKVED_38_ObAk → [-]
-ℹ️ Отсутствующие данные: OKVED_38_ObAk → [-]
-ℹ️ Отсутствующие данные: OKVED_F_ObAk → [-]
-ℹ️ Отсутствующие данные: OKVED_F_ObAk → [-]
-ℹ️ Отсутствующие данные: OKVED_41_ObAk → [-]
-ℹ️ Отсутствующие данные: OKVED_41_ObAk → [-]
-ℹ️ Отсутствующие данные: OKVED_42_ObAk → [-]
-ℹ️ Отсутствующие данные: OKVED_42_ObAk → [-]
-ℹ️ Отсутствующие данные: OKVED_43_ObAk → [-]
-ℹ️ Отсутствующие данные: OKVED_43_ObAk → [-]
-ℹ️ Отсутствующие данные: OKVED_G_ObAk → [-]
-ℹ️ Отсутствующие данные: OKVED_G_ObAk → [-]
-ℹ️ Отсутствующие данные: OKVED_46_ObAk → [-]
-ℹ️ Отсутствующие данные: OKVED_46_ObAk → [-]
-ℹ️ Отсутствующие данные: OKVED_47_ObAk → [-]
-ℹ️ Отсутствующие данные: OKVED_47_ObAk → [-]
-ℹ️ Отсутствующие данные: OKVED_H_ObAk → [-]
-ℹ️ Отсутствующие данные: OKVED_H_ObAk → [-]
-ℹ️ Отсутствующие данные: OKVED_50_ObAk → [-]
-ℹ️ Отсутствующие данные: OKVED_50_ObAk → [-]
-ℹ️ Отсутствующие данные: OKVED_51_ObAk → [-]
-ℹ️ Отсутствующие данные: OKVED_51_ObAk → [-]
-ℹ️ Отсутствующие данные: OKVED_52_ObAk → [-]
-ℹ️ Отсутствующие данные: OKVED_52_ObAk → [-]
-ℹ️ Отсутствующие данные: OKVED_I_ObAk → [-]
-ℹ️ Отсутствующие данные: OKVED_I_ObAk → [-]
-ℹ️ Отсутствующие данные: OKVED_55_ObAk → [-]
-ℹ️ Отсутствующие данные: OKVED_55_ObAk → [-]
-ℹ️ Отсутствующие данные: OKVED_K_ObAk → [-]
-ℹ️ Отсутствующие данные: OKVED_K_ObAk → [-]
-ℹ️ Отсутствующие данные: OKVED_64_ObAk → [-]
-ℹ️ Отсутствующие данные: OKVED_64_ObAk → [-]
-ℹ️ Отсутствующие данные: OKVED_L_ObAk → [-]
-ℹ️ Отсутствующие данные: OKVED_L_ObAk → [-]
-ℹ️ Отсутствующие данные: OKVED_68_ObAk → [-]
-ℹ️ Отсутствующие данные: OKVED_68_ObAk → [-]
-ℹ️ Отсутствующие данные: OKVED_M_ObAk → [-]
-ℹ️ Отсутствующие данные: OKVED_M_ObAk → [-]
-ℹ️ Отсутствующие данные: OKVED_69_ObAk → [-]
-ℹ️ Отсутствующие данные: OKVED_69_ObAk → [-]
-ℹ️ Отсутствующие данные: OKVED_70_ObAk → [-]
-ℹ️ Отсутствующие данные: OKVED_70_ObAk → [-]
-ℹ️ Отсутствующие данные: OKVED_71_ObAk → [-]
-ℹ️ Отсутствующие данные: OKVED_71_ObAk → [-]
-ℹ️ Отсутствующие данные: OKVED_74_ObAk → [-]
-ℹ️ Отсутствующие данные: OKVED_74_ObAk → [-]
-ℹ️ Отсутствующие данные: OKVED_N_ObAk → [-]
-ℹ️ Отсутствующие данные: OKVED_N_ObAk → [-]
-ℹ️ Отсутствующие данные: OKVED_77_ObAk → [-]
-ℹ️ Отсутствующие данные: OKVED_77_ObAk → [-]
-ℹ️ Отсутствующие данные: OKVED_79_ObAk → [-]
-ℹ️ Отсутствующие данные: OKVED_79_ObAk → [-]
-ℹ️ Отсутствующие данные: OKVED_81_ObAk → [-]
-ℹ️ Отсутствующие данные: OKVED_81_ObAk → [-]
-ℹ️ Отсутствующие данные: OKVED_82_ObAk → [-]
-ℹ️ Отсутствующие данные: OKVED_82_ObAk → [-]
-ℹ️ Отсутствующие данные: OKVED_O_ObAk → [-]
-ℹ️ Отсутствующие данные: OKVED_O_ObAk → [-]
-ℹ️ Отсутствующие данные: OKVED_84_ObAk → [-]
-ℹ️ Отсутствующие данные: OKVED_84_ObAk → [-]
-ℹ️ Отсутствующие данные: OKVED_85_ObAk → [-]
-ℹ️ Отсутствующие данные: OKVED_85_ObAk → [-]
-ℹ️ Отсутствующие данные: OKVED_85_ObAk → [-]
-ℹ️ Отсутствующие данные: OKVED_85_ObAk → [-]
-ℹ️ Отсутствующие данные: OKVED_Q_ObAk → [-]
-ℹ️ Отсутствующие данные: OKVED_Q_ObAk → [-]
-ℹ️ Отсутствующие данные: OKVED_86_ObAk → [-]
-ℹ️ Отсутствующие данные: OKVED_86_ObAk → [-]
-ℹ️ Отсутствующие данные: OKVED_R_ObAk → [-]
-ℹ️ Отсутствующие данные: OKVED_R_ObAk → [-]
-ℹ️ Отсутствующие данные: OKVED_93_ObAk → [-]
-ℹ️ Отсутствующие данные: OKVED_93_ObAk → [-]
-ℹ️ Отсутствующие данные: OKVED_S_ObAk → [-]
-ℹ️ Отсутствующие данные: OKVED_S_ObAk → [-]
-ℹ️ Отсутствующие данные: OKVED_94_ObAk → [-]
-ℹ️ Отсутствующие данные: OKVED_94_ObAk → [-]
-ℹ️ Отсутствующие данные: OKVED_96_ObAk → [-]
-ℹ️ Отсутствующие данные: OKVED_96_ObAk → [-]
+✅ Заполнено: OKVED_101_АГ_OborObAk → 221,7
+✅ Заполнено: OKVED_101_АГ_OborZap → 69,3
+✅ Заполнено: OKVED_101_АГ_OborKrZad → 68,1
+✅ Заполнено: OKVED_101_АГ_OborFinAk → 105,2
+✅ Заполнено: OKVED_101_АГ_OborDebZad → 79,9
+✅ Заполнено: OKVED_A_OborObAk → 249,2
+✅ Заполнено: OKVED_A_OborZap → 68,9
+✅ Заполнено: OKVED_A_OborKrZad → 52,4
+✅ Заполнено: OKVED_A_OborFinAk → 109,3
+✅ Заполнено: OKVED_A_OborDebZad → 75,5
+✅ Заполнено: OKVED_01_OborObAk → 237,0
+✅ Заполнено: OKVED_01_OborZap → 147,3
+✅ Заполнено: OKVED_01_OborKrZad → 53,8
+✅ Заполнено: OKVED_01_OborFinAk → 84,9
+✅ Заполнено: OKVED_01_OborDebZad → 76,8
+✅ Заполнено: OKVED_03_OborObAk → 249,1
+✅ Заполнено: OKVED_03_OborZap → 67,2
+✅ Заполнено: OKVED_03_OborKrZad → 52,4
+✅ Заполнено: OKVED_03_OborFinAk → 109,8
+✅ Заполнено: OKVED_03_OborDebZad → 75,5
+✅ Заполнено: OKVED_B_OborObAk → 326,1
+✅ Заполнено: OKVED_B_OborZap → 203,0
+✅ Заполнено: OKVED_B_OborKrZad → 33,4
+✅ Заполнено: OKVED_B_OborFinAk → 113,5
+✅ Заполнено: OKVED_B_OborDebZad → 93,8
+✅ Заполнено: OKVED_07_OborObAk → 326,1
+✅ Заполнено: OKVED_07_OborZap → 203,0
+✅ Заполнено: OKVED_07_OborKrZad → 33,4
+✅ Заполнено: OKVED_07_OborFinAk → 113,5
+✅ Заполнено: OKVED_07_OborDebZad → 93,8
+✅ Заполнено: OKVED_C_OborObAk → 267,1
+✅ Заполнено: OKVED_C_OborZap → 79,9
+✅ Заполнено: OKVED_C_OborKrZad → 84,0
+✅ Заполнено: OKVED_C_OborFinAk → 145,8
+✅ Заполнено: OKVED_C_OborDebZad → 84,1
+✅ Заполнено: OKVED_10_OborObAk → 220,4
+✅ Заполнено: OKVED_10_OborZap → 68,4
+✅ Заполнено: OKVED_10_OborKrZad → 51,8
+✅ Заполнено: OKVED_10_OborFinAk → 111,9
+✅ Заполнено: OKVED_10_OborDebZad → 82,3
+✅ Заполнено: OKVED_11_OborObAk → 271,7
+✅ Заполнено: OKVED_11_OborZap → 100,2
+✅ Заполнено: OKVED_11_OborKrZad → 27,8
+✅ Заполнено: OKVED_11_OborFinAk → 86,4
+✅ Заполнено: OKVED_11_OborDebZad → 72,7
+✅ Заполнено: OKVED_32_OborObAk → 77,7
+✅ Заполнено: OKVED_32_OborZap → 65,2
+✅ Заполнено: OKVED_32_OborKrZad → 56,8
+✅ Заполнено: OKVED_32_OborFinAk → 8,3
+✅ Заполнено: OKVED_32_OborDebZad → 8,1
+✅ Заполнено: OKVED_33_OborObAk → 765,3
+✅ Заполнено: OKVED_33_OborZap → 172,9
+✅ Заполнено: OKVED_33_OborKrZad → 459,4
+✅ Заполнено: OKVED_33_OborFinAk → 545,6
+✅ Заполнено: OKVED_33_OborDebZad → 110,8
+✅ Заполнено: OKVED_35_OborObAk → 176,9
+✅ Заполнено: OKVED_35_OborZap → 54,7
+✅ Заполнено: OKVED_35_OborKrZad → 68,9
+✅ Заполнено: OKVED_35_OborFinAk → 89,4
+✅ Заполнено: OKVED_35_OborDebZad → 78,2
+✅ Заполнено: OKVED_35_OborObAk → 176,9
+✅ Заполнено: OKVED_35_OborZap → 54,7
+✅ Заполнено: OKVED_35_OborKrZad → 68,9
+✅ Заполнено: OKVED_35_OborFinAk → 89,4
+✅ Заполнено: OKVED_35_OborDebZad → 78,2
+✅ Заполнено: OKVED_E_OborObAk → 174,0
+✅ Заполнено: OKVED_E_OborZap → 57,1
+✅ Заполнено: OKVED_E_OborKrZad → 96,0
+✅ Заполнено: OKVED_E_OborFinAk → 100,6
+✅ Заполнено: OKVED_E_OborDebZad → 97,8
+✅ Заполнено: OKVED_36_OborObAk → 196,1
+✅ Заполнено: OKVED_36_OborZap → 72,3
+✅ Заполнено: OKVED_36_OborKrZad → 112,9
+✅ Заполнено: OKVED_36_OborFinAk → 104,1
+✅ Заполнено: OKVED_36_OborDebZad → 100,8
+✅ Заполнено: OKVED_38_OborObAk → 104,5
+✅ Заполнено: OKVED_38_OborZap → 11,1
+✅ Заполнено: OKVED_38_OborKrZad → 38,8
+✅ Заполнено: OKVED_38_OborFinAk → 88,8
+✅ Заполнено: OKVED_38_OborDebZad → 87,6
+✅ Заполнено: OKVED_F_OborObAk → 514,6
+✅ Заполнено: OKVED_F_OborZap → 255,3
+✅ Заполнено: OKVED_F_OborKrZad → 464,9
+✅ Заполнено: OKVED_F_OborFinAk → 165,7
+✅ Заполнено: OKVED_F_OborDebZad → 138,7
+✅ Заполнено: OKVED_41_OborObAk → 605,1
+✅ Заполнено: OKVED_41_OborZap → 342,5
+✅ Заполнено: OKVED_41_OborKrZad → 541,9
+✅ Заполнено: OKVED_41_OborFinAk → 190,9
+✅ Заполнено: OKVED_41_OborDebZad → 168,8
+✅ Заполнено: OKVED_42_OborObAk → 351,0
+✅ Заполнено: OKVED_42_OborZap → 99,8
+✅ Заполнено: OKVED_42_OborKrZad → 315,1
+✅ Заполнено: OKVED_42_OborFinAk → 116,3
+✅ Заполнено: OKVED_42_OborDebZad → 81,9
+✅ Заполнено: OKVED_43_OborObAk → 7069,8
+✅ Заполнено: OKVED_43_OborZap → 5400,4
+✅ Заполнено: OKVED_43_OborKrZad → 4034,7
+✅ Заполнено: OKVED_43_OborFinAk → 1669,2
+✅ Заполнено: OKVED_43_OborDebZad → 232,0
+✅ Заполнено: OKVED_G_OborObAk → 105,7
+✅ Заполнено: OKVED_G_OborZap → 23,5
+✅ Заполнено: OKVED_G_OborKrZad → 52,0
+✅ Заполнено: OKVED_G_OborFinAk → 79,4
+✅ Заполнено: OKVED_G_OborDebZad → 70,5
+✅ Заполнено: OKVED_46_OborObAk → 114,5
+✅ Заполнено: OKVED_46_OborZap → 21,8
+✅ Заполнено: OKVED_46_OborKrZad → 51,1
+✅ Заполнено: OKVED_46_OborFinAk → 90,8
+✅ Заполнено: OKVED_46_OborDebZad → 80,5
+✅ Заполнено: OKVED_47_OborObAk → 53,7
+✅ Заполнено: OKVED_47_OborZap → 32,7
+✅ Заполнено: OKVED_47_OborKrZad → 57,9
+✅ Заполнено: OKVED_47_OborFinAk → 13,0
+✅ Заполнено: OKVED_47_OborDebZad → 11,6
+✅ Заполнено: OKVED_H_OborObAk → 121,3
+✅ Заполнено: OKVED_H_OborZap → 20,3
+✅ Заполнено: OKVED_H_OborKrZad → 42,0
+✅ Заполнено: OKVED_H_OborFinAk → 56,9
+✅ Заполнено: OKVED_H_OborDebZad → 54,6
+✅ Заполнено: OKVED_50_OborObAk → 97,1
+✅ Заполнено: OKVED_50_OborZap → 23,5
+✅ Заполнено: OKVED_50_OborKrZad → 129,5
+✅ Заполнено: OKVED_50_OborFinAk → 72,5
+✅ Заполнено: OKVED_50_OborDebZad → 71,0
+✅ Заполнено: OKVED_51_OborObAk → 86,8
+✅ Заполнено: OKVED_51_OborZap → 23,5
+✅ Заполнено: OKVED_51_OborKrZad → 14,5
+✅ Заполнено: OKVED_51_OborFinAk → 44,5
+✅ Заполнено: OKVED_51_OborDebZad → 39,2
+✅ Заполнено: OKVED_52_OborObAk → 134,4
+✅ Заполнено: OKVED_52_OborZap → 19,1
+✅ Заполнено: OKVED_52_OborKrZad → 33,9
+✅ Заполнено: OKVED_52_OborFinAk → 58,5
+✅ Заполнено: OKVED_52_OborDebZad → 56,9
+✅ Заполнено: OKVED_I_OborObAk → 556,3
+✅ Заполнено: OKVED_I_OborZap → 51,2
+✅ Заполнено: OKVED_I_OborKrZad → 213,0
+✅ Заполнено: OKVED_I_OborFinAk → 328,5
+✅ Заполнено: OKVED_I_OborDebZad → 212,3
+✅ Заполнено: OKVED_55_OborObAk → 556,3
+✅ Заполнено: OKVED_55_OborZap → 51,2
+✅ Заполнено: OKVED_55_OborKrZad → 213,0
+✅ Заполнено: OKVED_55_OborFinAk → 328,5
+✅ Заполнено: OKVED_55_OborDebZad → 212,3
+✅ Заполнено: OKVED_K_OborObAk → 297,0
+✅ Заполнено: OKVED_K_OborZap → 3,7
+✅ Заполнено: OKVED_K_OborKrZad → 57,8
+✅ Заполнено: OKVED_K_OborFinAk → 126,6
+✅ Заполнено: OKVED_K_OborDebZad → 75,8
+✅ Заполнено: OKVED_64_OborObAk → 297,0
+✅ Заполнено: OKVED_64_OborZap → 3,7
+✅ Заполнено: OKVED_64_OborKrZad → 57,8
+✅ Заполнено: OKVED_64_OborFinAk → 126,6
+✅ Заполнено: OKVED_64_OborDebZad → 75,8
+✅ Заполнено: OKVED_L_OborObAk → 170,0
+✅ Заполнено: OKVED_L_OborZap → 7,9
+✅ Заполнено: OKVED_L_OborKrZad → 297,2
+✅ Заполнено: OKVED_L_OborFinAk → 123,0
+✅ Заполнено: OKVED_L_OborDebZad → 81,9
+✅ Заполнено: OKVED_68_OborObAk → 170,0
+✅ Заполнено: OKVED_68_OborZap → 7,9
+✅ Заполнено: OKVED_68_OborKrZad → 297,2
+✅ Заполнено: OKVED_68_OborFinAk → 123,0
+✅ Заполнено: OKVED_68_OborDebZad → 81,9
+✅ Заполнено: OKVED_M_OborObAk → 815,9
+✅ Заполнено: OKVED_M_OborZap → 158,6
+✅ Заполнено: OKVED_M_OborKrZad → 69,3
+✅ Заполнено: OKVED_M_OborFinAk → 419,8
+✅ Заполнено: OKVED_M_OborDebZad → 388,5
+✅ Заполнено: OKVED_69_OborObAk → 1470,2
+✅ Заполнено: OKVED_69_OborZap → 3,4
+✅ Заполнено: OKVED_69_OborKrZad → 295,3
+✅ Заполнено: OKVED_69_OborFinAk → 1261,7
+✅ Заполнено: OKVED_69_OborDebZad → 1259,5
+✅ Заполнено: OKVED_70_OborObAk → 866,9
+✅ Заполнено: OKVED_70_OborZap → 174,9
+✅ Заполнено: OKVED_70_OborKrZad → 63,3
+✅ Заполнено: OKVED_70_OborFinAk → 424,1
+✅ Заполнено: OKVED_70_OborDebZad → 423,9
+✅ Заполнено: OKVED_71_OborObAk → 587,1
+✅ Заполнено: OKVED_71_OborZap → 161,1
+✅ Заполнено: OKVED_71_OborKrZad → 103,8
+✅ Заполнено: OKVED_71_OborFinAk → 390,1
+✅ Заполнено: OKVED_71_OborDebZad → 136,4
+✅ Заполнено: OKVED_74_OborObAk → 22,7
+✅ Заполнено: OKVED_74_OborZap → 4,1
+✅ Заполнено: OKVED_74_OborKrZad → 103,2
+✅ Заполнено: OKVED_74_OborFinAk → 18,0
+✅ Заполнено: OKVED_74_OborDebZad → 16,7
+✅ Заполнено: OKVED_N_OborObAk → 118,8
+✅ Заполнено: OKVED_N_OborZap → 49,1
+✅ Заполнено: OKVED_N_OborKrZad → 189,1
+✅ Заполнено: OKVED_N_OborFinAk → 55,0
+✅ Заполнено: OKVED_N_OborDebZad → 32,7
+✅ Заполнено: OKVED_77_OborObAk → 2913,2
+✅ Заполнено: OKVED_77_OborZap → 0,0
+✅ Заполнено: OKVED_77_OborKrZad → 16,4
+✅ Заполнено: OKVED_77_OborFinAk → 2210,5
+✅ Заполнено: OKVED_77_OborDebZad → 520,9
+✅ Заполнено: OKVED_79_OborObAk → 17456,1
+✅ Заполнено: OKVED_79_OborZap → 359,4
+✅ Заполнено: OKVED_79_OborKrZad → 13277,8
+✅ Заполнено: OKVED_79_OborFinAk → 16808,9
+✅ Заполнено: OKVED_79_OborDebZad → 16737,6
+✅ Заполнено: OKVED_81_OborObAk → 91,1
+✅ Заполнено: OKVED_81_OborZap → 49,2
+✅ Заполнено: OKVED_81_OborKrZad → 189,4
+✅ Заполнено: OKVED_81_OborFinAk → 32,9
+✅ Заполнено: OKVED_81_OborDebZad → 24,5
+✅ Заполнено: OKVED_82_OborObAk → 34,9
+✅ Заполнено: OKVED_82_OborZap → 8,8
+✅ Заполнено: OKVED_82_OborKrZad → 14,1
+✅ Заполнено: OKVED_82_OborFinAk → 9,9
+✅ Заполнено: OKVED_82_OborDebZad → 9,9
+✅ Заполнено: OKVED_O_OborObAk → 493,1
+✅ Заполнено: OKVED_O_OborZap → 478,5
+✅ Заполнено: OKVED_O_OborKrZad → 3,6
+✅ Заполнено: OKVED_O_OborFinAk → 4,2
+✅ Заполнено: OKVED_O_OborDebZad → 0,8
+✅ Заполнено: OKVED_84_OborObAk → 493,1
+✅ Заполнено: OKVED_84_OborZap → 478,5
+✅ Заполнено: OKVED_84_OborKrZad → 3,6
+✅ Заполнено: OKVED_84_OborFinAk → 4,2
+✅ Заполнено: OKVED_84_OborDebZad → 0,8
+✅ Заполнено: OKVED_85_OborObAk → 79,2
+✅ Заполнено: OKVED_85_OborZap → 59,6
+✅ Заполнено: OKVED_85_OborKrZad → 35,1
+✅ Заполнено: OKVED_85_OborFinAk → 13,8
+✅ Заполнено: OKVED_85_OborDebZad → 13,8
+✅ Заполнено: OKVED_85_OborObAk → 79,2
+✅ Заполнено: OKVED_85_OborZap → 59,6
+✅ Заполнено: OKVED_85_OborKrZad → 35,1
+✅ Заполнено: OKVED_85_OborFinAk → 13,8
+✅ Заполнено: OKVED_85_OborDebZad → 13,8
+✅ Заполнено: OKVED_Q_OborObAk → 274,3
+✅ Заполнено: OKVED_Q_OborZap → 3,6
+✅ Заполнено: OKVED_Q_OborKrZad → 31,3
+✅ Заполнено: OKVED_Q_OborFinAk → 179,7
+✅ Заполнено: OKVED_Q_OborDebZad → 179,7
+✅ Заполнено: OKVED_86_OborObAk → 271,3
+✅ Заполнено: OKVED_86_OborZap → 3,6
+✅ Заполнено: OKVED_86_OborKrZad → 30,4
+✅ Заполнено: OKVED_86_OborFinAk → 179,2
+✅ Заполнено: OKVED_86_OborDebZad → 179,1
+✅ Заполнено: OKVED_R_OborObAk → 75,9
+✅ Заполнено: OKVED_R_OborZap → 0,0
+ℹ️ Отсутствующие данные: OKVED_R_OborKrZad → [-]
+✅ Заполнено: OKVED_R_OborFinAk → 27,4
+✅ Заполнено: OKVED_R_OborDebZad → 27,4
+✅ Заполнено: OKVED_93_OborObAk → 75,9
+✅ Заполнено: OKVED_93_OborZap → 0,0
+ℹ️ Отсутствующие данные: OKVED_93_OborKrZad → [-]
+✅ Заполнено: OKVED_93_OborFinAk → 27,4
+✅ Заполнено: OKVED_93_OborDebZad → 27,4
+✅ Заполнено: OKVED_S_OborObAk → 8880,1
+✅ Заполнено: OKVED_S_OborZap → 11,8
+✅ Заполнено: OKVED_S_OborKrZad → 341,3
+✅ Заполнено: OKVED_S_OborFinAk → 954,1
+✅ Заполнено: OKVED_S_OborDebZad → 352,1
+✅ Заполнено: OKVED_94_OborObAk → 18047,6
+✅ Заполнено: OKVED_94_OborZap → 54,4
+✅ Заполнено: OKVED_94_OborKrZad → 133,1
+✅ Заполнено: OKVED_94_OborFinAk → 1409,1
+✅ Заполнено: OKVED_94_OborDebZad → 152,2
+✅ Заполнено: OKVED_96_OborObAk → 546,7
+✅ Заполнено: OKVED_96_OborZap → 6,1
+✅ Заполнено: OKVED_96_OborKrZad → 531,3
+✅ Заполнено: OKVED_96_OborFinAk → 538,8
+✅ Заполнено: OKVED_96_OborDebZad → 534,7
 ✅ Заполнено: OKVED_101_АГ_ZaimKrDl_22 → 170828774
 ✅ Заполнено: OKVED_101_АГ_ZaimKrDl_23 → 253197746
-✅ Заполнено: OKVED_101_АГ_OtlNalOb_22 → 7710718
-✅ Заполнено: OKVED_101_АГ_OtlNalOb_23 → 10101880
 ✅ Заполнено: OKVED_101_АГ_OtlNalOb_22 → 7710718
 ✅ Заполнено: OKVED_101_АГ_OtlNalOb_23 → 10101880
 ✅ Заполнено: OKVED_101_АГ_PrDlOb_22 → 22471571
@@ -1432,14 +1580,10 @@
 ✅ Заполнено: OKVED_A_ZaimKrDl_23 → 150731891
 ✅ Заполнено: OKVED_A_OtlNalOb_22 → 2442594
 ✅ Заполнено: OKVED_A_OtlNalOb_23 → 2976277
-✅ Заполнено: OKVED_A_OtlNalOb_22 → 2442594
-✅ Заполнено: OKVED_A_OtlNalOb_23 → 2976277
 ✅ Заполнено: OKVED_A_PrDlOb_22 → 6528614
 ✅ Заполнено: OKVED_A_PrDlOb_23 → 6663871
 ✅ Заполнено: OKVED_01_ZaimKrDl_22 → 1063644
 ✅ Заполнено: OKVED_01_ZaimKrDl_23 → 1161379
-✅ Заполнено: OKVED_01_OtlNalOb_22 → 7169
-ℹ️ Отсутствующие данные: OKVED_01_OtlNalOb_23 → [-]
 ✅ Заполнено: OKVED_01_OtlNalOb_22 → 7169
 ℹ️ Отсутствующие данные: OKVED_01_OtlNalOb_23 → [-]
 ✅ Заполнено: OKVED_01_PrDlOb_22 → 366146
@@ -1448,14 +1592,10 @@
 ✅ Заполнено: OKVED_03_ZaimKrDl_23 → 149570512
 ✅ Заполнено: OKVED_03_OtlNalOb_22 → 2435425
 ✅ Заполнено: OKVED_03_OtlNalOb_23 → 2976277
-✅ Заполнено: OKVED_03_OtlNalOb_22 → 2435425
-✅ Заполнено: OKVED_03_OtlNalOb_23 → 2976277
 ✅ Заполнено: OKVED_03_PrDlOb_22 → 6162468
 ✅ Заполнено: OKVED_03_PrDlOb_23 → 6452960
 ✅ Заполнено: OKVED_B_ZaimKrDl_22 → 51233354
 ✅ Заполнено: OKVED_B_ZaimKrDl_23 → 56447650
-✅ Заполнено: OKVED_B_OtlNalOb_22 → 2827920
-✅ Заполнено: OKVED_B_OtlNalOb_23 → 3902712
 ✅ Заполнено: OKVED_B_OtlNalOb_22 → 2827920
 ✅ Заполнено: OKVED_B_OtlNalOb_23 → 3902712
 ✅ Заполнено: OKVED_B_PrDlOb_22 → 837413
@@ -1464,14 +1604,10 @@
 ✅ Заполнено: OKVED_07_ZaimKrDl_23 → 56447650
 ✅ Заполнено: OKVED_07_OtlNalOb_22 → 2827920
 ✅ Заполнено: OKVED_07_OtlNalOb_23 → 3902712
-✅ Заполнено: OKVED_07_OtlNalOb_22 → 2827920
-✅ Заполнено: OKVED_07_OtlNalOb_23 → 3902712
 ✅ Заполнено: OKVED_07_PrDlOb_22 → 837413
 ✅ Заполнено: OKVED_07_PrDlOb_23 → 788323
 ✅ Заполнено: OKVED_C_ZaimKrDl_22 → 3697208
 ✅ Заполнено: OKVED_C_ZaimKrDl_23 → 4255954
-✅ Заполнено: OKVED_C_OtlNalOb_22 → 340077
-✅ Заполнено: OKVED_C_OtlNalOb_23 → 326597
 ✅ Заполнено: OKVED_C_OtlNalOb_22 → 340077
 ✅ Заполнено: OKVED_C_OtlNalOb_23 → 326597
 ✅ Заполнено: OKVED_C_PrDlOb_22 → 358489
@@ -1480,14 +1616,10 @@
 ✅ Заполнено: OKVED_10_ZaimKrDl_23 → 3693954
 ✅ Заполнено: OKVED_10_OtlNalOb_22 → 122314
 ✅ Заполнено: OKVED_10_OtlNalOb_23 → 132004
-✅ Заполнено: OKVED_10_OtlNalOb_22 → 122314
-✅ Заполнено: OKVED_10_OtlNalOb_23 → 132004
 ✅ Заполнено: OKVED_10_PrDlOb_22 → 284183
 ✅ Заполнено: OKVED_10_PrDlOb_23 → 404814
 ℹ️ Отсутствующие данные: OKVED_11_ZaimKrDl_22 → [-]
 ℹ️ Отсутствующие данные: OKVED_11_ZaimKrDl_23 → [-]
-✅ Заполнено: OKVED_11_OtlNalOb_22 → 928
-✅ Заполнено: OKVED_11_OtlNalOb_23 → 543
 ✅ Заполнено: OKVED_11_OtlNalOb_22 → 928
 ✅ Заполнено: OKVED_11_OtlNalOb_23 → 543
 ℹ️ Отсутствующие данные: OKVED_11_PrDlOb_22 → [-]
@@ -1496,22 +1628,16 @@
 ✅ Заполнено: OKVED_33_ZaimKrDl_23 → 562000
 ✅ Заполнено: OKVED_33_OtlNalOb_22 → 216835
 ✅ Заполнено: OKVED_33_OtlNalOb_23 → 194050
-✅ Заполнено: OKVED_33_OtlNalOb_22 → 216835
-✅ Заполнено: OKVED_33_OtlNalOb_23 → 194050
 ✅ Заполнено: OKVED_33_PrDlOb_22 → 74306
 ✅ Заполнено: OKVED_33_PrDlOb_23 → 2421024
 ✅ Заполнено: OKVED_35_ZaimKrDl_22 → 5899590
 ✅ Заполнено: OKVED_35_ZaimKrDl_23 → 10066848
 ✅ Заполнено: OKVED_35_OtlNalOb_22 → 993603
 ✅ Заполнено: OKVED_35_OtlNalOb_23 → 1162546
-✅ Заполнено: OKVED_35_OtlNalOb_22 → 993603
-✅ Заполнено: OKVED_35_OtlNalOb_23 → 1162546
 ✅ Заполнено: OKVED_35_PrDlOb_22 → 8468619
 ✅ Заполнено: OKVED_35_PrDlOb_23 → 8083251
 ✅ Заполнено: OKVED_35_ZaimKrDl_22 → 5899590
 ✅ Заполнено: OKVED_35_ZaimKrDl_23 → 10066848
-✅ Заполнено: OKVED_35_OtlNalOb_22 → 993603
-✅ Заполнено: OKVED_35_OtlNalOb_23 → 1162546
 ✅ Заполнено: OKVED_35_OtlNalOb_22 → 993603
 ✅ Заполнено: OKVED_35_OtlNalOb_23 → 1162546
 ✅ Заполнено: OKVED_35_PrDlOb_22 → 8468619
@@ -1520,14 +1646,10 @@
 ✅ Заполнено: OKVED_E_ZaimKrDl_23 → 34100
 ✅ Заполнено: OKVED_E_OtlNalOb_22 → 36135
 ✅ Заполнено: OKVED_E_OtlNalOb_23 → 52691
-✅ Заполнено: OKVED_E_OtlNalOb_22 → 36135
-✅ Заполнено: OKVED_E_OtlNalOb_23 → 52691
 ✅ Заполнено: OKVED_E_PrDlOb_22 → 2194681
 ✅ Заполнено: OKVED_E_PrDlOb_23 → 2663423
 ✅ Заполнено: OKVED_36_ZaimKrDl_22 → 103818
 ℹ️ Отсутствующие данные: OKVED_36_ZaimKrDl_23 → [-]
-✅ Заполнено: OKVED_36_OtlNalOb_22 → 36135
-✅ Заполнено: OKVED_36_OtlNalOb_23 → 52691
 ✅ Заполнено: OKVED_36_OtlNalOb_22 → 36135
 ✅ Заполнено: OKVED_36_OtlNalOb_23 → 52691
 ✅ Заполнено: OKVED_36_PrDlOb_22 → 2193644
@@ -1536,14 +1658,10 @@
 ✅ Заполнено: OKVED_38_ZaimKrDl_23 → 34100
 ℹ️ Отсутствующие данные: OKVED_38_OtlNalOb_22 → [-]
 ℹ️ Отсутствующие данные: OKVED_38_OtlNalOb_23 → [-]
-ℹ️ Отсутствующие данные: OKVED_38_OtlNalOb_22 → [-]
-ℹ️ Отсутствующие данные: OKVED_38_OtlNalOb_23 → [-]
 ✅ Заполнено: OKVED_38_PrDlOb_22 → 1037
 ✅ Заполнено: OKVED_38_PrDlOb_23 → 5213
 ℹ️ Отсутствующие данные: OKVED_F_ZaimKrDl_22 → [-]
 ✅ Заполнено: OKVED_F_ZaimKrDl_23 → 199907
-✅ Заполнено: OKVED_F_OtlNalOb_22 → 259674
-✅ Заполнено: OKVED_F_OtlNalOb_23 → 658665
 ✅ Заполнено: OKVED_F_OtlNalOb_22 → 259674
 ✅ Заполнено: OKVED_F_OtlNalOb_23 → 658665
 ✅ Заполнено: OKVED_F_PrDlOb_22 → 600917
@@ -1552,14 +1670,10 @@
 ℹ️ Отсутствующие данные: OKVED_41_ZaimKrDl_23 → [-]
 ✅ Заполнено: OKVED_41_OtlNalOb_22 → 121754
 ✅ Заполнено: OKVED_41_OtlNalOb_23 → 240653
-✅ Заполнено: OKVED_41_OtlNalOb_22 → 121754
-✅ Заполнено: OKVED_41_OtlNalOb_23 → 240653
 ✅ Заполнено: OKVED_41_PrDlOb_22 → 505279
 ✅ Заполнено: OKVED_41_PrDlOb_23 → 185397
 ℹ️ Отсутствующие данные: OKVED_42_ZaimKrDl_22 → [-]
 ✅ Заполнено: OKVED_42_ZaimKrDl_23 → 199800
-✅ Заполнено: OKVED_42_OtlNalOb_22 → 137920
-✅ Заполнено: OKVED_42_OtlNalOb_23 → 417857
 ✅ Заполнено: OKVED_42_OtlNalOb_22 → 137920
 ✅ Заполнено: OKVED_42_OtlNalOb_23 → 417857
 ✅ Заполнено: OKVED_42_PrDlOb_22 → 95638
@@ -1568,14 +1682,10 @@
 ✅ Заполнено: OKVED_43_ZaimKrDl_23 → 107
 ℹ️ Отсутствующие данные: OKVED_43_OtlNalOb_22 → [-]
 ✅ Заполнено: OKVED_43_OtlNalOb_23 → 155
-ℹ️ Отсутствующие данные: OKVED_43_OtlNalOb_22 → [-]
-✅ Заполнено: OKVED_43_OtlNalOb_23 → 155
 ℹ️ Отсутствующие данные: OKVED_43_PrDlOb_22 → [-]
 ℹ️ Отсутствующие данные: OKVED_43_PrDlOb_23 → [-]
 ✅ Заполнено: OKVED_G_ZaimKrDl_22 → 5448012
 ✅ Заполнено: OKVED_G_ZaimKrDl_23 → 7350580
-✅ Заполнено: OKVED_G_OtlNalOb_22 → 49671
-✅ Заполнено: OKVED_G_OtlNalOb_23 → 46029
 ✅ Заполнено: OKVED_G_OtlNalOb_22 → 49671
 ✅ Заполнено: OKVED_G_OtlNalOb_23 → 46029
 ✅ Заполнено: OKVED_G_PrDlOb_22 → 1709015
@@ -1584,14 +1694,10 @@
 ✅ Заполнено: OKVED_46_ZaimKrDl_23 → 7283359
 ✅ Заполнено: OKVED_46_OtlNalOb_22 → 49153
 ✅ Заполнено: OKVED_46_OtlNalOb_23 → 45736
-✅ Заполнено: OKVED_46_OtlNalOb_22 → 49153
-✅ Заполнено: OKVED_46_OtlNalOb_23 → 45736
 ✅ Заполнено: OKVED_46_PrDlOb_22 → 447769
 ✅ Заполнено: OKVED_46_PrDlOb_23 → 422573
 ✅ Заполнено: OKVED_47_ZaimKrDl_22 → 54340
 ✅ Заполнено: OKVED_47_ZaimKrDl_23 → 67221
-✅ Заполнено: OKVED_47_OtlNalOb_22 → 518
-✅ Заполнено: OKVED_47_OtlNalOb_23 → 293
 ✅ Заполнено: OKVED_47_OtlNalOb_22 → 518
 ✅ Заполнено: OKVED_47_OtlNalOb_23 → 293
 ✅ Заполнено: OKVED_47_PrDlOb_22 → 1261246
@@ -1600,14 +1706,10 @@
 ✅ Заполнено: OKVED_H_ZaimKrDl_23 → 15219005
 ✅ Заполнено: OKVED_H_OtlNalOb_22 → 426684
 ✅ Заполнено: OKVED_H_OtlNalOb_23 → 581558
-✅ Заполнено: OKVED_H_OtlNalOb_22 → 426684
-✅ Заполнено: OKVED_H_OtlNalOb_23 → 581558
 ✅ Заполнено: OKVED_H_PrDlOb_22 → 1753976
 ✅ Заполнено: OKVED_H_PrDlOb_23 → 2448956
 ℹ️ Отсутствующие данные: OKVED_49_ZaimKrDl_22 → [-]
 ℹ️ Отсутствующие данные: OKVED_49_ZaimKrDl_23 → [-]
-ℹ️ Отсутствующие данные: OKVED_49_OtlNalOb_22 → [-]
-✅ Заполнено: OKVED_49_OtlNalOb_23 → 9
 ℹ️ Отсутствующие данные: OKVED_49_OtlNalOb_22 → [-]
 ✅ Заполнено: OKVED_49_OtlNalOb_23 → 9
 ✅ Заполнено: OKVED_49_PrDlOb_22 → 71741
@@ -1616,14 +1718,10 @@
 ✅ Заполнено: OKVED_50_ZaimKrDl_23 → 1204900
 ✅ Заполнено: OKVED_50_OtlNalOb_22 → 6973
 ✅ Заполнено: OKVED_50_OtlNalOb_23 → 7517
-✅ Заполнено: OKVED_50_OtlNalOb_22 → 6973
-✅ Заполнено: OKVED_50_OtlNalOb_23 → 7517
 ✅ Заполнено: OKVED_50_PrDlOb_22 → 582213
 ✅ Заполнено: OKVED_50_PrDlOb_23 → 545973
 ✅ Заполнено: OKVED_51_ZaimKrDl_22 → 621585
 ✅ Заполнено: OKVED_51_ZaimKrDl_23 → 568729
-✅ Заполнено: OKVED_51_OtlNalOb_22 → 61246
-✅ Заполнено: OKVED_51_OtlNalOb_23 → 108064
 ✅ Заполнено: OKVED_51_OtlNalOb_22 → 61246
 ✅ Заполнено: OKVED_51_OtlNalOb_23 → 108064
 ✅ Заполнено: OKVED_51_PrDlOb_22 → 706908
@@ -1632,14 +1730,10 @@
 ✅ Заполнено: OKVED_52_ZaimKrDl_23 → 13445376
 ✅ Заполнено: OKVED_52_OtlNalOb_22 → 358465
 ✅ Заполнено: OKVED_52_OtlNalOb_23 → 465968
-✅ Заполнено: OKVED_52_OtlNalOb_22 → 358465
-✅ Заполнено: OKVED_52_OtlNalOb_23 → 465968
 ✅ Заполнено: OKVED_52_PrDlOb_22 → 393114
 ✅ Заполнено: OKVED_52_PrDlOb_23 → 733294
 ✅ Заполнено: OKVED_I_ZaimKrDl_22 → 3000643
 ✅ Заполнено: OKVED_I_ZaimKrDl_23 → 4061109
-✅ Заполнено: OKVED_I_OtlNalOb_22 → 12541
-✅ Заполнено: OKVED_I_OtlNalOb_23 → 12944
 ✅ Заполнено: OKVED_I_OtlNalOb_22 → 12541
 ✅ Заполнено: OKVED_I_OtlNalOb_23 → 12944
 ✅ Заполнено: OKVED_I_PrDlOb_22 → 14459
@@ -1648,102 +1742,76 @@
 ✅ Заполнено: OKVED_55_ZaimKrDl_23 → 4061109
 ✅ Заполнено: OKVED_55_OtlNalOb_22 → 12541
 ✅ Заполнено: OKVED_55_OtlNalOb_23 → 12944
-✅ Заполнено: OKVED_55_OtlNalOb_22 → 12541
-✅ Заполнено: OKVED_55_OtlNalOb_23 → 12944
 ✅ Заполнено: OKVED_55_PrDlOb_22 → 14459
 ✅ Заполнено: OKVED_55_PrDlOb_23 → 32228
+✅ Заполнено: OKVED_K_ZaimKrDl_22 → 7389330
 ✅ Заполнено: OKVED_K_ZaimKrDl_23 → 2344399
-✅ Заполнено: OKVED_K_ZaimKrDl_23 → 2344399
-✅ Заполнено: OKVED_K_OtlNalOb_22 → 171
-✅ Заполнено: OKVED_K_OtlNalOb_23 → 647
 ✅ Заполнено: OKVED_K_OtlNalOb_22 → 171
 ✅ Заполнено: OKVED_K_OtlNalOb_23 → 647
 ✅ Заполнено: OKVED_K_PrDlOb_22 → 785
 ✅ Заполнено: OKVED_K_PrDlOb_23 → 609
+✅ Заполнено: OKVED_64_ZaimKrDl_22 → 7389330
 ✅ Заполнено: OKVED_64_ZaimKrDl_23 → 2344399
-✅ Заполнено: OKVED_64_ZaimKrDl_23 → 2344399
-✅ Заполнено: OKVED_64_OtlNalOb_22 → 171
-✅ Заполнено: OKVED_64_OtlNalOb_23 → 647
 ✅ Заполнено: OKVED_64_OtlNalOb_22 → 171
 ✅ Заполнено: OKVED_64_OtlNalOb_23 → 647
 ✅ Заполнено: OKVED_64_PrDlOb_22 → 785
 ✅ Заполнено: OKVED_64_PrDlOb_23 → 609
+✅ Заполнено: OKVED_L_ZaimKrDl_22 → 1032251
 ✅ Заполнено: OKVED_L_ZaimKrDl_23 → 541434
-✅ Заполнено: OKVED_L_ZaimKrDl_23 → 541434
-✅ Заполнено: OKVED_L_OtlNalOb_22 → 60471
-✅ Заполнено: OKVED_L_OtlNalOb_23 → 50954
 ✅ Заполнено: OKVED_L_OtlNalOb_22 → 60471
 ✅ Заполнено: OKVED_L_OtlNalOb_23 → 50954
 ✅ Заполнено: OKVED_L_PrDlOb_22 → 868
 ✅ Заполнено: OKVED_L_PrDlOb_23 → 28257
+✅ Заполнено: OKVED_68_ZaimKrDl_22 → 1032251
 ✅ Заполнено: OKVED_68_ZaimKrDl_23 → 541434
-✅ Заполнено: OKVED_68_ZaimKrDl_23 → 541434
-✅ Заполнено: OKVED_68_OtlNalOb_22 → 60471
-✅ Заполнено: OKVED_68_OtlNalOb_23 → 50954
 ✅ Заполнено: OKVED_68_OtlNalOb_22 → 60471
 ✅ Заполнено: OKVED_68_OtlNalOb_23 → 50954
 ✅ Заполнено: OKVED_68_PrDlOb_22 → 868
 ✅ Заполнено: OKVED_68_PrDlOb_23 → 28257
+✅ Заполнено: OKVED_M_ZaimKrDl_22 → 1656681
 ✅ Заполнено: OKVED_M_ZaimKrDl_23 → 1425388
-✅ Заполнено: OKVED_M_ZaimKrDl_23 → 1425388
-✅ Заполнено: OKVED_M_OtlNalOb_22 → 260248
-✅ Заполнено: OKVED_M_OtlNalOb_23 → 328761
 ✅ Заполнено: OKVED_M_OtlNalOb_22 → 260248
 ✅ Заполнено: OKVED_M_OtlNalOb_23 → 328761
 ✅ Заполнено: OKVED_M_PrDlOb_22 → 3382
 ✅ Заполнено: OKVED_M_PrDlOb_23 → 48298
+✅ Заполнено: OKVED_69_ZaimKrDl_22 → 94600
 ℹ️ Отсутствующие данные: OKVED_69_ZaimKrDl_23 → [-]
-ℹ️ Отсутствующие данные: OKVED_69_ZaimKrDl_23 → [-]
-✅ Заполнено: OKVED_69_OtlNalOb_22 → 219
-✅ Заполнено: OKVED_69_OtlNalOb_23 → 219
 ✅ Заполнено: OKVED_69_OtlNalOb_22 → 219
 ✅ Заполнено: OKVED_69_OtlNalOb_23 → 219
 ℹ️ Отсутствующие данные: OKVED_69_PrDlOb_22 → [-]
 ℹ️ Отсутствующие данные: OKVED_69_PrDlOb_23 → [-]
+ℹ️ Отсутствующие данные: OKVED_70_ZaimKrDl_22 → [-]
 ℹ️ Отсутствующие данные: OKVED_70_ZaimKrDl_23 → [-]
-ℹ️ Отсутствующие данные: OKVED_70_ZaimKrDl_23 → [-]
-✅ Заполнено: OKVED_70_OtlNalOb_22 → 21357
-✅ Заполнено: OKVED_70_OtlNalOb_23 → 17759
 ✅ Заполнено: OKVED_70_OtlNalOb_22 → 21357
 ✅ Заполнено: OKVED_70_OtlNalOb_23 → 17759
 ✅ Заполнено: OKVED_70_PrDlOb_22 → 682
 ✅ Заполнено: OKVED_70_PrDlOb_23 → 726
+✅ Заполнено: OKVED_71_ZaimKrDl_22 → 1562081
 ✅ Заполнено: OKVED_71_ZaimKrDl_23 → 1425388
-✅ Заполнено: OKVED_71_ZaimKrDl_23 → 1425388
-✅ Заполнено: OKVED_71_OtlNalOb_22 → 238672
-✅ Заполнено: OKVED_71_OtlNalOb_23 → 310783
 ✅ Заполнено: OKVED_71_OtlNalOb_22 → 238672
 ✅ Заполнено: OKVED_71_OtlNalOb_23 → 310783
 ✅ Заполнено: OKVED_71_PrDlOb_22 → 1922
 ✅ Заполнено: OKVED_71_PrDlOb_23 → 46802
+ℹ️ Отсутствующие данные: OKVED_74_ZaimKrDl_22 → [-]
 ℹ️ Отсутствующие данные: OKVED_74_ZaimKrDl_23 → [-]
-ℹ️ Отсутствующие данные: OKVED_74_ZaimKrDl_23 → [-]
-ℹ️ Отсутствующие данные: OKVED_74_OtlNalOb_22 → [-]
-ℹ️ Отсутствующие данные: OKVED_74_OtlNalOb_23 → [-]
 ℹ️ Отсутствующие данные: OKVED_74_OtlNalOb_22 → [-]
 ℹ️ Отсутствующие данные: OKVED_74_OtlNalOb_23 → [-]
 ✅ Заполнено: OKVED_74_PrDlOb_22 → 778
 ✅ Заполнено: OKVED_74_PrDlOb_23 → 770
+✅ Заполнено: OKVED_N_ZaimKrDl_22 → 117600
 ✅ Заполнено: OKVED_N_ZaimKrDl_23 → 212585
-✅ Заполнено: OKVED_N_ZaimKrDl_23 → 212585
-✅ Заполнено: OKVED_N_OtlNalOb_22 → 147
-✅ Заполнено: OKVED_N_OtlNalOb_23 → 724
 ✅ Заполнено: OKVED_N_OtlNalOb_22 → 147
 ✅ Заполнено: OKVED_N_OtlNalOb_23 → 724
 ℹ️ Отсутствующие данные: OKVED_N_PrDlOb_22 → [-]
 ℹ️ Отсутствующие данные: OKVED_N_PrDlOb_23 → [-]
+✅ Заполнено: OKVED_79_ZaimKrDl_22 → 5100
 ✅ Заполнено: OKVED_79_ZaimKrDl_23 → 102175
-✅ Заполнено: OKVED_79_ZaimKrDl_23 → 102175
-✅ Заполнено: OKVED_79_OtlNalOb_22 → 147
-✅ Заполнено: OKVED_79_OtlNalOb_23 → 724
 ✅ Заполнено: OKVED_79_OtlNalOb_22 → 147
 ✅ Заполнено: OKVED_79_OtlNalOb_23 → 724
 ℹ️ Отсутствующие данные: OKVED_79_PrDlOb_22 → [-]
 ℹ️ Отсутствующие данные: OKVED_79_PrDlOb_23 → [-]
+✅ Заполнено: OKVED_81_ZaimKrDl_22 → 112500
 ✅ Заполнено: OKVED_81_ZaimKrDl_23 → 110410
-✅ Заполнено: OKVED_81_ZaimKrDl_23 → 110410
-ℹ️ Отсутствующие данные: OKVED_81_OtlNalOb_22 → [-]
-ℹ️ Отсутствующие данные: OKVED_81_OtlNalOb_23 → [-]
 ℹ️ Отсутствующие данные: OKVED_81_OtlNalOb_22 → [-]
 ℹ️ Отсутствующие данные: OKVED_81_OtlNalOb_23 → [-]
 ℹ️ Отсутствующие данные: OKVED_81_PrDlOb_22 → [-]
@@ -1752,14 +1820,10 @@
 ℹ️ Отсутствующие данные: OKVED_O_ZaimKrDl_23 → [-]
 ℹ️ Отсутствующие данные: OKVED_O_OtlNalOb_22 → [-]
 ℹ️ Отсутствующие данные: OKVED_O_OtlNalOb_23 → [-]
-ℹ️ Отсутствующие данные: OKVED_O_OtlNalOb_22 → [-]
-ℹ️ Отсутствующие данные: OKVED_O_OtlNalOb_23 → [-]
 ℹ️ Отсутствующие данные: OKVED_O_PrDlOb_22 → [-]
 ✅ Заполнено: OKVED_O_PrDlOb_23 → 102947
 ℹ️ Отсутствующие данные: OKVED_84_ZaimKrDl_22 → [-]
 ℹ️ Отсутствующие данные: OKVED_84_ZaimKrDl_23 → [-]
-ℹ️ Отсутствующие данные: OKVED_84_OtlNalOb_22 → [-]
-ℹ️ Отсутствующие данные: OKVED_84_OtlNalOb_23 → [-]
 ℹ️ Отсутствующие данные: OKVED_84_OtlNalOb_22 → [-]
 ℹ️ Отсутствующие данные: OKVED_84_OtlNalOb_23 → [-]
 ℹ️ Отсутствующие данные: OKVED_84_PrDlOb_22 → [-]
@@ -1768,14 +1832,10 @@
 ✅ Заполнено: OKVED_Q_ZaimKrDl_23 → 306896
 ✅ Заполнено: OKVED_Q_OtlNalOb_22 → 782
 ✅ Заполнено: OKVED_Q_OtlNalOb_23 → 775
-✅ Заполнено: OKVED_Q_OtlNalOb_22 → 782
-✅ Заполнено: OKVED_Q_OtlNalOb_23 → 775
 ℹ️ Отсутствующие данные: OKVED_Q_PrDlOb_22 → [-]
 ℹ️ Отсутствующие данные: OKVED_Q_PrDlOb_23 → [-]
 ✅ Заполнено: OKVED_86_ZaimKrDl_22 → 110000
 ✅ Заполнено: OKVED_86_ZaimKrDl_23 → 306896
-✅ Заполнено: OKVED_86_OtlNalOb_22 → 782
-✅ Заполнено: OKVED_86_OtlNalOb_23 → 775
 ✅ Заполнено: OKVED_86_OtlNalOb_22 → 782
 ✅ Заполнено: OKVED_86_OtlNalOb_23 → 775
 ℹ️ Отсутствующие данные: OKVED_86_PrDlOb_22 → [-]
@@ -1784,14 +1844,10 @@
 ℹ️ Отсутствующие данные: OKVED_S_ZaimKrDl_23 → [-]
 ℹ️ Отсутствующие данные: OKVED_S_OtlNalOb_22 → [-]
 ℹ️ Отсутствующие данные: OKVED_S_OtlNalOb_23 → [-]
-ℹ️ Отсутствующие данные: OKVED_S_OtlNalOb_22 → [-]
-ℹ️ Отсутствующие данные: OKVED_S_OtlNalOb_23 → [-]
 ✅ Заполнено: OKVED_S_PrDlOb_22 → 353
 ✅ Заполнено: OKVED_S_PrDlOb_23 → 265
 ℹ️ Отсутствующие данные: OKVED_94_ZaimKrDl_22 → [-]
 ℹ️ Отсутствующие данные: OKVED_94_ZaimKrDl_23 → [-]
-ℹ️ Отсутствующие данные: OKVED_94_OtlNalOb_22 → [-]
-ℹ️ Отсутствующие данные: OKVED_94_OtlNalOb_23 → [-]
 ℹ️ Отсутствующие данные: OKVED_94_OtlNalOb_22 → [-]
 ℹ️ Отсутствующие данные: OKVED_94_OtlNalOb_23 → [-]
 ✅ Заполнено: OKVED_94_PrDlOb_22 → 353
