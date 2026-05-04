@@ -9,7 +9,8 @@ from config import (
     get_cleaned_cell_text,
     _normalize_text,
     find_okved_code,
-    get_table_name
+    get_table_name,
+    canonical_okved
 )
 from config_v2 import load_column_mapping_v2
 from docx import Document
@@ -341,7 +342,9 @@ def generate_word_template(input_doc_path, okved_map_path, table_source_mapping_
             if not okved_code:
                 continue
 
-            okved_tag_part = okved_code.replace('.', '_')
+            # Применяем канонизацию к коду ОКВЭД перед созданием тега
+            okved_canonical = canonical_okved(okved_code)
+            okved_tag_part = okved_canonical.replace('.', '_')
 
             for col_idx, indicator_spec in mapping.items():
                 if col_idx < len(row.cells):

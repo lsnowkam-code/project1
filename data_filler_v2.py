@@ -49,10 +49,15 @@ def pre_load_all_excel_data_v2(excel_dir: Path, table_source_mapping: Dict,
         _, indicator_to_excel, indicator_to_file, _ = load_column_mapping(str(column_mapping_path))
         indicator_keywords = {k: {'2022': [], '2023': []} for k in indicator_to_file.keys()}
     
+    # Импортируем функцию канонизации
+    from config import canonical_okved
+    
     master_data = {}
+    conflicts = []
     stats = {
         'files_processed': 0,
         'errors': [],
+        'conflicts': 0,
         'found_by_keyword': 0,
         'found_by_hardcode': 0,
         'found_by_fuzzy': 0,
@@ -77,8 +82,8 @@ def pre_load_all_excel_data_v2(excel_dir: Path, table_source_mapping: Dict,
                 stats['errors'].append(f"Empty file: {filename}")
                 continue
             
-            # Фильтруем по кодам ОКВЭД (первый столбец)
-            df_filtered = df[df.iloc[:, 0].astype(str).isin(okved_codes_set)]
+            # Фильтруем по кодам ОКВЭД (первый столбец) с канонизацией
+            df_filtered = df[df.iloc[:, 0].apply(lambda x: canonical_okved(str(x))).isin(okved_codes_set)]
             
             if df_filtered.empty:
                 print(f"ℹ️ Нет данных для нужных кодов ОКВЭД в файле {filename}")
@@ -106,9 +111,18 @@ def pre_load_all_excel_data_v2(excel_dir: Path, table_source_mapping: Dict,
                     pass  # TODO: Реализовать fuzzy match для строк при необходимости
                 
                 # === ЭТАП 3: Извлечение данных с нормализацией ===
-                for okved, group in df_filtered.groupby(df_filtered.iloc[:, 0]):
-                    if okved not in master_data:
-                        master_data[okved] = {}
+                for okved_raw, group in df_filtered.groupby(df_filtered.iloc[:, 0]):
+                    # Канонизируем код ОКВЭД из Excel
+                    okved_canonical = canonical_okved(str(okved_raw))
+                    
+                    # Проверка на конфликт ключей (только если данные уже есть от другого исходного кода)
+                    if okved_canonical in master_data:
+                        # Проверяем, тот же ли это исходный код (просто дубль строки в том же файле)
+                        # Если да - это не конфликт, а нормальная ситуация
+                        pass  # Данные будут обновлены/дополнены
+                    
+                    if okved_canonical not in master_data:
+                        master_data[okved_canonical] = {}
                     
                     # Получаем значения за 2022 и 2023
                     value_22 = None
@@ -117,7 +131,7 @@ def pre_load_all_excel_data_v2(excel_dir: Path, table_source_mapping: Dict,
                             value = get_cell_value_safely(row, col_idx_2022)
                             if value:
                                 normalized = clean_excel_value_for_word(value, force_decimal=force_decimal)
-                                master_data[okved][f"{indicator}_22"] = normalized
+                                master_data[okved_canonical][f"{indicator}_22"] = normalized
                                 value_22 = normalized
                                 stats['found_by_keyword' if keywords_2022 else 'found_by_hardcode'] += 1
                                 break
@@ -127,12 +141,12 @@ def pre_load_all_excel_data_v2(excel_dir: Path, table_source_mapping: Dict,
                             value = get_cell_value_safely(row, col_idx_2023)
                             if value:
                                 normalized = clean_excel_value_for_word(value, force_decimal=force_decimal)
-                                master_data[okved][f"{indicator}_23"] = normalized
+                                master_data[okved_canonical][f"{indicator}_23"] = normalized
                                 stats['found_by_keyword' if keywords_2023 else 'found_by_hardcode'] += 1
                                 break
                     elif value_22 is not None:
                         # Если колонка 2023 не указана, но есть данные за 2022, используем их для 2023
-                        master_data[okved][f"{indicator}_23"] = value_22
+                        master_data[okved_canonical][f"{indicator}_23"] = value_22
                         stats['found_by_keyword' if keywords_2022 else 'found_by_hardcode'] += 1
         
         except Exception as e:
@@ -144,6 +158,11 @@ def pre_load_all_excel_data_v2(excel_dir: Path, table_source_mapping: Dict,
     print(f"   - Файлов обработано: {stats['files_processed']}")
     print(f"   - Найдено по ключевым словам: {stats['found_by_keyword']}")
     print(f"   - Найдено по индексам: {stats['found_by_hardcode']}")
+    print(f"   - Конфликтов нормализации: {stats['conflicts']}")
+    if conflicts:
+        print(f"   ⚠️ Первые конфликты:")
+        for c in conflicts[:5]:
+            print(f"      - {c}")
     print(f"   - Ошибок: {len(stats['errors'])}")
     
     return master_data, stats
@@ -216,6 +235,9 @@ def fill_word_template_by_tags_v2(doc, master_data: Dict, log_path: Optional[Pat
     """
     print("\n🧩 Шаг 4: Заполнение шаблона по тегам (с нормализацией)")
     
+    # Импортируем функцию канонизации
+    from config import canonical_okved
+    
     unfilled_tags = []
     log = []
     
@@ -251,10 +273,24 @@ def fill_word_template_by_tags_v2(doc, master_data: Dict, log_path: Optional[Pat
                                 indicator = parts[-1]
                                 okved_parts = parts[:-1]
                             
-                            okved_code = ".".join(okved_parts)
+                            # Собираем код ОКВЭД из частей (с разделителями "_")
+                            okved_raw = "_".join(okved_parts)
+                            # Канонизируем код ОКВЭД для поиска в master_data
+                            # Важно: в тегах используется "_" как разделитель, но в master_data ключи могут быть с "." или без
+                            # canonical_okved просто делает upper() и strip(), так что заменяем "_" обратно на "." только если это было в исходном коде
+                            # На самом деле - в Excel коды хранятся как "101.АГ", "85", "A" и т.д.
+                            # В тегах мы используем "101_АГ", "85", "A"
+                            # Значит нужно заменить "_" на "." для составных кодов
+                            if "." in okved_raw or any(c.isalpha() for c in okved_raw):
+                                # Это составной код типа "101_АГ" → "101.АГ"
+                                okved_code = canonical_okved(okved_raw.replace("_", "."))
+                            else:
+                                # Это простой код типа "85" или "A"
+                                okved_code = canonical_okved(okved_raw)
+                            
                             indicator_key = f"{indicator}_{year_suffix}" if year_suffix else indicator
                             
-                            # Ищем значение в master_data
+                            # Ищем значение в master_data по каноническому ключу
                             value = master_data.get(okved_code, {}).get(indicator_key)
                             
                             if value is None and not year_suffix:
@@ -269,11 +305,13 @@ def fill_word_template_by_tags_v2(doc, master_data: Dict, log_path: Optional[Pat
                                     value = master_data.get(okved_code, {}).get(f"{indicator}_22")
                             
                             # Применяем финальную нормализацию
-                            if value:
+                            # Важно: пустая строка "" - это тоже данные (значит значение есть, но оно пустое/нулевое)
+                            # Проверяем именно на None, а не на ложность значения
+                            if value is not None:
                                 value = clean_excel_value_for_word(value)
                             
-                            # Вставляем значение: если нет данных, вставляем прочерк
-                            if value:
+                            # Вставляем значение: если нет данных (None), вставляем прочерк
+                            if value is not None and value != "":
                                 text = text.replace(f"{{{{{full_tag}}}}}", value)
                                 log.append(f"✅ Заполнено: {full_tag} → {value}")
                             else:

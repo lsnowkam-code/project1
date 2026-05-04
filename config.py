@@ -16,6 +16,19 @@ def _normalize_text(text: str) -> str:
     return re.sub(r'\s+', ' ', text).strip().lower()
 
 
+def canonical_okved(code: str) -> str:
+    """
+    Приводит код ОКВЭД к единому каноническому виду.
+    Правила:
+    1. Убираем пробелы по краям.
+    2. Приводим к верхнему регистру.
+    Никакой магии - только очистка от человеческого фактора.
+    """
+    if not code:
+        return ""
+    return str(code).strip().upper()
+
+
 def get_cleaned_cell_text(cell: _Cell) -> str:
     return ' '.join(p.text.replace('\n', ' ').strip() for p in cell.paragraphs).strip()
 
@@ -236,9 +249,12 @@ def get_excel_data(excel_path, okved_codes_set):
         if row.empty or pd.isna(row.iloc[OKVED_CODE_COLUMN_INDEX]):
             continue
 
-        okved_code = str(row.iloc[OKVED_CODE_COLUMN_INDEX]).strip()
-        if not okved_code:
+        okved_code_raw = str(row.iloc[OKVED_CODE_COLUMN_INDEX]).strip()
+        if not okved_code_raw:
             continue
+        
+        # Применяем канонизацию кода ОКВЭД
+        okved_code = canonical_okved(okved_code_raw)
 
         # 🔍 Если фильтрация включена — пропускаем лишние
         if okved_codes_set and okved_code not in okved_codes_set:
