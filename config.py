@@ -160,7 +160,7 @@ def load_column_mapping(filepath):
 def get_table_name(table: Table, known_table_names):
     ignore_phrases = ['продолжение таблицы', 'таблица', 'график', 'рис.', 'рис', 'по всей форме', 'приложение', 'форма',
                       'лист', 'страница', 'тысяч рублей', 'на конец года']
-    
+
     # Собираем все параграфы выше таблицы, чтобы выбрать наиболее подходящий заголовок.
     candidates = []
     para_count = 0
@@ -182,8 +182,9 @@ def get_table_name(table: Table, known_table_names):
             for known_title in known_table_names:
                 known_norm = _normalize_text(known_title)
                 if text_norm == known_norm or text_norm in known_norm or known_norm in text_norm:
-                    score = len(known_norm)
-                    candidates.append((score, known_title, text_norm))
+                    # Score = длина совпадения / расстояние (чем ближе, тем лучше)
+                    score = len(known_norm) / (para_count + 1)
+                    candidates.append((score, known_title, text_norm, para_count))
 
         else:
             prev_elem = prev_elem.getprevious()

@@ -29,16 +29,23 @@ def _find_year_header_row(table, min_year_cells=2, max_search_rows=40):
     return candidates[-1] if candidates else (None, None)
 
 
+def _normalize_match_text(text: str) -> str:
+    normalized = _normalize_text(text)
+    normalized = re.sub(r'[^0-9a-zа-я]+', ' ', normalized)
+    return re.sub(r'\s+', ' ', normalized).strip()
+
+
 def _find_header_row_by_indicators(table, source_word_to_indicator, max_search_rows=20, start_row=0):
     """Находит строку заголовка по наилучшему совпадению с названиями показателей."""
+    normalized_names = [(_normalize_match_text(name), name) for name in source_word_to_indicator.keys()]
     best_match = None
     best_score = 0
     for row_idx, row in enumerate(table.rows[start_row:max_search_rows], start=start_row):
-        row_texts = [_normalize_text(get_cleaned_cell_text(cell)) for cell in row.cells]
+        row_texts = [_normalize_match_text(get_cleaned_cell_text(cell)) for cell in row.cells]
         score = 0
         for cell_text in row_texts:
-            for name in source_word_to_indicator.keys():
-                if name in cell_text:
+            for normalized_name, _ in normalized_names:
+                if normalized_name and normalized_name in cell_text:
                     score += 1
         if score > best_score:
             best_score = score
@@ -48,12 +55,13 @@ def _find_header_row_by_indicators(table, source_word_to_indicator, max_search_r
 
 def _find_header_rows(table, source_word_to_indicator, max_search_rows=80):
     """Собирает все строки заголовков таблицы (year или indicator rows)."""
+    normalized_names = [_normalize_match_text(name) for name in source_word_to_indicator.keys()]
     headers = []
     for row_idx, row in enumerate(table.rows[:max_search_rows]):
         row_years = [get_cleaned_cell_text(cell).strip() for cell in row.cells]
         year_count = sum(1 for year in row_years if year in ('2022', '2023'))
-        row_texts = [_normalize_text(get_cleaned_cell_text(cell)) for cell in row.cells]
-        indicator_score = sum(1 for cell_text in row_texts for name in source_word_to_indicator.keys() if name in cell_text)
+        row_texts = [_normalize_match_text(get_cleaned_cell_text(cell)) for cell in row.cells]
+        indicator_score = sum(1 for cell_text in row_texts for name in normalized_names if name and name in cell_text)
         if year_count >= 2 or indicator_score >= 2:
             headers.append(row_idx)
     return sorted(set(headers))
@@ -82,6 +90,10 @@ def _compute_section_mapping(table, header_idx, source_word_to_indicator):
             header_rows_filled.append(row_values)
 
         last_indicator = None
+        normalized_name_map = {
+            _normalize_match_text(name): indicator
+            for name, indicator in source_word_to_indicator.items()
+        }
         for i, cell in enumerate(year_row.cells):
             year_text = get_cleaned_cell_text(cell).strip()
             if year_text not in ('2022', '2023'):
@@ -98,17 +110,18 @@ def _compute_section_mapping(table, header_idx, source_word_to_indicator):
                 seen.add(header_part)
                 parts.append(header_part)
             composed_header = " ".join(parts)
+            composed_header_norm = _normalize_match_text(composed_header)
 
             best_match = None
             best_len = 0
-            for name, indicator in source_word_to_indicator.items():
-                if name in composed_header and len(name) > best_len:
+            for name_norm, indicator in normalized_name_map.items():
+                if name_norm and name_norm in composed_header_norm and len(name_norm) > best_len:
                     best_match = indicator
-                    best_len = len(name)
+                    best_len = len(name_norm)
 
             if best_match:
                 last_indicator = best_match
-            elif last_indicator and not composed_header:
+            elif last_indicator and not composed_header_norm:
                 best_match = last_indicator
 
             if not best_match:
@@ -118,16 +131,20 @@ def _compute_section_mapping(table, header_idx, source_word_to_indicator):
             print(f"   🔍 Столбец {i}: '{composed_header[:90]}' -> {best_match}, год {year_text}")
     else:
         header_row = year_row
+        normalized_name_map = {
+            _normalize_match_text(name): indicator
+            for name, indicator in source_word_to_indicator.items()
+        }
         for i, cell in enumerate(header_row.cells):
-            header_text = _normalize_text(get_cleaned_cell_text(cell))
+            header_text = _normalize_match_text(get_cleaned_cell_text(cell))
             if not header_text:
                 continue
             best_match = None
             best_len = 0
-            for name, indicator in source_word_to_indicator.items():
-                if name in header_text and len(name) > best_len:
+            for name_norm, indicator in normalized_name_map.items():
+                if name_norm and name_norm in header_text and len(name_norm) > best_len:
                     best_match = indicator
-                    best_len = len(name)
+                    best_len = len(name_norm)
             if best_match:
                 col_to_indicator_map[i] = (best_match, None)
                 print(f"   🔍 Индикаторный заголовок: столбец {i}, текст '{header_text[:50]}' -> {best_match}")
@@ -224,13 +241,21 @@ def generate_word_template(input_doc_path, okved_map_path, table_source_mapping_
                 else:
                     print(f"⚠️ Не найден источник для заголовка таблицы: '{table_title}'")
 
+            continuation_number = get_continuation_table_number(table)
+            if continuation_number:
+                continuation_source = get_table_source_by_number(table_source_mapping, continuation_number)
+                if continuation_source:
+                    if current_source_file and current_source_file != continuation_source:
+                        print(f"🔁 Источник по метке продолжения таблицы {continuation_number} ({continuation_source}) отличается от источника заголовка ({current_source_file}). Предпочитаем продолжение таблицы.")
+                    current_source_file = continuation_source
+                    print(f"🔁 Источник по метке продолжения таблицы {continuation_number}: {current_source_file}")
+
             if not current_source_file:
-                continuation_number = get_continuation_table_number(table)
-                if continuation_number:
-                    continuation_source = get_table_source_by_number(table_source_mapping, continuation_number)
-                    if continuation_source:
-                        current_source_file = continuation_source
-                        print(f"🔁 Источник по метке продолжения таблицы {continuation_number}: {current_source_file}")
+                print(f"   → Пытаемся определить по содержимому таблицы...")
+                detected = auto_detect_table_source(table, table_source_mapping, file_word_to_indicator)
+                if detected:
+                    current_source_file = detected
+                    print(f"   ✓ Автоматически определен источник: {current_source_file}")
 
             if not current_source_file:
                 print(f"   → Пытаемся определить по содержимому таблицы...")
