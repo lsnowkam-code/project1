@@ -12,7 +12,7 @@ from pathlib import Path
 import pandas as pd
 from typing import Dict, Set, Tuple, Optional
 
-from config_v2 import load_column_mapping_v2
+from config_v2 import load_column_mapping_v2, build_column_mapping_v2_from_excel
 from smart_loader import (
     find_column_by_year,
     find_row_by_fuzzy_match,
@@ -42,6 +42,10 @@ def pre_load_all_excel_data_v2(excel_dir: Path, table_source_mapping: Dict,
     print("\n📊 Шаг 3: Загрузка данных из Excel (УМНЫЙ поиск)")
     
     try:
+        _, indicator_to_excel, indicator_to_file, _, indicator_keywords = load_column_mapping_v2(str(column_mapping_path))
+    except FileNotFoundError:
+        print(f"⚠️ Файл {column_mapping_path} не найден. Генерируем его из Excel...")
+        build_column_mapping_v2_from_excel(excel_dir, table_source_mapping, column_mapping_path)
         _, indicator_to_excel, indicator_to_file, _, indicator_keywords = load_column_mapping_v2(str(column_mapping_path))
     except Exception as e:
         print(f"⚠️ Ошибка загрузки маппингов v2: {e}, используем fallback...")
