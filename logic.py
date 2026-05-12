@@ -18,6 +18,26 @@ from docx import Document
 TAG_REGEX = re.compile(r"{{([^}]+?)_([0-9]+)}}")
 
 
+def _normalize_match_text(text: str) -> str:
+    """
+    Нормализация текста для сравнения показателей:
+    1. Применяем базовую нормализацию (_normalize_text)
+    2. Удаляем специальные символы, оставляя только цифры и буквы
+    3. Схлопываем множественные пробелы
+    
+    Используется для поиска совпадений названий показателей в заголовках.
+    """
+    if not text:
+        return ""
+    # Сначала применяем базовую нормализацию
+    normalized = _normalize_text(text)
+    # Удаляем все символы кроме цифр, букв (Cyrillic/Latin) и пробелов
+    normalized = re.sub(r'[^\d\w\s]', ' ', normalized, flags=re.UNICODE)
+    # Удаляем лишние пробелы (на случай, если было много спецсимволов подряд)
+    normalized = re.sub(r'\s+', ' ', normalized).strip()
+    return normalized
+
+
 def _find_year_header_row(table, min_year_cells=2, max_search_rows=40):
     """Находит последнюю строку заголовка с годами (2022/2023) в таблице."""
     candidates = []
@@ -27,12 +47,6 @@ def _find_year_header_row(table, min_year_cells=2, max_search_rows=40):
         if year_count >= min_year_cells:
             candidates.append((row, row_idx))
     return candidates[-1] if candidates else (None, None)
-
-
-def _normalize_match_text(text: str) -> str:
-    normalized = _normalize_text(text)
-    normalized = re.sub(r'[^0-9a-zа-я]+', ' ', normalized)
-    return re.sub(r'\s+', ' ', normalized).strip()
 
 
 def _find_header_row_by_indicators(table, source_word_to_indicator, max_search_rows=20, start_row=0):
@@ -225,46 +239,33 @@ def generate_word_template(input_doc_path, okved_map_path, table_source_mapping_
     for t_index, table in enumerate(doc.tables):
         print(f"\n📄 Таблица {t_index + 1}")
 
-        # СПЕЦИАЛЬНЫЙ СЛУЧАЙ: Таблица 17 - это таблица 7 (Долгосрочные обязательства)
-        if t_index + 1 == 17:
-            print(f"⚠️ Таблица 17 - применяем специальное определение (таблица 7)")
-            current_source_file = 'T23_000000_t20Ved14.xlsx'
-            print(f"   → Установлен источник: {current_source_file}")
-        else:
-            # 0. Определение источника данных по названию таблицы
-            table_title = get_table_name(table, table_source_mapping.keys())
-            if table_title:
-                table_title_norm = _normalize_text(table_title)
-                if table_title_norm in normalized_title_to_src:
-                    current_source_file = normalized_title_to_src[table_title_norm]
-                    print(f"🔍 Источник таблицы: {current_source_file}")
-                else:
-                    print(f"⚠️ Не найден источник для заголовка таблицы: '{table_title}'")
+        # 0. Определение источника данных по названию таблицы
+        table_title = get_table_name(table, table_source_mapping.keys())
+        if table_title:
+            table_title_norm = _normalize_text(table_title)
+            if table_title_norm in normalized_title_to_src:
+                current_source_file = normalized_title_to_src[table_title_norm]
+                print(f"🔍 Источник таблицы: {current_source_file}")
+            else:
+                print(f"⚠️ Не найден источник для заголовка таблицы: '{table_title}'")
 
-            continuation_number = get_continuation_table_number(table)
-            if continuation_number:
-                continuation_source = get_table_source_by_number(table_source_mapping, continuation_number)
-                if continuation_source:
-                    if current_source_file and current_source_file != continuation_source:
-                        print(f"🔁 Источник по метке продолжения таблицы {continuation_number} ({continuation_source}) отличается от источника заголовка ({current_source_file}). Предпочитаем продолжение таблицы.")
-                    current_source_file = continuation_source
-                    print(f"🔁 Источник по метке продолжения таблицы {continuation_number}: {current_source_file}")
+        continuation_number = get_continuation_table_number(table)
+        if continuation_number:
+            continuation_source = get_table_source_by_number(table_source_mapping, continuation_number)
+            if continuation_source:
+                if current_source_file and current_source_file != continuation_source:
+                    print(f"🔁 Источник по метке продолжения таблицы {continuation_number} ({continuation_source}) отличается от источника заголовка ({current_source_file}). Предпочитаем продолжение таблицы.")
+                current_source_file = continuation_source
+                print(f"🔁 Источник по метке продолжения таблицы {continuation_number}: {current_source_file}")
 
-            if not current_source_file:
-                print(f"   → Пытаемся определить по содержимому таблицы...")
-                detected = auto_detect_table_source(table, table_source_mapping, file_word_to_indicator)
-                if detected:
-                    current_source_file = detected
-                    print(f"   ✓ Автоматически определен источник: {current_source_file}")
-
-            if not current_source_file:
-                print(f"   → Пытаемся определить по содержимому таблицы...")
-                detected = auto_detect_table_source(table, table_source_mapping, file_word_to_indicator)
-                if detected:
-                    current_source_file = detected
-                    print(f"   ✓ Автоматически определен источник: {current_source_file}")
-                else:
-                    print("ℹ️ Заголовок таблицы не определён, используем предыдущий источник")
+        if not current_source_file:
+            print(f"   → Пытаемся определить по содержимому таблицы...")
+            detected = auto_detect_table_source(table, table_source_mapping, file_word_to_indicator)
+            if detected:
+                current_source_file = detected
+                print(f"   ✓ Автоматически определен источник: {current_source_file}")
+            else:
+                print("ℹ️ Заголовок таблицы не определён, используем предыдущий источник")
 
         if not current_source_file:
             print("⚠️ Источник не определён. Пропускаем таблицу.")
@@ -434,23 +435,6 @@ def collect_okved_codes_from_template(doc_path):
                         codes.add(code)
     print(f"\n📄 Коды ОКВЭД в шаблоне: {len(codes)}")
     return codes
-
-
-def collect_okved_codes_from_excel(excel_dir, table_mapping, okved_codes_set):
-    """Собирает коды ОКВЭД, реально присутствующие в Excel."""
-    all_codes = set()
-    for _, excel_filename in table_mapping.items():
-        excel_path = Path(excel_dir) / excel_filename
-        if not excel_path.exists():
-            print(f"⚠️ Excel-файл не найден: {excel_path}")
-            continue
-        try:
-            data = get_excel_data(excel_path, okved_codes_set)
-            all_codes.update(data.keys())
-        except Exception as e:
-            print(f"⚠️ Ошибка при чтении {excel_filename}: {e}")
-    print(f"\n📊 Коды ОКВЭД в Excel: {len(all_codes)}")
-    return all_codes
 
 
 def compare_okved_sets(template_codes, excel_codes):

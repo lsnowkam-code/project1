@@ -13,7 +13,18 @@ OKVED_NAME_COLUMN_INDEX = 1
 
 # === Утилиты ===
 def _normalize_text(text: str) -> str:
-    return re.sub(r'\s+', ' ', text).strip().lower()
+    """
+    Базовая нормализация: очистка пробелов и приведение к нижнему регистру.
+    """
+    if not text:
+        return ""
+    # Приводим к нижнему регистру и нормализуем пробелы
+    text = text.lower().strip()
+    # Заменяем ё на е (для русского языка)
+    text = text.replace('ё', 'е')
+    # Удаляем множественные пробелы
+    text = re.sub(r'\s+', ' ', text).strip()
+    return text
 
 
 def canonical_okved(code: str) -> str:
