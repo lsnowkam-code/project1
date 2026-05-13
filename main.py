@@ -8,7 +8,7 @@ from config import (
 )
 from config_v2 import (
     load_column_mapping_v2,
-    build_column_mapping_v2_from_excel,
+    ensure_column_mapping_v2,
     validate_table_source_mapping,
 )
 from logic import (
@@ -49,9 +49,7 @@ def main(input_template_override=None, output_file_override=None):
     table_mapping = load_table_source_map(table_mapping_file)
     validate_table_source_mapping(table_mapping, excel_dir)
 
-    if not column_mapping_file.exists():
-        print(f"⚠️ Файл {column_mapping_file} не найден. Генерируем column_mapping_v2.csv из Excel...")
-        build_column_mapping_v2_from_excel(excel_dir, table_mapping, column_mapping_file)
+    ensure_column_mapping_v2(excel_dir, table_mapping, column_mapping_file)
 
     word_to_indicator, indicator_to_excel, indicator_to_file, file_word_to_indicator, indicator_keywords = load_column_mapping_v2(column_mapping_file)
     okved_codes_set = set(okved_to_name.keys())

@@ -282,54 +282,84 @@ def _is_connective_header(text: str) -> bool:
 def _extract_keywords_for_year(base_name: str, suffix: str, year: str) -> str:
     """Извлекает ключевые слова из базового названия и суффикса для поиска в Excel.
     
+    Эти ключевые слова используются для "умного" поиска нужной колонки в Excel,
+    когда жесткий индекс может быть неправильным или устаревшим.
+    
+    Динамичный процесс (работает для любого года):
+    1. Сначала ищем явный год в суффиксе через regex (202X)
+    2. Если явного года нет, добавляем маркеры периода на основе суффикса:
+       - Если текст содержит "предыдущ", "начало", "2022" → период "начало"
+       - Если текст содержит "конец", "отчетн", "текущ", "2023" → период "конец"
+    3. Добавляем базовое название показателя как универсальный ключ
+    
+    Пример:
+        base_name = "Валюта баланса"
+        suffix = "на конец предыдущего года"
+        year = "22"
+        
+        Результат: '"предыдущий","Валюта баланса"'
+    
+    Эти ключевые слова затем:
+    - Сохраняются в column_mapping_v2.csv
+    - Загружаются в memory при предварительной загрузке Excel
+    - Используются при поиске колонок в функции _find_column_smart()
+    
     Возвращает строку в формате: "слово1","слово2","слово3"
     """
     keywords = []
     suffix_lower = suffix.lower()
     
-    # Динамически извлекаем год из суффикса через regex
-    # Ищем любой год вида 202X (может быть 2022, 2023, 2024, 2025 и т.д.)
+    # 1️⃣ Попытка извлечь явный год из суффикса через regex (202X)
     year_match = re.search(r'(202\d)', suffix)
     if year_match:
         keywords.append(year_match.group(1))
-    elif year:
-        # Fallback: если год определен как '22' или '23', конвертируем
-        if year == '22':
-            keywords.append('2022')
-        elif year == '23':
-            keywords.append('2023')
     
-    # Добавляем маркеры периода
-    if year == '22':
-        # Для первого года (условно 2022/2024)
-        if 'начало' in suffix_lower:
+    # 2️⃣ Добавляем маркеры периода на основе суффикса (работает независимо от года)
+    # Для первого периода (обычно "начало года" / "на начало")
+    if year == '22' or 'предыдущ' in suffix_lower or 'начало' in suffix_lower or '2022' in suffix:
+        if 'начало' not in keywords:
             keywords.append('начало')
-        elif 'предыдущ' in suffix_lower:
+        if 'предыдущий' not in keywords:
             keywords.append('предыдущий')
-        else:
-            keywords.append('начало')  # По умолчанию
-    elif year == '23':
-        # Для второго года (условно 2023/2025)
-        if 'конец' in suffix_lower:
-            keywords.append('конец')
-        elif 'отчетн' in suffix_lower or 'текущ' in suffix_lower:
-            keywords.append('конец')
-        else:
-            keywords.append('конец')  # По умолчанию
     
-    # Если нет явного года, просто используем суффикс
-    if not keywords and suffix:
-        keywords.append(suffix)
+    # Для второго периода (обычно "конец года" / "на конец")
+    if year == '23' or 'конец' in suffix_lower or 'отчетн' in suffix_lower or 'текущ' in suffix_lower or '2023' in suffix:
+        if 'конец' not in keywords:
+            keywords.append('конец')
+        if 'отчетный' not in keywords:
+            keywords.append('отчетный')
     
-    # Добавляем базовое название как универсальный ключ поиска
+    # 3️⃣ Добавляем базовое название как универсальный ключ поиска
     keywords.append(base_name)
     
-    # Возвращаем в формате CSV с кавычками, но БЕЗ двойного экранирования
-    # csv.writer сам добавит кавычки вокруг поля, если нужно
+    # Удаляем дубликаты и пустые значения
+    keywords = [k for k in dict.fromkeys(keywords) if k]
+    
+    # Возвращаем в формате CSV с кавычками
     return ','.join(f'"{k}"' for k in keywords)
 
 
 def _infer_mapping_from_excel(excel_path: Path) -> list:
+    """Динамически извлекает маппинг показателей из Excel файла.
+    
+    Анализирует структуру Excel:
+    1. Находит строку заголовка с 'Код' и 'Наименование'
+    2. Для каждого столбца определяет:
+       - Базовое название (header)
+       - Суффикс/подзаголовок, в котором может быть год (202X) или период
+       - Год/период на основе текста суффикса
+    3. Генерирует ключевые слова для каждого показателя
+    
+    Результат:
+        [(filename, indicator_name, code, col_22, col_23, keywords_2022, keywords_2023), ...]
+    
+    Где:
+    - col_22, col_23 — номера колонок (1-based), использованные для каждого года
+    - keywords_2022, keywords_2023 — ключевые слова для "умного" поиска в Excel
+    
+    Эти ключевые слова позволяют пересчитывать колонки автоматически,
+    если структура Excel изменилась, но суть показателей и периодов осталась.
+    """
     df = pd.read_excel(excel_path, header=None)
     header_row = _find_excel_header_row(df)
     if header_row is None:
@@ -417,7 +447,14 @@ def build_column_mapping_v2_from_excel(excel_dir: Path, table_source_mapping: di
     rows = []
     seen_codes = set()
 
-    for filename in sorted(set(table_source_mapping.values())):
+    unique_files = []
+    seen_files = set()
+    for filename in table_source_mapping.values():
+        if filename not in seen_files:
+            seen_files.add(filename)
+            unique_files.append(filename)
+
+    for filename in unique_files:
         excel_path = excel_dir / filename
         if not excel_path.exists():
             print(f"⚠️ Excel файл не найден: {filename}")
@@ -448,3 +485,33 @@ def build_column_mapping_v2_from_excel(excel_dir: Path, table_source_mapping: di
             writer.writerow(row)
 
     print(f"✅ Сгенерирован column_mapping_v2: {output_path} ({len(rows)} строк)")
+
+
+def ensure_column_mapping_v2(excel_dir: Path, table_source_mapping: dict, output_path: Path):
+    """Гарантирует, что column_mapping_v2 содержит все источники из table_source_data_mapping.csv."""
+    output_path = Path(output_path)
+    if not output_path.exists():
+        print(f"⚠️ Файл {output_path} не найден. Генерируем column_mapping_v2.csv из Excel...")
+        build_column_mapping_v2_from_excel(excel_dir, table_source_mapping, output_path)
+        return
+
+    existing_sources = set()
+    try:
+        _, _, _, file_word_to_indicator, _ = load_column_mapping_v2(output_path)
+        existing_sources = {file for file, _ in file_word_to_indicator.keys()}
+    except Exception as exc:
+        print(f"⚠️ Не удалось считать существующий файл column_mapping_v2.csv: {exc}")
+        print("    Регенерируем файл заново.")
+        build_column_mapping_v2_from_excel(excel_dir, table_source_mapping, output_path)
+        return
+
+    expected_sources = set(table_source_mapping.values())
+    missing_sources = sorted(expected_sources - existing_sources)
+    if missing_sources:
+        print("⚠️ Найдены отсутствующие Excel-источники в column_mapping_v2.csv:")
+        for src in missing_sources:
+            print(f"   - {src}")
+        print("    Регенерируем column_mapping_v2 из Excel на основе table_source_data_mapping.csv...")
+        build_column_mapping_v2_from_excel(excel_dir, table_source_mapping, output_path)
+    else:
+        print(f"✅ column_mapping_v2 уже содержит все источники из {len(expected_sources)} файла(ов).")
