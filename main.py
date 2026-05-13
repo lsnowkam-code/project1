@@ -6,7 +6,7 @@ from config import (
     load_okved_map,
     load_table_source_map,
 )
-from config_v2 import load_column_mapping_v2
+from config_v2 import load_column_mapping_v2, build_column_mapping_v2_from_excel
 from logic import (
     generate_word_template,
     collect_okved_codes_from_template,
@@ -43,6 +43,11 @@ def main(input_template_override=None, output_file_override=None):
     print("\n=== ШАГ 1: Загрузка справочников ===")
     okved_to_name, name_to_okved_cleaned = load_okved_map(okved_file)
     table_mapping = load_table_source_map(table_mapping_file)
+
+    if not column_mapping_file.exists():
+        print(f"⚠️ Файл {column_mapping_file} не найден. Генерируем column_mapping_v2.csv из Excel...")
+        build_column_mapping_v2_from_excel(excel_dir, table_mapping, column_mapping_file)
+
     word_to_indicator, indicator_to_excel, indicator_to_file, file_word_to_indicator, indicator_keywords = load_column_mapping_v2(column_mapping_file)
     okved_codes_set = set(okved_to_name.keys())
     print("✅ Справочники успешно загружены.")

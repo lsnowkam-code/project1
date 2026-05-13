@@ -34,6 +34,9 @@ def _read_csv_robustly(filepath, header_row=0):
             print(f"✅ Успешно прочитано с кодировкой {encoding}")
             if df.shape[1] == 1:
                 print(f"⚠️ ВНИМАНИЕ: CSV-файл прочитан как один столбец. Возможно, проблема с разделителями.")
+            # Если нет заголовка, явно задаём имена столбцов
+            if header_row is None:
+                df.columns = [f"col_{i}" for i in range(df.shape[1])]
             return df
         except UnicodeDecodeError:
             pass
@@ -148,15 +151,167 @@ def load_table_source_map(filepath):
     print(f"Загрузка сопоставления таблиц из: {filepath}")
     df = _read_csv_robustly(filepath, header_row=None)
     first_row = [str(x).strip().lower() for x in df.iloc[0].tolist()]
-    if "таблица" in first_row and "файл" in first_row:
+    if "таблица" in first_row and ("файл" in first_row or "источник" in first_row):
         df = _read_csv_robustly(filepath, header_row=0)
     else:
         df.columns = ["Таблица", "Файл"]
     mapping_dict = {}
+    file_column = "Файл" if "Файл" in df.columns else "Источник" if "Источник" in df.columns else df.columns[1]
     for _, row in df.iterrows():
         raw_name = str(row["Таблица"]).strip()
-        raw_src = str(row["Файл"]).strip()
+        raw_src = str(row[file_column]).strip()
         norm_key = _normalize_text(raw_name)
         mapping_dict[norm_key] = raw_src
     print(f"📘 Загружено сопоставлений: {len(mapping_dict)}")
     return mapping_dict
+
+
+def _detect_year_by_text(text: str) -> str:
+    if not isinstance(text, str):
+        return None
+    s = text.lower()
+    if 'преды' in s or '2022' in s:
+        return '22'
+    if 'отчет' in s or '2023' in s or 'текущ' in s:
+        return '23'
+    return None
+
+
+def _find_excel_header_row(df: pd.DataFrame) -> int:
+    for idx in range(min(20, len(df))):
+        row = df.iloc[idx, :10].astype(str).fillna('').str.lower().tolist()
+        joined = ' '.join(row)
+        if 'код' in joined and 'наименование' in joined:
+            return idx
+    return None
+
+
+def _slugify_indicator_code(text: str, prefix: str = None) -> str:
+    if not text:
+        return ''
+    normalized = _normalize_text(text)
+    code = re.sub(r'[^0-9a-zа-я]+', '_', normalized)
+    code = re.sub(r'_+', '_', code).strip('_')
+    if prefix:
+        prefix_norm = re.sub(r'[^0-9a-zа-я]+', '_', _normalize_text(prefix))
+        prefix_norm = re.sub(r'_+', '_', prefix_norm).strip('_')
+        return f"{prefix_norm}_{code}" if code else prefix_norm
+    return code
+
+
+def _is_connective_header(text: str) -> bool:
+    if not isinstance(text, str):
+        return False
+    return _normalize_text(text) in {
+        'в том числе',
+        'в том числе:'
+    }
+
+
+def _infer_mapping_from_excel(excel_path: Path) -> list:
+    df = pd.read_excel(excel_path, header=None)
+    header_row = _find_excel_header_row(df)
+    if header_row is None:
+        print(f"⚠️ Не найден заголовок с 'Код' и 'Наименование' в {excel_path.name}")
+        return []
+
+    headers = df.iloc[header_row].astype(str).fillna('').tolist()
+    subheaders = df.iloc[header_row + 1].astype(str).fillna('').tolist() if header_row + 1 < len(df) else [''] * len(headers)
+
+    current_base = ''
+    current_indicator_name = None
+    groups = {}
+    for col_idx in range(2, len(headers)):
+        raw_header = str(headers[col_idx]).strip()
+        suffix = str(subheaders[col_idx]).strip()
+        year = _detect_year_by_text(suffix)
+
+        if raw_header:
+            if _is_connective_header(raw_header):
+                if not current_base or not suffix:
+                    continue
+                indicator_name = f"{current_base} {raw_header} {suffix}".strip()
+            else:
+                current_base = raw_header
+                if suffix and not year:
+                    indicator_name = f"{current_base} {suffix}".strip()
+                else:
+                    indicator_name = current_base
+        elif suffix:
+            if not current_base:
+                continue
+            if year:
+                indicator_name = current_indicator_name or current_base
+            else:
+                indicator_name = f"{current_base} {suffix}".strip()
+        else:
+            if not current_indicator_name:
+                continue
+            indicator_name = current_indicator_name
+
+        current_indicator_name = indicator_name
+        group_key = _normalize_text(indicator_name)
+        if group_key not in groups:
+            groups[group_key] = {
+                'name': indicator_name,
+                'code': _slugify_indicator_code(indicator_name, excel_path.stem),
+                'cols': {'22': None, '23': None},
+                'keywords': [current_base]
+            }
+
+        if year:
+            groups[group_key]['cols'][year] = str(col_idx + 1)
+        else:
+            if groups[group_key]['cols']['22'] is None:
+                groups[group_key]['cols']['22'] = str(col_idx + 1)
+            else:
+                groups[group_key]['cols']['23'] = str(col_idx + 1)
+
+    rows = []
+    for group in groups.values():
+        col_22 = group['cols']['22'] or ''
+        col_23 = group['cols']['23'] or ''
+        keyword_2022 = group['keywords'][0] if group['keywords'] else ''
+        keyword_2023 = group['keywords'][0] if group['keywords'] else ''
+        rows.append((excel_path.name, group['name'], group['code'], col_22, col_23, keyword_2022, keyword_2023))
+
+    return rows
+
+
+def build_column_mapping_v2_from_excel(excel_dir: Path, table_source_mapping: dict, output_path: Path):
+    excel_dir = Path(excel_dir)
+    output_path = Path(output_path)
+    rows = []
+    seen_codes = set()
+
+    for filename in sorted(set(table_source_mapping.values())):
+        excel_path = excel_dir / filename
+        if not excel_path.exists():
+            print(f"⚠️ Excel файл не найден: {filename}")
+            continue
+        inferred = _infer_mapping_from_excel(excel_path)
+        for excel_file, name, code, col_22, col_23, kw22, kw23 in inferred:
+            if code in seen_codes:
+                suffix = 1
+                base_code = code
+                while f"{base_code}_{suffix}" in seen_codes:
+                    suffix += 1
+                code = f"{base_code}_{suffix}"
+            seen_codes.add(code)
+            rows.append((excel_file, name, code, col_22, col_23, kw22, kw23))
+
+    if not rows:
+        raise ValueError("Не удалось сгенерировать column_mapping_v2 из Excel.")
+
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    with open(output_path, 'w', encoding='utf-8-sig', newline='') as f:
+        writer = csv.writer(f, delimiter=';')
+        writer.writerow([
+            'Excel файл', 'Название показателя', 'Код показателя',
+            'Excel колонка 2022', 'Excel колонка 2023',
+            'Ключевое слово 2022', 'Ключевое слово 2023'
+        ])
+        for row in rows:
+            writer.writerow(row)
+
+    print(f"✅ Сгенерирован column_mapping_v2: {output_path} ({len(rows)} строк)")
