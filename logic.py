@@ -1,6 +1,7 @@
 # logic.py
 from pathlib import Path
 import re
+from typing import Optional
 from config import (
     get_excel_data,
     load_okved_map,
@@ -16,6 +17,14 @@ from config_v2 import load_column_mapping_v2
 from docx import Document
 
 TAG_REGEX = re.compile(r"{{([^}]+?)_([0-9]+)}}")
+YEAR_PATTERN = re.compile(r'\b(20\d{2})\b')
+
+
+def _extract_year(text: str) -> Optional[str]:
+    if not text:
+        return None
+    match = YEAR_PATTERN.search(text)
+    return match.group(1) if match else None
 
 
 def _normalize_match_text(text: str) -> str:
@@ -39,11 +48,11 @@ def _normalize_match_text(text: str) -> str:
 
 
 def _find_year_header_row(table, min_year_cells=2, max_search_rows=40):
-    """Находит последнюю строку заголовка с годами (2022/2023) в таблице."""
+    """Находит последнюю строку заголовка с годами (например, 2022/2023) в таблице."""
     candidates = []
     for row_idx, row in enumerate(table.rows[:max_search_rows]):
         row_years = [get_cleaned_cell_text(cell).strip() for cell in row.cells]
-        year_count = sum(1 for year in row_years if year in ('2022', '2023'))
+        year_count = sum(1 for year in row_years if _extract_year(year))
         if year_count >= min_year_cells:
             candidates.append((row, row_idx))
     return candidates[-1] if candidates else (None, None)
@@ -73,7 +82,7 @@ def _find_header_rows(table, source_word_to_indicator, max_search_rows=80):
     headers = []
     for row_idx, row in enumerate(table.rows[:max_search_rows]):
         row_years = [get_cleaned_cell_text(cell).strip() for cell in row.cells]
-        year_count = sum(1 for year in row_years if year in ('2022', '2023'))
+        year_count = sum(1 for year in row_years if _extract_year(year))
         row_texts = [_normalize_match_text(get_cleaned_cell_text(cell)) for cell in row.cells]
         indicator_score = sum(1 for cell_text in row_texts for name in normalized_names if name and name in cell_text)
         if year_count >= 2 or indicator_score >= 2:
@@ -85,7 +94,7 @@ def _compute_section_mapping(table, header_idx, source_word_to_indicator):
     """Вычисляет маппинг столбцов для данной секции таблицы."""
     year_row = table.rows[header_idx]
     year_texts = [get_cleaned_cell_text(cell).strip() for cell in year_row.cells]
-    has_years = sum(1 for text in year_texts if text in ('2022', '2023')) >= 2
+    has_years = sum(1 for text in year_texts if _extract_year(text)) >= 2
 
     col_to_indicator_map = {}
     if has_years:
@@ -109,8 +118,9 @@ def _compute_section_mapping(table, header_idx, source_word_to_indicator):
             for name, indicator in source_word_to_indicator.items()
         }
         for i, cell in enumerate(year_row.cells):
-            year_text = get_cleaned_cell_text(cell).strip()
-            if year_text not in ('2022', '2023'):
+            raw_year_text = get_cleaned_cell_text(cell).strip()
+            year_text = _extract_year(raw_year_text)
+            if not year_text:
                 continue
 
             parts = []
@@ -141,7 +151,8 @@ def _compute_section_mapping(table, header_idx, source_word_to_indicator):
             if not best_match:
                 continue
 
-            col_to_indicator_map[i] = (best_match, '22' if year_text == '2022' else '23')
+            year_code = year_text[-2:]
+            col_to_indicator_map[i] = (best_match, year_code)
             print(f"   🔍 Столбец {i}: '{composed_header[:90]}' -> {best_match}, год {year_text}")
     else:
         header_row = year_row
@@ -324,14 +335,14 @@ def generate_word_template(input_doc_path, okved_map_path, table_source_mapping_
             year_row, year_row_idx = _find_year_header_row(table)
             if year_row:
                 for i, cell in enumerate(year_row.cells):
-                    year_text = get_cleaned_cell_text(cell).strip()
+                    raw_year_text = get_cleaned_cell_text(cell).strip()
                     indicator = base_indicator_map.get(i)
                     if indicator is None:
                         continue
-                    if year_text == '2022':
-                        col_to_indicator_map[i] = (indicator, '22')
-                    elif year_text == '2023':
-                        col_to_indicator_map[i] = (indicator, '23')
+                    year_text = _extract_year(raw_year_text)
+                    if not year_text:
+                        continue
+                    col_to_indicator_map[i] = (indicator, year_text[-2:])
             else:
                 for i, indicator in base_indicator_map.items():
                     col_to_indicator_map[i] = (indicator, None)
@@ -418,21 +429,57 @@ def find_unfilled_tags(doc_path):
     return unfilled_tags
 
 
+def _extract_okved_code_from_tag(raw_tag: str) -> Optional[str]:
+    if not raw_tag or not raw_tag.startswith("OKVED_"):
+        return None
+
+    raw_tag = raw_tag[len("OKVED_"):]
+    parts = raw_tag.split("_")
+    if not parts:
+        return None
+
+    if parts[-1] in ("22", "23"):
+        parts = parts[:-1]
+
+    if not parts:
+        return None
+
+    okved_parts = [parts[0]]
+    for part in parts[1:]:
+        if part.isdigit() or (part.isalpha() and part.isupper()):
+            okved_parts.append(part)
+            continue
+        # Если встречаем часть, которая выглядит как индикатор, останавливаемся.
+        break
+
+    okved_raw = "_".join(okved_parts)
+    if not okved_raw:
+        return None
+
+    if "." in okved_raw or any(c.isalpha() for c in okved_raw):
+        return canonical_okved(okved_raw.replace("_", "."))
+    return canonical_okved(okved_raw)
+
+
 def collect_okved_codes_from_template(doc_path):
     """Собирает коды ОКВЭД из тегов шаблона."""
     doc = Document(doc_path)
     codes = set()
+
+    def add_codes_from_text(text: str):
+        for tag, _ in TAG_REGEX.findall(text):
+            okved_code = _extract_okved_code_from_tag(tag)
+            if okved_code:
+                codes.add(okved_code)
+
     for para in doc.paragraphs:
-        matches = TAG_REGEX.findall(para.text)
-        for code, _ in matches:
-            codes.add(code)
+        add_codes_from_text(para.text)
     for table in doc.tables:
         for row in table.rows:
             for cell in row.cells:
                 for para in cell.paragraphs:
-                    matches = TAG_REGEX.findall(para.text)
-                    for code, _ in matches:
-                        codes.add(code)
+                    add_codes_from_text(para.text)
+
     print(f"\n📄 Коды ОКВЭД в шаблоне: {len(codes)}")
     return codes
 
@@ -441,9 +488,11 @@ def compare_okved_sets(template_codes, excel_codes):
     """Сравнение множеств кодов ОКВЭД."""
     missing = template_codes - excel_codes
     extra = excel_codes - template_codes
+
     print("\n🔍 В шаблоне, но нет в Excel:")
     for code in sorted(missing):
         print(f" - {code}")
+
     print("\n📁 В Excel, но не используется в шаблоне:")
     for code in sorted(extra):
         print(f" - {code}")

@@ -46,17 +46,31 @@ def _read_csv_robustly(filepath, header_row=0):
 
 
 # === Новая функция: Загрузка маппингов с ключевыми словами ===
+def _parse_keywords_from_field(value: str) -> list:
+    if not value or not isinstance(value, str):
+        return []
+    value = value.strip()
+    if not value:
+        return []
+
+    keywords = re.findall(r'"([^"]+)"', value)
+    if keywords:
+        return [kw.strip() for kw in keywords if kw.strip()]
+
+    return [kw.strip() for kw in value.split(',') if kw.strip()]
+
+
 def load_column_mapping_v2(filepath) -> Tuple[Dict[str, str], Dict[str, Tuple[str, str]], 
                                                Dict[str, str], Dict, Dict[str, Dict[str, str]]]:
     """
     Загружает column_mapping_v2.csv с ключевыми словами.
     
     Returns:
-        - word_to_indicator: назв ание показателя → код индикатора
+        - word_to_indicator: название показателя → код индикатора
         - indicator_to_excel: код индикатора → (колонка 2022, колонка 2023)
         - indicator_to_file: код индикатора → файл Excel
         - file_word_to_indicator: (файл, название) → код индикатора
-        - indicator_keywords: код индикатора → {year_2022: [...], year_2023: [...]}
+        - indicator_keywords: код индикатора → {year_2022: [...], year_2023: [...]} 
     """
     word_to_indicator = {}
     indicator_to_excel = {}
@@ -65,61 +79,45 @@ def load_column_mapping_v2(filepath) -> Tuple[Dict[str, str], Dict[str, Tuple[st
     indicator_keywords = {}
 
     try:
-        with open(filepath, encoding="utf-8-sig") as f:
-            lines = f.readlines()
-            
-            # Пропускаем заголовок
-            if lines:
-                lines = lines[1:]
-            
-            for line in lines:
-                line = line.strip()
-                if not line or line.startswith('#'):
-                    continue
-                
-                # Убираем кавычки в начале и конце строки, если они есть
-                if line.startswith('"') and line.endswith('"'):
-                    line = line[1:-1]
-                
-                # Разделяем по точке с запятой
-                row = line.split(';')
-                
-                if len(row) < 3:
-                    continue
-                
-                excel_file = str(row[0]).strip()
-                word_name = str(row[1]).strip()
-                indicator = str(row[2]).strip()
-                col_22 = str(row[3]).strip() if len(row) > 3 else ''
-                col_23 = str(row[4]).strip() if len(row) > 4 else ''
-                
-                # Новые поля: ключевые слова (если есть)
-                kw_2022 = str(row[5]).strip() if len(row) > 5 else ''
-                kw_2023 = str(row[6]).strip() if len(row) > 6 else ''
-                
-                if col_22.lower() == 'nan':
-                    col_22 = ''
-                if col_23.lower() == 'nan':
-                    col_23 = ''
-                
-                if col_22.lower() == 'nan':
-                    col_22 = ''
-                if col_23.lower() == 'nan':
-                    col_23 = ''
-                
-                word_to_indicator[word_name] = indicator
-                indicator_to_excel[indicator] = (col_22, col_23)
-                indicator_to_file[indicator] = excel_file
-                file_word_to_indicator[(excel_file, _normalize_text(word_name))] = indicator
-                
-                # Парсим ключевые слова из кавычек
-                keywords_2022 = [kw.strip('"').strip() for kw in kw_2022.split(',') if kw.strip()]
-                keywords_2023 = [kw.strip('"').strip() for kw in kw_2023.split(',') if kw.strip()]
-                
-                indicator_keywords[indicator] = {
-                    '2022': keywords_2022,
-                    '2023': keywords_2023
-                }
+        with open(filepath, encoding="utf-8-sig", newline='') as f:
+            reader = csv.reader(f, delimiter=';', quotechar='"')
+            rows = list(reader)
+
+        if rows:
+            rows = rows[1:]
+
+        for row in rows:
+            if not row or all(not str(cell).strip() for cell in row):
+                continue
+
+            excel_file = str(row[0]).strip() if len(row) > 0 else ''
+            word_name = str(row[1]).strip() if len(row) > 1 else ''
+            indicator = str(row[2]).strip() if len(row) > 2 else ''
+            col_22 = str(row[3]).strip() if len(row) > 3 else ''
+            col_23 = str(row[4]).strip() if len(row) > 4 else ''
+            kw_2022 = str(row[5]).strip() if len(row) > 5 else ''
+            kw_2023 = str(row[6]).strip() if len(row) > 6 else ''
+
+            if col_22.lower() == 'nan':
+                col_22 = ''
+            if col_23.lower() == 'nan':
+                col_23 = ''
+
+            if not excel_file or not word_name or not indicator:
+                continue
+
+            word_to_indicator[word_name] = indicator
+            indicator_to_excel[indicator] = (col_22, col_23)
+            indicator_to_file[indicator] = excel_file
+            file_word_to_indicator[(excel_file, _normalize_text(word_name))] = indicator
+
+            keywords_2022 = _parse_keywords_from_field(kw_2022)
+            keywords_2023 = _parse_keywords_from_field(kw_2023)
+
+            indicator_keywords[indicator] = {
+                '2022': keywords_2022,
+                '2023': keywords_2023
+            }
     
     except FileNotFoundError:
         print(f"⚠️ Файл {filepath} не найден, используем fallback на column_mapping.csv")
@@ -166,6 +164,31 @@ def load_table_source_map(filepath):
     return mapping_dict
 
 
+def validate_table_source_mapping(table_source_mapping: dict, excel_dir: Path):
+    """Проверяет, что файлы из маппинга существуют в папке Excel."""
+    excel_dir = Path(excel_dir)
+    available_files = {p.name for p in excel_dir.glob('*.xlsx')}
+    mapped_files = set(table_source_mapping.values())
+
+    missing_files = sorted(src for src in mapped_files if src and src not in available_files)
+    unused_files = sorted(name for name in available_files if name not in mapped_files)
+
+    if missing_files:
+        print("\n⚠️ ВНИМАНИЕ: найдены источники в table_source_data_mapping.csv, которых нет в input/excel:")
+        for src in missing_files:
+            print(f"   - {src}")
+        print("   Проверьте, не изменилось ли имя файла, и обновите mapping или файл в папке input/excel.")
+
+    if unused_files:
+        print("\nℹ️ В папке input/excel найдены файлы, не указанные в маппинге:")
+        for name in unused_files[:20]:
+            print(f"   - {name}")
+        if len(unused_files) > 20:
+            print(f"   ...и еще {len(unused_files) - 20} файлов.")
+
+    return missing_files, unused_files
+
+
 def _detect_year_by_text(text: str) -> str:
     if not isinstance(text, str):
         return None
@@ -186,17 +209,65 @@ def _find_excel_header_row(df: pd.DataFrame) -> int:
     return None
 
 
+def _transliterate_to_latin(text: str) -> str:
+    """Транслитерирует русский текст в латинские буквы."""
+    cyrillic_to_latin = {
+        'а': 'a', 'б': 'b', 'в': 'v', 'г': 'g', 'д': 'd', 'е': 'e', 'ё': 'e', 'ж': 'zh',
+        'з': 'z', 'и': 'i', 'й': 'y', 'к': 'k', 'л': 'l', 'м': 'm', 'н': 'n', 'о': 'o',
+        'п': 'p', 'р': 'r', 'с': 's', 'т': 't', 'у': 'u', 'ф': 'f', 'х': 'h', 'ц': 'ts',
+        'ч': 'ch', 'ш': 'sh', 'щ': 'sch', 'ъ': '', 'ы': 'y', 'ь': '', 'э': 'e', 'ю': 'yu', 'я': 'ya'
+    }
+    result = []
+    for char in text.lower():
+        result.append(cyrillic_to_latin.get(char, char))
+    return ''.join(result)
+
+
+def _create_short_code_from_text(text: str) -> str:
+    """Создает короткий код из названия показателя через транслитерацию.
+    
+    Примеры:
+    - "Валюта баланса" → "ValBal"
+    - "Внеоборотные активы" → "VneObAk"
+    - "основные средства" → "OsnSr"
+    """
+    normalized = _normalize_text(text)
+    words = [w for w in normalized.split() if w]  # Убираем пустые слова
+    
+    if not words:
+        return ''
+    
+    code_parts = []
+    for word in words:
+        # Транслитерируем слово
+        trans = _transliterate_to_latin(word)
+        
+        if not trans:
+            continue
+        
+        # Для каждого слова берем нужное количество символов
+        if len(trans) <= 2:
+            part = trans
+        elif len(trans) <= 4:
+            part = trans[:2]  # "код" → "ko"
+        else:
+            # Для длинных слов: "внеоборотные" → "vne+ob" → берем первые слоги
+            # Берем первые 3 символа, но стараемся взять целые слоги
+            part = trans[:3]
+        
+        code_parts.append(part.capitalize())
+    
+    return ''.join(code_parts)
+
+
 def _slugify_indicator_code(text: str, prefix: str = None) -> str:
+    """Создает короткий код показателя через транслитерацию.
+    
+    Параметр prefix игнорируется для совместимости с более ранним кодом.
+    """
     if not text:
         return ''
-    normalized = _normalize_text(text)
-    code = re.sub(r'[^0-9a-zа-я]+', '_', normalized)
-    code = re.sub(r'_+', '_', code).strip('_')
-    if prefix:
-        prefix_norm = re.sub(r'[^0-9a-zа-я]+', '_', _normalize_text(prefix))
-        prefix_norm = re.sub(r'_+', '_', prefix_norm).strip('_')
-        return f"{prefix_norm}_{code}" if code else prefix_norm
-    return code
+    return _create_short_code_from_text(text)
 
 
 def _is_connective_header(text: str) -> bool:
@@ -206,6 +277,56 @@ def _is_connective_header(text: str) -> bool:
         'в том числе',
         'в том числе:'
     }
+
+
+def _extract_keywords_for_year(base_name: str, suffix: str, year: str) -> str:
+    """Извлекает ключевые слова из базового названия и суффикса для поиска в Excel.
+    
+    Возвращает строку в формате: "слово1","слово2","слово3"
+    """
+    keywords = []
+    suffix_lower = suffix.lower()
+    
+    # Динамически извлекаем год из суффикса через regex
+    # Ищем любой год вида 202X (может быть 2022, 2023, 2024, 2025 и т.д.)
+    year_match = re.search(r'(202\d)', suffix)
+    if year_match:
+        keywords.append(year_match.group(1))
+    elif year:
+        # Fallback: если год определен как '22' или '23', конвертируем
+        if year == '22':
+            keywords.append('2022')
+        elif year == '23':
+            keywords.append('2023')
+    
+    # Добавляем маркеры периода
+    if year == '22':
+        # Для первого года (условно 2022/2024)
+        if 'начало' in suffix_lower:
+            keywords.append('начало')
+        elif 'предыдущ' in suffix_lower:
+            keywords.append('предыдущий')
+        else:
+            keywords.append('начало')  # По умолчанию
+    elif year == '23':
+        # Для второго года (условно 2023/2025)
+        if 'конец' in suffix_lower:
+            keywords.append('конец')
+        elif 'отчетн' in suffix_lower or 'текущ' in suffix_lower:
+            keywords.append('конец')
+        else:
+            keywords.append('конец')  # По умолчанию
+    
+    # Если нет явного года, просто используем суффикс
+    if not keywords and suffix:
+        keywords.append(suffix)
+    
+    # Добавляем базовое название как универсальный ключ поиска
+    keywords.append(base_name)
+    
+    # Возвращаем в формате CSV с кавычками, но БЕЗ двойного экранирования
+    # csv.writer сам добавит кавычки вокруг поля, если нужно
+    return ','.join(f'"{k}"' for k in keywords)
 
 
 def _infer_mapping_from_excel(excel_path: Path) -> list:
@@ -221,6 +342,8 @@ def _infer_mapping_from_excel(excel_path: Path) -> list:
     current_base = ''
     current_indicator_name = None
     groups = {}
+    col_metadata = {}  # Сохраняем метаданные для каждого столбца (базовое имя, суффикс)
+    
     for col_idx in range(2, len(headers)):
         raw_header = str(headers[col_idx]).strip()
         suffix = str(subheaders[col_idx]).strip()
@@ -256,11 +379,21 @@ def _infer_mapping_from_excel(excel_path: Path) -> list:
                 'name': indicator_name,
                 'code': _slugify_indicator_code(indicator_name, excel_path.stem),
                 'cols': {'22': None, '23': None},
-                'keywords': [current_base]
+                'keywords_2022': [],
+                'keywords_2023': []
             }
+        
+        # Сохраняем метаданные столбца
+        col_metadata[col_idx] = {'base': current_base, 'suffix': suffix, 'year': year}
 
         if year:
             groups[group_key]['cols'][year] = str(col_idx + 1)
+            # Извлекаем ключевые слова для соответствующего года
+            keywords = _extract_keywords_for_year(current_base, suffix, year)
+            if year == '22':
+                groups[group_key]['keywords_2022'] = keywords
+            else:
+                groups[group_key]['keywords_2023'] = keywords
         else:
             if groups[group_key]['cols']['22'] is None:
                 groups[group_key]['cols']['22'] = str(col_idx + 1)
@@ -271,9 +404,9 @@ def _infer_mapping_from_excel(excel_path: Path) -> list:
     for group in groups.values():
         col_22 = group['cols']['22'] or ''
         col_23 = group['cols']['23'] or ''
-        keyword_2022 = group['keywords'][0] if group['keywords'] else ''
-        keyword_2023 = group['keywords'][0] if group['keywords'] else ''
-        rows.append((excel_path.name, group['name'], group['code'], col_22, col_23, keyword_2022, keyword_2023))
+        kw_22 = group['keywords_2022'] if group['keywords_2022'] else group['name']
+        kw_23 = group['keywords_2023'] if group['keywords_2023'] else group['name']
+        rows.append((excel_path.name, group['name'], group['code'], col_22, col_23, kw_22, kw_23))
 
     return rows
 
