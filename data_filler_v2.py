@@ -13,6 +13,7 @@ import pandas as pd
 from typing import Dict, Set, Tuple, Optional
 
 from config_v2 import load_column_mapping_v2, build_column_mapping_v2_from_excel
+from mo import load_mo_map, canonical_mo
 from smart_loader import (
     find_column_by_year,
     find_row_by_fuzzy_match,
@@ -24,6 +25,7 @@ from data_normalizer import clean_excel_value_for_word
 
 def pre_load_all_excel_data_v2(excel_dir: Path, table_source_mapping: Dict, 
                                okved_codes_set: Set[str], column_mapping_path: Path,
+                               mo_map_path: Optional[Path] = None,
                                use_fuzzy_match: bool = True, fuzzy_threshold: float = 0.80) -> Tuple[Dict, dict]:
     """
     Загружает все данные из Excel с использованием умного поиска.
@@ -53,8 +55,11 @@ def pre_load_all_excel_data_v2(excel_dir: Path, table_source_mapping: Dict,
         _, indicator_to_excel, indicator_to_file, _ = load_column_mapping(str(column_mapping_path))
         indicator_keywords = {k: {'2022': [], '2023': []} for k in indicator_to_file.keys()}
     
-    # Импортируем функцию канонизации
+    # Импортируем функции канонизации
     from config import canonical_okved
+    mo_name_to_mo_cleaned = {}
+    if mo_map_path is not None:
+        _, mo_name_to_mo_cleaned = load_mo_map(mo_map_path)
     
     master_data = {}
     conflicts = []
@@ -86,12 +91,21 @@ def pre_load_all_excel_data_v2(excel_dir: Path, table_source_mapping: Dict,
                 stats['errors'].append(f"Empty file: {filename}")
                 continue
             
-            # Фильтруем по кодам ОКВЭД (первый столбец) с канонизацией
-            df_filtered = df[df.iloc[:, 0].apply(lambda x: canonical_okved(str(x))).isin(okved_codes_set)]
-            
-            if df_filtered.empty:
-                print(f"ℹ️ Нет данных для нужных кодов ОКВЭД в файле {filename}")
-                continue
+            is_mo_file = 'mo' in filename.lower()
+            if is_mo_file:
+                if mo_name_to_mo_cleaned:
+                    mo_codes_set = set(mo_name_to_mo_cleaned.values())
+                    df_filtered = df[df.iloc[:, 0].apply(lambda x: canonical_mo(str(x))).isin(mo_codes_set)]
+                else:
+                    df_filtered = df
+                if df_filtered.empty:
+                    print(f"ℹ️ Нет данных для МО в файле {filename}")
+                    continue
+            else:
+                df_filtered = df[df.iloc[:, 0].apply(lambda x: canonical_okved(str(x))).isin(okved_codes_set)]
+                if df_filtered.empty:
+                    print(f"ℹ️ Нет данных для нужных кодов ОКВЭД в файле {filename}")
+                    continue
             
             stats['files_processed'] += 1
             
@@ -115,18 +129,17 @@ def pre_load_all_excel_data_v2(excel_dir: Path, table_source_mapping: Dict,
                     pass  # TODO: Реализовать fuzzy match для строк при необходимости
                 
                 # === ЭТАП 3: Извлечение данных с нормализацией ===
-                for okved_raw, group in df_filtered.groupby(df_filtered.iloc[:, 0]):
-                    # Канонизируем код ОКВЭД из Excel
-                    okved_canonical = canonical_okved(str(okved_raw))
+                df_group_keys = df_filtered.iloc[:, 0].apply(lambda x: canonical_mo(str(x)) if is_mo_file else canonical_okved(str(x)))
+                for entity_key, group in df_filtered.groupby(df_group_keys):
                     
                     # Проверка на конфликт ключей (только если данные уже есть от другого исходного кода)
-                    if okved_canonical in master_data:
+                    if entity_key in master_data:
                         # Проверяем, тот же ли это исходный код (просто дубль строки в том же файле)
                         # Если да - это не конфликт, а нормальная ситуация
                         pass  # Данные будут обновлены/дополнены
                     
-                    if okved_canonical not in master_data:
-                        master_data[okved_canonical] = {}
+                    if entity_key not in master_data:
+                        master_data[entity_key] = {}
                     
                     # Получаем значения за 2022 и 2023
                     value_22 = None
@@ -135,7 +148,7 @@ def pre_load_all_excel_data_v2(excel_dir: Path, table_source_mapping: Dict,
                             value = get_cell_value_safely(row, col_idx_2022)
                             if value:
                                 normalized = clean_excel_value_for_word(value, force_decimal=force_decimal)
-                                master_data[okved_canonical][f"{indicator}_22"] = normalized
+                                master_data[entity_key][f"{indicator}_22"] = normalized
                                 value_22 = normalized
                                 stats['found_by_keyword' if keywords_2022 else 'found_by_hardcode'] += 1
                                 break
@@ -145,12 +158,12 @@ def pre_load_all_excel_data_v2(excel_dir: Path, table_source_mapping: Dict,
                             value = get_cell_value_safely(row, col_idx_2023)
                             if value:
                                 normalized = clean_excel_value_for_word(value, force_decimal=force_decimal)
-                                master_data[okved_canonical][f"{indicator}_23"] = normalized
+                                master_data[entity_key][f"{indicator}_23"] = normalized
                                 stats['found_by_keyword' if keywords_2023 else 'found_by_hardcode'] += 1
                                 break
                     elif value_22 is not None:
                         # Если колонка 2023 не указана, но есть данные за 2022, используем их для 2023
-                        master_data[okved_canonical][f"{indicator}_23"] = value_22
+                        master_data[entity_key][f"{indicator}_23"] = value_22
                         stats['found_by_keyword' if keywords_2022 else 'found_by_hardcode'] += 1
         
         except Exception as e:
@@ -277,9 +290,13 @@ def fill_word_template_by_tags_v2(doc, master_data: Dict, log_path: Optional[Pat
                         for match in matches:
                             full_tag = match.group(1)
                             raw_tag = full_tag
-                            
+                            source_prefix = None
                             if raw_tag.startswith("OKVED_"):
+                                source_prefix = "OKVED"
                                 raw_tag = raw_tag[len("OKVED_"):]
+                            elif raw_tag.startswith("MO_"):
+                                source_prefix = "MO"
+                                raw_tag = raw_tag[len("MO_"):]
                             
                             parts = raw_tag.split("_")
                             if len(parts) < 2:
@@ -306,39 +323,35 @@ def fill_word_template_by_tags_v2(doc, master_data: Dict, log_path: Optional[Pat
                                 indicator = parts[-1]
                                 okved_parts = parts[:-1]
                             
-                            # Собираем код ОКВЭД из частей (с разделителями "_")
-                            okved_raw = "_".join(okved_parts)
-                            # Канонизируем код ОКВЭД для поиска в master_data
-                            # Важно: в тегах используется "_" как разделитель, но в master_data ключи могут быть с "." или без
-                            # canonical_okved просто делает upper() и strip(), так что заменяем "_" обратно на "." только если это было в исходном коде
-                            # На самом деле - в Excel коды хранятся как "101.АГ", "85", "A" и т.д.
-                            # В тегах мы используем "101_АГ", "85", "A"
-                            # Значит нужно заменить "_" на "." для составных кодов
-                            if "." in okved_raw or any(c.isalpha() for c in okved_raw):
-                                # Это составной код типа "101_АГ" → "101.АГ"
-                                okved_code = canonical_okved(okved_raw.replace("_", "."))
+                            # Собираем код из частей (с разделителями "_")
+                            entity_raw = "_".join(okved_parts)
+                            # Канонизируем код для поиска в master_data
+                            if source_prefix == "MO":
+                                entity_code = canonical_mo(entity_raw)
                             else:
-                                # Это простой код типа "85" или "A"
-                                okved_code = canonical_okved(okved_raw)
+                                if "." in entity_raw or any(c.isalpha() for c in entity_raw):
+                                    entity_code = canonical_okved(entity_raw.replace("_", "."))
+                                else:
+                                    entity_code = canonical_okved(entity_raw)
                             
                             # Обрабатываем год: преобразуем реальный год (202X) в условный код (22/23)
                             lookup_suffix = year_suffix
                             indicator_key = f"{indicator}_{lookup_suffix}" if lookup_suffix else indicator
                             
                             # Ищем значение в master_data по каноническому ключу
-                            value = master_data.get(okved_code, {}).get(indicator_key)
+                            value = master_data.get(entity_code, {}).get(indicator_key)
                             
                             if value is None and not lookup_suffix:
                                 # Если год не указан в теге, пробуем найти с суффиксами года
-                                value = master_data.get(okved_code, {}).get(f"{indicator}_22")
+                                value = master_data.get(entity_code, {}).get(f"{indicator}_22")
                                 if value is None:
-                                    value = master_data.get(okved_code, {}).get(f"{indicator}_23")
+                                    value = master_data.get(entity_code, {}).get(f"{indicator}_23")
                             
                             if value is None and lookup_suffix:
                                 # Если прямой год не найден, пробуем fallback на относительные годы
-                                value = master_data.get(okved_code, {}).get(f"{indicator}_23")
+                                value = master_data.get(entity_code, {}).get(f"{indicator}_23")
                                 if value is None:
-                                    value = master_data.get(okved_code, {}).get(f"{indicator}_22")
+                                    value = master_data.get(entity_code, {}).get(f"{indicator}_22")
                             
                             # Применяем финальную нормализацию
                             # Важно: пустая строка "" - это тоже данные (значит значение есть, но оно пустое/нулевое)

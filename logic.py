@@ -13,6 +13,7 @@ from config import (
     get_table_name,
     canonical_okved
 )
+from mo import load_mo_map, find_mo_code, canonical_mo
 from config_v2 import load_column_mapping_v2
 from docx import Document
 
@@ -235,14 +236,19 @@ def get_table_source_by_number(table_source_mapping, table_number):
 # ==========================================================
 # === ГЕНЕРАЦИЯ ШАБЛОНА ====================================
 # ==========================================================
-def generate_word_template(input_doc_path, okved_map_path, table_source_mapping_path, column_mapping_path, output_doc_path):
+def generate_word_template(input_doc_path, okved_map_path, table_source_mapping_path, column_mapping_path, output_doc_path, mo_map_path: Path = None):
     """
-    Генерация шаблона Word с тегами {{OKVED_<code>_<indicator>[_22|_23]}}.
+    Генерация шаблона Word с тегами {{OKVED_<code>_<indicator>[_22|_23]}} и {{MO_<code>_<indicator>[_22|_23]}}.
     Расширенный поиск заголовков по первым 5 строкам таблицы.
     """
     print("\n--- ШАГ 2: Генерация шаблона с умными тегами ---")
     _, name_to_okved_cleaned = load_okved_map(okved_map_path)
+    _, mo_name_to_mo_cleaned = ({}, {})
+    if mo_map_path is not None:
+        _, mo_name_to_mo_cleaned = load_mo_map(mo_map_path)
+
     table_source_mapping = load_table_source_map(table_source_mapping_path)
+    mo_source_files = {src for src in table_source_mapping.values() if 'mo' in src.lower()}
     word_to_indicator, _, indicator_to_file, file_word_to_indicator, _ = load_column_mapping_v2(column_mapping_path)
     doc = Document(input_doc_path)
     total_tags = 0
@@ -378,20 +384,29 @@ def generate_word_template(input_doc_path, okved_map_path, table_source_mapping_
 
             first_cell_text = get_cleaned_cell_text(row.cells[0])
             okved_code = find_okved_code(first_cell_text, name_to_okved_cleaned)
-            if not okved_code:
+            mo_code = None
+            if not okved_code and current_source_file and current_source_file.lower().endswith('.xlsx') and current_source_file.lower().find('mo') != -1:
+                mo_code = find_mo_code(first_cell_text, mo_name_to_mo_cleaned)
+
+            if not okved_code and not mo_code:
                 continue
 
-            # Применяем канонизацию к коду ОКВЭД перед созданием тега
-            okved_canonical = canonical_okved(okved_code)
-            okved_tag_part = okved_canonical.replace('.', '_')
+            if okved_code:
+                prefix = "OKVED"
+                code_value = canonical_okved(okved_code)
+            else:
+                prefix = "MO"
+                code_value = canonical_mo(mo_code)
+
+            code_tag_part = code_value.replace('.', '_')
 
             for col_idx, indicator_spec in mapping.items():
                 if col_idx < len(row.cells):
                     indicator, year = indicator_spec
                     if year:
-                        tag = f"{{{{OKVED_{okved_tag_part}_{indicator}_{year}}}}}"
+                        tag = f"{{{{{prefix}_{code_tag_part}_{indicator}_{year}}}}}"
                     else:
-                        tag = f"{{{{OKVED_{okved_tag_part}_{indicator}}}}}"
+                        tag = f"{{{{{prefix}_{code_tag_part}_{indicator}}}}}"
                     # Очищаем ячейку перед вставкой тега
                     for p in row.cells[col_idx].paragraphs:
                         p.text = " "

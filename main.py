@@ -36,6 +36,7 @@ def main(input_template_override=None, output_file_override=None):
 
     # 📄 Файлы
     okved_file = mappings_dir / "okved_mapping.csv"
+    mo_file = mappings_dir / "mo.csv"
     table_mapping_file = mappings_dir / "table_source_data_mapping.csv"
     column_mapping_file = mappings_dir / "column_mapping_v2.csv"
 
@@ -57,7 +58,14 @@ def main(input_template_override=None, output_file_override=None):
 
     # === ШАГ 2: Генерация шаблона Word с тегами ===
     print("\n=== ШАГ 2: Генерация шаблона Word с умными тегами ===")
-    generate_word_template(input_word_file, okved_file, table_mapping_file, column_mapping_file, template_word_file)
+    generate_word_template(
+        input_word_file,
+        okved_file,
+        table_mapping_file,
+        column_mapping_file,
+        template_word_file,
+        mo_map_path=mo_file,
+    )
     print(f"📄 Шаблон с тегами сохранен: {template_word_file}")
 
     # === ШАГ 3: Предварительная загрузка данных из Excel ===
@@ -67,6 +75,7 @@ def main(input_template_override=None, output_file_override=None):
         table_source_mapping=table_mapping,
         okved_codes_set=okved_codes_set,
         column_mapping_path=column_mapping_file,
+        mo_map_path=mo_file,
         use_fuzzy_match=True,
         fuzzy_threshold=0.80
     )
