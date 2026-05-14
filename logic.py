@@ -21,27 +21,10 @@ YEAR_PATTERN = re.compile(r'\b(20\d{2})\b')
 
 
 def _extract_year(text: str) -> Optional[str]:
-    """Извлекает полный год из текста (202X)."""
     if not text:
         return None
     match = YEAR_PATTERN.search(text)
     return match.group(1) if match else None
-
-
-def _extract_year_suffix(year_text: str) -> str:
-    """Преобразует полный год в суффикс (последние 2 цифры).
-    
-    Примеры:
-        "2023" → "23"
-        "2024" → "24"
-        "2025" → "25"
-    
-    Это позволяет системе автоматически адаптироваться к любому году
-    без изменения кода.
-    """
-    if not year_text or len(year_text) < 4:
-        return year_text
-    return year_text[-2:]  # Берём последние 2 цифры
 
 
 def _normalize_match_text(text: str) -> str:
@@ -168,11 +151,11 @@ def _compute_section_mapping(table, header_idx, source_word_to_indicator):
             if not best_match:
                 continue
 
-            # Используем суффикс года (последние 2 цифры: 23, 24, 25...)
-            # Это позволяет системе автоматически адаптироваться к любому году без изменений кода
-            year_suffix = _extract_year_suffix(year_text)
-            col_to_indicator_map[i] = (best_match, year_suffix)
-            print(f"   🔍 Столбец {i}: '{composed_header[:90]}' -> {best_match}, год {year_text} → суффикс {year_suffix}")
+            # Используем сокращенный год из Word: 2023 -> 23, 2024 -> 24
+            # Это даёт гибкие теги на будущее без правки кода из-за нового календарного года.
+            year_code = year_text[-2:]
+            col_to_indicator_map[i] = (best_match, year_code)
+            print(f"   🔍 Столбец {i}: '{composed_header[:90]}' -> {best_match}, год {year_text} -> код {year_code}")
     else:
         header_row = year_row
         normalized_name_map = {
@@ -361,8 +344,7 @@ def generate_word_template(input_doc_path, okved_map_path, table_source_mapping_
                     year_text = _extract_year(raw_year_text)
                     if not year_text:
                         continue
-                    year_suffix = _extract_year_suffix(year_text)
-                    col_to_indicator_map[i] = (indicator, year_suffix)
+                    col_to_indicator_map[i] = (indicator, year_text[-2:])
             else:
                 for i, indicator in base_indicator_map.items():
                     col_to_indicator_map[i] = (indicator, None)

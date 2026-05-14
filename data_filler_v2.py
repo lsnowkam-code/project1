@@ -174,23 +174,21 @@ def pre_load_all_excel_data_v2(excel_dir: Path, table_source_mapping: Dict,
 
 def _map_year_to_suffix(year: str) -> str:
     """
-    Преобразует полный год (202X) в суффикс (последние 2 цифры).
-    
-    Эта функция обеспечивает ДИНАМИЧЕСКОЕ преобразование:
-    - 2022 → '22'
-    - 2023 → '23'
-    - 2024 → '24'
-    - 2025 → '25'
-    - ...и так далее в будущие годы
-    
-    Это избегает необходимости переписывать код каждый год.
+    Переводит год в двухзначный суффикс.
+
+    Примеры:
+        2023 -> 23
+        2024 -> 24
+        23   -> 23
+        24   -> 24
     """
-    if not year or not year.isdigit() or len(year) != 4:
+    if not year or not year.isdigit():
         return None
-    
-    # Просто берём последние 2 цифры года
-    # Это работает для любого года 202X
-    return year[-2:]
+    if len(year) == 4 and year.startswith('20'):
+        return year[-2:]
+    if len(year) == 2:
+        return year
+    return None
 
 
 def _find_column_smart(df: pd.DataFrame, hardcode_idx: str, year: str, keywords: list) -> Optional[int]:
@@ -288,24 +286,17 @@ def fill_word_template_by_tags_v2(doc, master_data: Dict, log_path: Optional[Pat
                                 log.append(f"⚠️ Ошибка формата тега: {full_tag}")
                                 continue
                             
-                            # Парсируем OKVED код и индикатор (с поддержкой реальных годов 202X и суффиксов 20-99)
+                            # Парсируем OKVED код и индикатор (с поддержкой реальных годов 202X)
                             year_suffix = None
                             if len(parts) > 1:
                                 last_part = parts[-1]
-                                # Проверяем, является ли последний элемент годом
-                                if last_part.isdigit():
-                                    if len(last_part) == 4 and last_part.startswith("20"):
-                                        # Реальный год из Word: 2022, 2023, 2024, и т.д.
-                                        year_suffix = last_part
-                                        indicator = parts[-2]
-                                        okved_parts = parts[:-2]
-                                    elif len(last_part) == 2:
-                                        # Любой двузначный суффикс: 22, 23, 24, 25... (динамичный)
-                                        year_suffix = last_part
+                                # Проверяем, является ли последний элемент годом (202X или двухзначным годом)
+                                if last_part.isdigit() and (len(last_part) == 4 or len(last_part) == 2):
+                                    year_suffix = _map_year_to_suffix(last_part)
+                                    if year_suffix:
                                         indicator = parts[-2]
                                         okved_parts = parts[:-2]
                                     else:
-                                        # Не год, это часть индикатора
                                         indicator = parts[-1]
                                         okved_parts = parts[:-1]
                                 else:
@@ -332,12 +323,6 @@ def fill_word_template_by_tags_v2(doc, master_data: Dict, log_path: Optional[Pat
                             
                             # Обрабатываем год: преобразуем реальный год (202X) в условный код (22/23)
                             lookup_suffix = year_suffix
-                            if year_suffix and len(year_suffix) == 4 and year_suffix.startswith("20"):
-                                # Реальный год из Word, переводим в условный код
-                                conditional_suffix = _map_year_to_suffix(year_suffix)
-                                if conditional_suffix:
-                                    lookup_suffix = conditional_suffix
-                            
                             indicator_key = f"{indicator}_{lookup_suffix}" if lookup_suffix else indicator
                             
                             # Ищем значение в master_data по каноническому ключу
@@ -349,12 +334,11 @@ def fill_word_template_by_tags_v2(doc, master_data: Dict, log_path: Optional[Pat
                                 if value is None:
                                     value = master_data.get(okved_code, {}).get(f"{indicator}_23")
                             
-                            if value is None:
-                                # Если первый вариант не найден, пробуем альтернативный год (fallback)
-                                if lookup_suffix == "23":
+                            if value is None and lookup_suffix:
+                                # Если прямой год не найден, пробуем fallback на относительные годы
+                                value = master_data.get(okved_code, {}).get(f"{indicator}_23")
+                                if value is None:
                                     value = master_data.get(okved_code, {}).get(f"{indicator}_22")
-                                elif lookup_suffix == "22":
-                                    value = master_data.get(okved_code, {}).get(f"{indicator}_23")
                             
                             # Применяем финальную нормализацию
                             # Важно: пустая строка "" - это тоже данные (значит значение есть, но оно пустое/нулевое)
